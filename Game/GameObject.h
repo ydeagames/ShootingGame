@@ -67,6 +67,7 @@ typedef struct
 	Vec2 size;					// <大きさ>
 	ObjectShape shape;			// <形>
 	GameSprite sprite;			// <スプライト>
+	int state;					// <表示状態>
 } GameObject;
 
 // 定数の定義 ==============================================================
@@ -97,6 +98,12 @@ GameSprite GameSprite_CreateNone();
 
 // <オブジェクト作成>
 GameObject GameObject_Create(Vec2 pos = Vec2_Create(), Vec2 vel = Vec2_Create(), Vec2 size = Vec2_Create());
+
+// <オブジェクト削除>
+void GameObject_Dispose(GameObject* obj);
+
+// <オブジェクト確認>
+BOOL GameObject_IsAlive(GameObject* obj);
 
 // <オブジェクト座標更新>
 void GameObject_UpdatePosition(GameObject* obj);

@@ -51,7 +51,19 @@ GameSprite GameSprite_CreateNone()
 // <オブジェクト作成>
 GameObject GameObject_Create(Vec2 pos, Vec2 vel, Vec2 size)
 {
-	return{ pos, vel, size, SHAPE_BOX, GameSprite_CreateNone() };
+	return{ pos, vel, size, SHAPE_BOX, GameSprite_CreateNone(), 1 };
+}
+
+// <オブジェクト削除>
+void GameObject_Dispose(GameObject* obj)
+{
+	obj->state = 0;
+}
+
+// <オブジェクト確認>
+BOOL GameObject_IsAlive(GameObject* obj)
+{
+	return obj->state;
 }
 
 // <オブジェクト座標更新>

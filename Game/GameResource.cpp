@@ -12,8 +12,10 @@
 // <サウンド> ----------------------------------------------------------
 
 // <テクスチャ> --------------------------------------------------------
-#define TEXTURE_SPACERACE_PROTECTED "Resources\\Textures\\Protected\\Solvalou.png"		// リソース保護テクスチャ
-#define TEXTURE_SPACERACE "Resources\\Textures\\Solvalou.png"							// オープンテクスチャ
+#define TEXTURE_PLAYER_PROTECTED "Resources\\Textures\\Protected\\Solvalou.png"		// リソース保護テクスチャ
+#define TEXTURE_PLAYER "Resources\\Textures\\Solvalou.png"							// オープンテクスチャ
+#define TEXTURE_BULLET_PROTECTED "Resources\\Textures\\Protected\\Bullet.png"		// リソース保護テクスチャ
+#define TEXTURE_BULLET "Resources\\Textures\\Bullet.png"							// オープンテクスチャ
 
 // <動画> --------------------------------------------------------------
 #define MOVIE_LOGO "Resources\\Movies\\ydeagames.avi"									// ロゴムービー
@@ -38,9 +40,12 @@ GameResource GameResource_Create(void)
 	// サウンド
 
 	// テクスチャ
-	res.texture_player = LoadGraph(TEXTURE_SPACERACE_PROTECTED);
+	res.texture_player = LoadGraph(TEXTURE_PLAYER_PROTECTED);
 	if (res.texture_player == TEXTURE_MISSING)										// リソース保護テクスチャが無かったら
-		res.texture_player = LoadGraph(TEXTURE_SPACERACE);							// オープンテクスチャを読み込む
+		res.texture_player = LoadGraph(TEXTURE_PLAYER);							// オープンテクスチャを読み込む
+	res.texture_bullet = LoadGraph(TEXTURE_BULLET_PROTECTED);
+	if (res.texture_bullet == TEXTURE_MISSING)										// リソース保護テクスチャが無かったら
+		res.texture_bullet = LoadGraph(TEXTURE_BULLET);							// オープンテクスチャを読み込む
 
 	// 動画
 	res.movie_logo = LoadGraph(MOVIE_LOGO);												// オープンテクスチャを読み込む
@@ -59,6 +64,7 @@ void GameResource_Delete(GameResource* res)
 
 	// テクスチャ
 	DeleteGraph(res->texture_player);
+	DeleteGraph(res->texture_bullet);
 
 	// 動画
 	DeleteGraph(res->movie_logo);

@@ -13,6 +13,7 @@ typedef struct
 
 	// <テクスチャ>
 	HGRP texture_player;
+	HGRP texture_bullet;
 
 	// <動画>
 	HGRP movie_logo;

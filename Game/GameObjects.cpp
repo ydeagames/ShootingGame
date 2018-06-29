@@ -9,8 +9,12 @@
 #define ENEMY_HEIGHT 32
 
 // <プレイヤー>
-#define PLAYER_WIDTH  48
-#define PLAYER_HEIGHT 48
+#define PLAYER_WIDTH  42
+#define PLAYER_HEIGHT 36
+
+// <弾
+#define BULLET_WIDTH  6
+#define BULLET_HEIGHT 6
 
 // 関数の定義 ==============================================================
 
@@ -54,4 +58,25 @@ GameObject GameObject_Player_Create(void)
 void GameObject_Player_SetPosYDefault(GameObject* obj, GameObject* field)
 {
 	obj->pos.y = GameObject_OffsetY(obj, TOP, GameObject_GetY(field, BOTTOM), 16);
+}
+
+// <<弾オブジェクト>> ----------------------------------------------
+
+// <弾オブジェクト作成>
+GameObject GameObject_Bullet_Create(void)
+{
+	return GameObject_Create(Vec2_Create(), Vec2_Create(), Vec2_Create(BULLET_WIDTH, BULLET_HEIGHT));
+}
+
+// <弾オブジェクト座標デフォルト>
+void GameObject_Bullet_SetPosDefault(GameObject* obj, GameObject* player)
+{
+	obj->pos = player->pos;
+}
+
+// <弾オブジェクト移動デフォルト>
+void GameObject_Bullet_SetVelDefault(GameObject* obj)
+{
+	obj->vel.x = 0;
+	obj->vel.y = -BULLET_VEL;
 }
