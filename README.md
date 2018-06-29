@@ -1,0 +1,2 @@
+# ShootingGame
+Dxライブラリを使用したShootingゲームです
