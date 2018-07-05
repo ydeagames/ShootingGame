@@ -38,9 +38,9 @@ void UpdatePlay(void);      // ÉQÅ[ÉÄÇÃçXêVèàóù
 void RenderPlay(void);      // ÉQÅ[ÉÄÇÃï`âÊèàóù
 void FinalizePlay(void);    // ÉQÅ[ÉÄÇÃèIóπèàóù
 
-BOOL ReloadPlayerBullet(GameObject* bullet);
-BOOL GrowPlayerBullet(GameObject* bullet);
-BOOL ShotPlayerBullet(GameObject* bullet);
+BOOL ReloadPlayerBullet(void);
+BOOL GrowPlayerBullet(void);
+BOOL ShotPlayerBullet(void);
 
 
 
@@ -100,32 +100,11 @@ void UpdatePlay(void)
 	GameController_UpdateControl(&g_player_ctrl);
 
 	if (IsKeyPressed(PAD_INPUT_1))
-	{
-		int i;
-		for (i = 0; i < NUM_BULLETS; i++)
-		{
-			if (ReloadPlayerBullet(&g_player_bullets[i]))
-				break;
-		}
-	}
+		ReloadPlayerBullet();
 	if (IsKeyDown(PAD_INPUT_1))
-	{
-		int i;
-		for (i = 0; i < NUM_BULLETS; i++)
-		{
-			if (GrowPlayerBullet(&g_player_bullets[i]))
-				break;
-		}
-	}
+		GrowPlayerBullet();
 	if (IsKeyReleased(PAD_INPUT_1))
-	{
-		int i;
-		for (i = 0; i < NUM_BULLETS; i++)
-		{
-			if (ShotPlayerBullet(&g_player_bullets[i]))
-				break;
-		}
-	}
+		ShotPlayerBullet();
 
 	GameObject_UpdatePosition(&g_player);
 	{
@@ -150,41 +129,53 @@ void UpdatePlay(void)
 	}
 }
 
-BOOL ReloadPlayerBullet(GameObject* bullet)
+BOOL ReloadPlayerBullet(void)
 {
-	if (!GameObject_IsAlive(bullet))
+	int i;
+	for (i = 0; i < NUM_BULLETS; i++)
 	{
-		*bullet = GameObject_Bullet_Create();
-		bullet->sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_bullet, Vec2_Create(), Vec2_Create(32, 32)));
-		GameObject_Bullet_SetPosDefault(bullet, &g_player);
+		if (!GameObject_IsAlive(&g_player_bullets[i]))
+		{
+			g_player_bullets[i] = GameObject_Bullet_Create();
+			g_player_bullets[i].sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_bullet, Vec2_Create(), Vec2_Create(32, 32)));
+			GameObject_Bullet_SetPosDefault(&g_player_bullets[i], &g_player);
 
-		return TRUE;
+			return TRUE;
+		}
+	}
+	
+	return FALSE;
+}
+
+BOOL GrowPlayerBullet(void)
+{
+	int i;
+	for (i = 0; i < NUM_BULLETS; i++)
+	{
+		if (g_player_bullets[i].state == 1)
+		{
+			GameObject_Bullet_Grow(&g_player_bullets[i]);
+			GameObject_Bullet_SetPosDefault(&g_player_bullets[i], &g_player);
+
+			return TRUE;
+		}
 	}
 
 	return FALSE;
 }
 
-BOOL GrowPlayerBullet(GameObject* bullet)
+BOOL ShotPlayerBullet(void)
 {
-	if (bullet->state == 1)
+	int i;
+	for (i = 0; i < NUM_BULLETS; i++)
 	{
-		GameObject_Bullet_Grow(bullet);
-		GameObject_Bullet_SetPosDefault(bullet, &g_player);
+		if (GameObject_IsAlive(&g_player_bullets[i]) && g_player_bullets[i].state == 1)
+		{
+			GameObject_Bullet_SetVelDefault(&g_player_bullets[i]);
+			g_player_bullets[i].state = 2;
 
-		return TRUE;
-	}
-
-	return FALSE;
-}
-
-BOOL ShotPlayerBullet(GameObject* bullet)
-{
-	if (GameObject_IsAlive(bullet) && bullet->state == 1)
-	{
-		GameObject_Bullet_SetVelDefault(bullet);
-		bullet->state = 2;
-
-		return TRUE;
+			return TRUE;
+		}
 	}
 
 	return FALSE;
@@ -206,8 +197,6 @@ void RenderPlay(void)
 	ClearDrawScreen();
 
 	{
-		GameObject_Render(&g_player);
-
 		{
 			int i;
 			for (i = 0; i < NUM_BULLETS; i++)
@@ -216,6 +205,8 @@ void RenderPlay(void)
 					GameObject_Render(&g_player_bullets[i]);
 			}
 		}
+
+		GameObject_Render(&g_player);
 	}
 
 	SetDrawScreen(current);

@@ -73,6 +73,7 @@ GameObject GameObject_Bullet_Create(void)
 void GameObject_Bullet_SetPosDefault(GameObject* obj, GameObject* player)
 {
 	obj->pos = player->pos;
+	//obj->pos.y = GameObject_OffsetY(obj, BOTTOM, GameObject_GetY(player, BOTTOM));
 }
 
 // <弾オブジェクト移動デフォルト>
