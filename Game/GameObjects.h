@@ -44,3 +44,9 @@ void GameObject_Bullet_SetPosDefault(GameObject* obj, GameObject* player);
 
 // <弾オブジェクト移動デフォルト>
 void GameObject_Bullet_SetVelDefault(GameObject* obj);
+
+// <弾オブジェクトサイズ変更>
+void GameObject_Bullet_SetSize(GameObject* obj, float scale);
+
+// <弾オブジェクト成長>
+void GameObject_Bullet_Grow(GameObject* obj);

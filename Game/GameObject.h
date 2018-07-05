@@ -67,7 +67,8 @@ typedef struct
 	Vec2 size;					// <大きさ>
 	ObjectShape shape;			// <形>
 	GameSprite sprite;			// <スプライト>
-	int state;					// <表示状態>
+	BOOL alive;					// <表示状態>
+	int state;					// <状態>
 } GameObject;
 
 // 定数の定義 ==============================================================

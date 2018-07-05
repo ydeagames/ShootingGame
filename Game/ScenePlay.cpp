@@ -38,6 +38,8 @@ void UpdatePlay(void);      // ゲームの更新処理
 void RenderPlay(void);      // ゲームの描画処理
 void FinalizePlay(void);    // ゲームの終了処理
 
+BOOL ReloadPlayerBullet(GameObject* bullet);
+BOOL GrowPlayerBullet(GameObject* bullet);
 BOOL ShotPlayerBullet(GameObject* bullet);
 
 
@@ -94,12 +96,28 @@ void UpdatePlay(void)
 	if (IsKeyPressed(PAD_INPUT_2))
 		RequestScene(SCENE_RESULT);
 
-	UpdateInputManager();
-
 	GameController_Update(&g_player_ctrl);
 	GameController_UpdateControl(&g_player_ctrl);
 
-	if (g_count % 5 == 0 && IsKeyDown(PAD_INPUT_1))
+	if (IsKeyPressed(PAD_INPUT_1))
+	{
+		int i;
+		for (i = 0; i < NUM_BULLETS; i++)
+		{
+			if (ReloadPlayerBullet(&g_player_bullets[i]))
+				break;
+		}
+	}
+	if (IsKeyDown(PAD_INPUT_1))
+	{
+		int i;
+		for (i = 0; i < NUM_BULLETS; i++)
+		{
+			if (GrowPlayerBullet(&g_player_bullets[i]))
+				break;
+		}
+	}
+	if (IsKeyReleased(PAD_INPUT_1))
 	{
 		int i;
 		for (i = 0; i < NUM_BULLETS; i++)
@@ -132,14 +150,39 @@ void UpdatePlay(void)
 	}
 }
 
-BOOL ShotPlayerBullet(GameObject* bullet)
+BOOL ReloadPlayerBullet(GameObject* bullet)
 {
 	if (!GameObject_IsAlive(bullet))
 	{
 		*bullet = GameObject_Bullet_Create();
 		bullet->sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_bullet, Vec2_Create(), Vec2_Create(32, 32)));
 		GameObject_Bullet_SetPosDefault(bullet, &g_player);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+BOOL GrowPlayerBullet(GameObject* bullet)
+{
+	if (bullet->state == 1)
+	{
+		GameObject_Bullet_Grow(bullet);
+		GameObject_Bullet_SetPosDefault(bullet, &g_player);
+
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+BOOL ShotPlayerBullet(GameObject* bullet)
+{
+	if (GameObject_IsAlive(bullet) && bullet->state == 1)
+	{
 		GameObject_Bullet_SetVelDefault(bullet);
+		bullet->state = 2;
 
 		return TRUE;
 	}

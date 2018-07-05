@@ -12,9 +12,10 @@
 #define PLAYER_WIDTH  42
 #define PLAYER_HEIGHT 36
 
-// <弾
+// <弾>
 #define BULLET_WIDTH  6
 #define BULLET_HEIGHT 6
+#define BULLET_GROW_SPEED .1f
 
 // 関数の定義 ==============================================================
 
@@ -79,4 +80,17 @@ void GameObject_Bullet_SetVelDefault(GameObject* obj)
 {
 	obj->vel.x = 0;
 	obj->vel.y = -BULLET_VEL;
+}
+
+// <弾オブジェクトサイズ変更>
+void GameObject_Bullet_SetSize(GameObject* obj, float scale)
+{
+	obj->sprite.scale = scale;
+	obj->size = Vec2_Create(BULLET_WIDTH * scale, BULLET_HEIGHT * scale);
+}
+
+// <弾オブジェクト成長>
+void GameObject_Bullet_Grow(GameObject* obj)
+{
+	GameObject_Bullet_SetSize(obj, obj->sprite.scale + BULLET_GROW_SPEED);
 }

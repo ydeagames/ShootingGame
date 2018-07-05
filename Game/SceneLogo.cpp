@@ -1,6 +1,7 @@
 #include "SceneLogo.h"
 #include "GameMain.h"
 #include "SceneManager.h"
+#include "InputManager.h"
 #include "GameUtils.h"
 
 // 定数の定義 ==============================================================
@@ -30,7 +31,7 @@ void InitializeLogo(void)
 // ロゴシーンの更新処理
 void UpdateLogo(void)
 {
-	if (g_logo_count++ >= 60 * 3.5f)
+	if (IsKeyPressed(PAD_INPUT_2) || g_logo_count++ >= 60 * 3.5f)
 		RequestScene(SCENE_TITLE);
 }
 
