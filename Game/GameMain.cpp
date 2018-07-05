@@ -48,6 +48,8 @@ void UpdateGame(void);      // ゲームの更新処理
 void RenderGame(void);      // ゲームの描画処理
 void FinalizeGame(void);    // ゲームの終了処理
 
+BOOL ShotPlayerBullet(GameObject* bullet);
+
 
 
 
@@ -109,15 +111,8 @@ void UpdateGame(void)
 		int i;
 		for (i = 0; i < NUM_BULLETS; i++)
 		{
-			if (!GameObject_IsAlive(&g_player_bullets[i]))
-			{
-				g_player_bullets[i] = GameObject_Bullet_Create();
-				g_player_bullets[i].sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_bullet, Vec2_Create(), Vec2_Create(32, 32)));
-				GameObject_Bullet_SetPosDefault(&g_player_bullets[i], &g_player);
-				GameObject_Bullet_SetVelDefault(&g_player_bullets[i]);
-
+			if (ShotPlayerBullet(&g_player_bullets[i]))
 				break;
-			}
 		}
 	}
 
@@ -142,6 +137,21 @@ void UpdateGame(void)
 				GameObject_Dispose(&g_player_bullets[i]);
 		}
 	}
+}
+
+BOOL ShotPlayerBullet(GameObject* bullet)
+{
+	if (!GameObject_IsAlive(bullet))
+	{
+		*bullet = GameObject_Bullet_Create();
+		bullet->sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_bullet, Vec2_Create(), Vec2_Create(32, 32)));
+		GameObject_Bullet_SetPosDefault(bullet, &g_player);
+		GameObject_Bullet_SetVelDefault(bullet);
+
+		return TRUE;
+	}
+
+	return FALSE;
 }
 
 
