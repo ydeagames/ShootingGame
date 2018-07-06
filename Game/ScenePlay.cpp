@@ -38,7 +38,6 @@ void UpdatePlay(void);      // ゲームの更新処理
 void RenderPlay(void);      // ゲームの描画処理
 void FinalizePlay(void);    // ゲームの終了処理
 
-BOOL NWayBullet(int n_way, BOOL(*func)(int n_way));
 BOOL ReloadPlayerBullet(int n_way);
 BOOL GrowPlayerBullet(int n_way);
 BOOL ShotPlayerBullet(int n_way);
@@ -128,33 +127,6 @@ void UpdatePlay(void)
 				GameObject_Dispose(&g_player_bullets[i]);
 		}
 	}
-}
-
-BOOL NWayBullet(int n_way, BOOL(*func)(int n_way))
-{
-	GameObject* bullets[NUM_BULLETS];
-	int num_bullets = 0;
-	int i;
-
-	for (i = 0; i < n_way; i++)
-		bullets[i] = NULL;
-
-	for (i = 0; i < NUM_BULLETS; i++)
-	{
-		if (GameObject_IsAlive(&g_player_bullets[i]))
-		{
-			bullets[num_bullets++] = &g_player_bullets[i];
-			if (num_bullets == n_way)
-				break;
-		}
-	}
-
-	if (num_bullets == n_way)
-	{
-		return func(n_way);
-	}
-
-	return FALSE;
 }
 
 BOOL ReloadPlayerBullet(int n_way)
