@@ -1,6 +1,7 @@
 #include "GameObjects.h"
 #include "GameMain.h"
 #include "GameUtils.h"
+#include <math.h>
 
 // 定数の定義 ==============================================================
 
@@ -77,10 +78,12 @@ void GameObject_Bullet_SetPosDefault(GameObject* obj, GameObject* player)
 }
 
 // <弾オブジェクト移動デフォルト>
-void GameObject_Bullet_SetVelDefault(GameObject* obj)
+void GameObject_Bullet_SetVelDefault(GameObject* obj, int num, int total)
 {
-	obj->vel.x = 0;
-	obj->vel.y = -BULLET_VEL;
+	int n = 270 - (total - 1) * 10 + num * 20;
+	float angle = ToRadians((float) n);
+	obj->vel.x = BULLET_VEL * cosf(angle);
+	obj->vel.y = BULLET_VEL * sinf(angle);
 }
 
 // <弾オブジェクトサイズ変更>

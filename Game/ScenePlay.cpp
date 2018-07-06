@@ -38,9 +38,10 @@ void UpdatePlay(void);      // ÉQÅ[ÉÄÇÃçXêVèàóù
 void RenderPlay(void);      // ÉQÅ[ÉÄÇÃï`âÊèàóù
 void FinalizePlay(void);    // ÉQÅ[ÉÄÇÃèIóπèàóù
 
-BOOL ReloadPlayerBullet(void);
-BOOL GrowPlayerBullet(void);
-BOOL ShotPlayerBullet(void);
+BOOL NWayBullet(int n_way, BOOL(*func)(int n_way));
+BOOL ReloadPlayerBullet(int n_way);
+BOOL GrowPlayerBullet(int n_way);
+BOOL ShotPlayerBullet(int n_way);
 
 
 
@@ -100,11 +101,11 @@ void UpdatePlay(void)
 	GameController_UpdateControl(&g_player_ctrl);
 
 	if (IsKeyPressed(PAD_INPUT_1))
-		ReloadPlayerBullet();
+		ReloadPlayerBullet(3);
 	if (IsKeyDown(PAD_INPUT_1))
-		GrowPlayerBullet();
+		GrowPlayerBullet(3);
 	if (IsKeyReleased(PAD_INPUT_1))
-		ShotPlayerBullet();
+		ShotPlayerBullet(3);
 
 	GameObject_UpdatePosition(&g_player);
 	{
@@ -129,25 +130,69 @@ void UpdatePlay(void)
 	}
 }
 
-BOOL ReloadPlayerBullet(void)
+BOOL NWayBullet(int n_way, BOOL(*func)(int n_way))
 {
+	GameObject* bullets[NUM_BULLETS];
+	int num_bullets = 0;
 	int i;
+
+	for (i = 0; i < n_way; i++)
+		bullets[i] = NULL;
+
+	for (i = 0; i < NUM_BULLETS; i++)
+	{
+		if (GameObject_IsAlive(&g_player_bullets[i]))
+		{
+			bullets[num_bullets++] = &g_player_bullets[i];
+			if (num_bullets == n_way)
+				break;
+		}
+	}
+
+	if (num_bullets == n_way)
+	{
+		return func(n_way);
+	}
+
+	return FALSE;
+}
+
+BOOL ReloadPlayerBullet(int n_way)
+{
+	GameObject* bullets[NUM_BULLETS];
+	int num_bullets = 0;
+	int i;
+
+	for (i = 0; i < n_way; i++)
+		bullets[i] = NULL;
+
 	for (i = 0; i < NUM_BULLETS; i++)
 	{
 		if (!GameObject_IsAlive(&g_player_bullets[i]))
 		{
-			g_player_bullets[i] = GameObject_Bullet_Create();
-			g_player_bullets[i].sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_bullet, Vec2_Create(), Vec2_Create(32, 32)));
-			GameObject_Bullet_SetPosDefault(&g_player_bullets[i], &g_player);
-
-			return TRUE;
+			bullets[num_bullets++] = &g_player_bullets[i];
+			if (num_bullets == n_way)
+				break;
 		}
 	}
-	
+
+	if (num_bullets == n_way)
+	{
+		int i;
+		for (i = 0; i < n_way; i++)
+		{
+			*bullets[i] = GameObject_Bullet_Create();
+			bullets[i]->sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_bullet, Vec2_Create(), Vec2_Create(32, 32)));
+			GameObject_Bullet_SetPosDefault(bullets[i], &g_player);
+		}
+
+		return TRUE;
+	}
+
 	return FALSE;
 }
 
-BOOL GrowPlayerBullet(void)
+BOOL GrowPlayerBullet(int n_way)
 {
 	int i;
 	for (i = 0; i < NUM_BULLETS; i++)
@@ -156,29 +201,26 @@ BOOL GrowPlayerBullet(void)
 		{
 			GameObject_Bullet_Grow(&g_player_bullets[i]);
 			GameObject_Bullet_SetPosDefault(&g_player_bullets[i], &g_player);
-
-			return TRUE;
 		}
 	}
 
-	return FALSE;
+	return TRUE;
 }
 
-BOOL ShotPlayerBullet(void)
+BOOL ShotPlayerBullet(int n_way)
 {
+	int num_shot = 0;
 	int i;
 	for (i = 0; i < NUM_BULLETS; i++)
 	{
 		if (GameObject_IsAlive(&g_player_bullets[i]) && g_player_bullets[i].state == 1)
 		{
-			GameObject_Bullet_SetVelDefault(&g_player_bullets[i]);
+			GameObject_Bullet_SetVelDefault(&g_player_bullets[i], num_shot++, n_way);
 			g_player_bullets[i].state = 2;
-
-			return TRUE;
 		}
 	}
 
-	return FALSE;
+	return TRUE;
 }
 
 
