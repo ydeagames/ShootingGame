@@ -11,8 +11,11 @@
 
 // 定数の定義 ==============================================================
 
-#define NUM_BULLETS 20
+#define NUM_PLAYER_BULLETS 20
+#define NUM_ENEMIES 20
 
+#define ENEMY_APPEAR_INTERVAL 30
+#define PLAYER_SHOOTING_INTERVAL 30
 
 
 // グローバル変数の定義 ====================================================
@@ -25,7 +28,11 @@ GameObject g_field;
 GameObject g_player;
 GameController g_player_ctrl;
 
-GameObject g_player_bullets[NUM_BULLETS];
+GameObject g_player_bullets[NUM_PLAYER_BULLETS];
+GameObject g_enemies[NUM_ENEMIES];
+
+int g_player_shot_count;
+int g_enemy_appear_count;
 
 GameObject g_screen_field;
 int g_screen;
@@ -38,10 +45,12 @@ void UpdatePlay(void);      // ゲームの更新処理
 void RenderPlay(void);      // ゲームの描画処理
 void FinalizePlay(void);    // ゲームの終了処理
 
+BOOL UpdatePlayerBullet(void);
 BOOL ReloadPlayerBullet(int n_way);
-BOOL GrowPlayerBullet(int n_way);
+BOOL GrowPlayerBullet(void);
 BOOL ShotPlayerBullet(int n_way);
 
+BOOL AppearEnemy(void);
 
 
 
@@ -70,6 +79,18 @@ void InitializePlay(void)
 	g_player_ctrl = GameController_Player_Create(&g_player, PlayerKeySet_Default_Create());
 
 	{
+		int i;
+		for (i = 0; i < NUM_PLAYER_BULLETS; i++)
+			GameObject_Dispose(&g_player_bullets[i]);
+	}
+
+	{
+		int i;
+		for (i = 0; i < NUM_ENEMIES; i++)
+			GameObject_Dispose(&g_enemies[i]);
+	}
+
+	{
 		g_screen_field = GameObject_Create();
 		g_screen_field.size = Vec2_Create(GetMaxF(SCREEN_WIDTH, SCREEN_HEIGHT), GetMaxF(SCREEN_WIDTH, SCREEN_HEIGHT));
 		g_screen = MakeScreen((int)g_screen_field.size.x, (int)g_screen_field.size.y);
@@ -91,54 +112,74 @@ void InitializePlay(void)
 //----------------------------------------------------------------------
 void UpdatePlay(void)
 {
-	g_count++;
-
-	if (IsKeyPressed(PAD_INPUT_2))
-		RequestScene(SCENE_RESULT);
-
-	GameController_Update(&g_player_ctrl);
-	GameController_UpdateControl(&g_player_ctrl);
-
-	if (IsKeyPressed(PAD_INPUT_1))
-		ReloadPlayerBullet(3);
-	if (IsKeyDown(PAD_INPUT_1))
-		GrowPlayerBullet(3);
-	if (IsKeyReleased(PAD_INPUT_1))
-		ShotPlayerBullet(3);
-
-	GameObject_UpdatePosition(&g_player);
 	{
-		int i;
-		for (i = 0; i < NUM_BULLETS; i++)
+		g_count++;
+		g_player_shot_count = GetMax(0, g_player_shot_count - 1);
+		g_enemy_appear_count = GetMax(0, g_enemy_appear_count - 1);
+	}
+
+	{
+		if (g_enemy_appear_count == 0)
 		{
-			if (GameObject_IsAlive(&g_player_bullets[i]))
-				GameObject_UpdatePosition(&g_player_bullets[i]);
+			AppearEnemy();
+			g_enemy_appear_count = ENEMY_APPEAR_INTERVAL;
 		}
 	}
 
-	GameObject_Field_CollisionVertical(&g_field, &g_player, CONNECTION_BARRIER, EDGESIDE_INNER);
-	GameObject_Field_CollisionHorizontal(&g_field, &g_player, CONNECTION_BARRIER, EDGESIDE_INNER);
 	{
-		int i;
-		for (i = 0; i < NUM_BULLETS; i++)
+		if (IsKeyPressed(PAD_INPUT_2))
+			RequestScene(SCENE_RESULT);
+
+		GameController_Update(&g_player_ctrl);
+		GameController_UpdateControl(&g_player_ctrl);
+
+		if (IsKeyPressed(PAD_INPUT_1))
+			ReloadPlayerBullet(3);
+		if (IsKeyDown(PAD_INPUT_1))
+			GrowPlayerBullet();
+		if (IsKeyReleased(PAD_INPUT_1))
+			ShotPlayerBullet(3);
+	}
+
+	{
+		GameObject_UpdatePosition(&g_player);
+		UpdatePlayerBullet();
+
 		{
-			if (GameObject_Field_CollisionVertical(&g_field, &g_player_bullets[i], CONNECTION_NONE, EDGESIDE_OUTER) ||
-				GameObject_Field_CollisionHorizontal(&g_field, &g_player_bullets[i], CONNECTION_NONE, EDGESIDE_OUTER))
-				GameObject_Dispose(&g_player_bullets[i]);
+			int i;
+			for (i = 0; i < NUM_ENEMIES; i++)
+			{
+				if (GameObject_IsAlive(&g_enemies[i]))
+					GameObject_UpdatePosition(&g_enemies[i]);
+			}
+		}
+	}
+
+	{
+		GameObject_Field_CollisionVertical(&g_field, &g_player, CONNECTION_BARRIER, EDGESIDE_INNER);
+		GameObject_Field_CollisionHorizontal(&g_field, &g_player, CONNECTION_BARRIER, EDGESIDE_INNER);
+		{
+			int i;
+			for (i = 0; i < NUM_PLAYER_BULLETS; i++)
+			{
+				if (GameObject_Field_CollisionVertical(&g_field, &g_player_bullets[i], CONNECTION_NONE, EDGESIDE_OUTER) ||
+					GameObject_Field_CollisionHorizontal(&g_field, &g_player_bullets[i], CONNECTION_NONE, EDGESIDE_OUTER))
+					GameObject_Dispose(&g_player_bullets[i]);
+			}
 		}
 	}
 }
 
 BOOL ReloadPlayerBullet(int n_way)
 {
-	GameObject* bullets[NUM_BULLETS];
+	GameObject* bullets[NUM_PLAYER_BULLETS];
 	int num_bullets = 0;
 	int i;
 
 	for (i = 0; i < n_way; i++)
 		bullets[i] = NULL;
 
-	for (i = 0; i < NUM_BULLETS; i++)
+	for (i = 0; i < NUM_PLAYER_BULLETS; i++)
 	{
 		if (!GameObject_IsAlive(&g_player_bullets[i]))
 		{
@@ -164,10 +205,10 @@ BOOL ReloadPlayerBullet(int n_way)
 	return FALSE;
 }
 
-BOOL GrowPlayerBullet(int n_way)
+BOOL GrowPlayerBullet(void)
 {
 	int i;
-	for (i = 0; i < NUM_BULLETS; i++)
+	for (i = 0; i < NUM_PLAYER_BULLETS; i++)
 	{
 		if (g_player_bullets[i].state == 1)
 		{
@@ -183,7 +224,7 @@ BOOL ShotPlayerBullet(int n_way)
 {
 	int num_shot = 0;
 	int i;
-	for (i = 0; i < NUM_BULLETS; i++)
+	for (i = 0; i < NUM_PLAYER_BULLETS; i++)
 	{
 		if (GameObject_IsAlive(&g_player_bullets[i]) && g_player_bullets[i].state == 1)
 		{
@@ -193,6 +234,35 @@ BOOL ShotPlayerBullet(int n_way)
 	}
 
 	return TRUE;
+}
+
+BOOL UpdatePlayerBullet(void)
+{
+	int i;
+	for (i = 0; i < NUM_PLAYER_BULLETS; i++)
+	{
+		if (GameObject_IsAlive(&g_player_bullets[i]))
+			GameObject_UpdatePosition(&g_player_bullets[i]);
+	}
+
+	return TRUE;
+}
+
+BOOL AppearEnemy(void)
+{
+	int i;
+	for (i = 0; i < NUM_ENEMIES; i++)
+	{
+		if (!GameObject_IsAlive(&g_enemies[i]))
+		{
+			g_enemies[i] = GameObject_Enemy_Create();
+			GameObject_Enemy_SetPosDefault(&g_enemies[i], &g_field);
+			GameObject_Enemy_SetVelDefault(&g_enemies[i]);
+			return TRUE;
+		}
+	}
+
+	return FALSE;
 }
 
 
@@ -213,10 +283,19 @@ void RenderPlay(void)
 	{
 		{
 			int i;
-			for (i = 0; i < NUM_BULLETS; i++)
+			for (i = 0; i < NUM_PLAYER_BULLETS; i++)
 			{
 				if (GameObject_IsAlive(&g_player_bullets[i]))
 					GameObject_Render(&g_player_bullets[i]);
+			}
+		}
+
+		{
+			int i;
+			for (i = 0; i < NUM_ENEMIES; i++)
+			{
+				if (GameObject_IsAlive(&g_enemies[i]))
+					GameObject_Render(&g_enemies[i]);
 			}
 		}
 

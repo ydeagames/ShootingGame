@@ -15,16 +15,13 @@
 // <<敵オブジェクト>> ----------------------------------------------
 
 // <敵オブジェクト作成>
-GameObject GameObject_Enemy_Create(Vec2 pos);
+GameObject GameObject_Enemy_Create(void);
 
-// <敵オブジェクト座標Xデフォルト>
-void GameObject_Enemy_SetPosXDefault(GameObject* obj, GameObject* field);
+// <敵オブジェクト座標デフォルト>
+void GameObject_Enemy_SetPosDefault(GameObject* obj, GameObject* field);
 
-// <敵オブジェクト座標Yデフォルト>
-void GameObject_Enemy_SetPosYDefault(GameObject* obj, GameObject* field);
-
-// <敵オブジェクト移動Xデフォルト>
-void GameObject_Enemy_SetVelXDefault(GameObject* obj);
+// <敵オブジェクト移動デフォルト>
+void GameObject_Enemy_SetVelDefault(GameObject* obj);
 
 // <<プレイヤーオブジェクト>> ----------------------------------------------
 

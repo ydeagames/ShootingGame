@@ -23,29 +23,24 @@
 // <<敵オブジェクト>> ----------------------------------------------
 
 // <敵オブジェクト作成>
-GameObject GameObject_Enemy_Create(Vec2 vec)
+GameObject GameObject_Enemy_Create(void)
 {
-	GameObject obj = GameObject_Create(vec, Vec2_Create(), Vec2_Create(ENEMY_WIDTH, ENEMY_HEIGHT));
-	obj.shape = SHAPE_CIRCLE;
+	GameObject obj = GameObject_Create(Vec2_Create(), Vec2_Create(), Vec2_Create(ENEMY_WIDTH, ENEMY_HEIGHT));
+	//obj.shape = SHAPE_CIRCLE;
 	return obj;
 }
 
 // <敵オブジェクト座標Xデフォルト>
-void GameObject_Enemy_SetPosXDefault(GameObject* obj, GameObject* field)
+void GameObject_Enemy_SetPosDefault(GameObject* obj, GameObject* field)
 {
 	obj->pos.x = GetRandRangeF(GameObject_GetX(field, LEFT), GameObject_GetX(field, RIGHT));
-}
-
-// <敵オブジェクト座標Yデフォルト>
-void GameObject_Enemy_SetPosYDefault(GameObject* obj, GameObject* field)
-{
-	obj->pos.y = GetRandRangeF(GameObject_GetY(field, TOP), GameObject_GetY(field, BOTTOM, -85));
+	obj->pos.y = GameObject_GetY(field, TOP, 20);
 }
 
 // <敵オブジェクト移動Xデフォルト>
-void GameObject_Enemy_SetVelXDefault(GameObject* obj)
+void GameObject_Enemy_SetVelDefault(GameObject* obj)
 {
-	obj->vel.x = (float)(GetRand(1) * 2 - 1)*ENEMY_VEL;
+	obj->vel = Vec2_Create(0, 5);
 }
 
 // <<プレイヤーオブジェクト>> ----------------------------------------------
