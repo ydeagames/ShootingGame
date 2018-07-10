@@ -69,6 +69,7 @@ typedef struct
 	GameSprite sprite;			// <スプライト>
 	BOOL alive;					// <表示状態>
 	int state;					// <状態>
+	int type;					// <タイプ>
 } GameObject;
 
 // 定数の定義 ==============================================================

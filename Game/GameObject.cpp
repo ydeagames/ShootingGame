@@ -51,7 +51,7 @@ GameSprite GameSprite_CreateNone()
 // <オブジェクト作成>
 GameObject GameObject_Create(Vec2 pos, Vec2 vel, Vec2 size)
 {
-	return{ pos, vel, size, SHAPE_BOX, GameSprite_CreateNone(), TRUE, 1 };
+	return{ pos, vel, size, SHAPE_BOX, GameSprite_CreateNone(), TRUE, 1, 0 };
 }
 
 // <オブジェクト削除>

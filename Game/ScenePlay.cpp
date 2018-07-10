@@ -167,6 +167,15 @@ void UpdatePlay(void)
 					GameObject_Dispose(&g_player_bullets[i]);
 			}
 		}
+		{
+			int i;
+			for (i = 0; i < NUM_ENEMIES; i++)
+			{
+				if (GameObject_Field_CollisionVertical(&g_field, &g_enemies[i], CONNECTION_NONE, EDGESIDE_OUTER) ||
+					GameObject_Field_CollisionHorizontal(&g_field, &g_enemies[i], CONNECTION_NONE, EDGESIDE_OUTER))
+					GameObject_Dispose(&g_enemies[i]);
+			}
+		}
 	}
 }
 
@@ -256,6 +265,7 @@ BOOL AppearEnemy(void)
 		if (!GameObject_IsAlive(&g_enemies[i]))
 		{
 			g_enemies[i] = GameObject_Enemy_Create();
+			g_enemies[i].sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_enemy, Vec2_Create(0, GetRand(9) * 32), Vec2_Create(32, 32)));
 			GameObject_Enemy_SetPosDefault(&g_enemies[i], &g_field);
 			GameObject_Enemy_SetVelDefault(&g_enemies[i]);
 			return TRUE;
