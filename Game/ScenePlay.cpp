@@ -150,7 +150,10 @@ void UpdatePlay(void)
 			for (i = 0; i < NUM_ENEMIES; i++)
 			{
 				if (GameObject_IsAlive(&g_enemies[i]))
+				{
+					GameObject_Enemy_Update(&g_enemies[i]);
 					GameObject_UpdatePosition(&g_enemies[i]);
+				}
 			}
 		}
 	}
@@ -265,7 +268,7 @@ BOOL AppearEnemy(void)
 		if (!GameObject_IsAlive(&g_enemies[i]))
 		{
 			g_enemies[i] = GameObject_Enemy_Create();
-			g_enemies[i].sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_enemy, Vec2_Create(0, GetRand(9) * 32), Vec2_Create(32, 32)));
+			g_enemies[i].sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_enemy, Vec2_Create(0, GetRand(9) * 32.f), Vec2_Create(32, 32)));
 			GameObject_Enemy_SetPosDefault(&g_enemies[i], &g_field);
 			GameObject_Enemy_SetVelDefault(&g_enemies[i]);
 			return TRUE;

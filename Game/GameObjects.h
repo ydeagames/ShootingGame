@@ -36,6 +36,9 @@ void GameObject_Enemy_SetPosDefault(GameObject* obj, GameObject* field);
 // <敵オブジェクト移動デフォルト>
 void GameObject_Enemy_SetVelDefault(GameObject* obj);
 
+// <敵オブジェクト更新>
+void GameObject_Enemy_Update(GameObject* obj);
+
 // <<プレイヤーオブジェクト>> ----------------------------------------------
 
 // <プレイヤーオブジェクト作成>
