@@ -12,7 +12,7 @@
 // íËêîÇÃíËã` ==============================================================
 
 #define NUM_PLAYER_BULLETS 20
-#define NUM_ENEMIES 20
+#define NUM_ENEMIES 1
 
 #define ENEMY_APPEAR_INTERVAL 30
 #define PLAYER_SHOOTING_INTERVAL 30
@@ -74,7 +74,7 @@ void InitializePlay(void)
 	g_player = GameObject_Player_Create();
 	g_player.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_player, Vec2_Create(), Vec2_Create(32, 32)), 1.5f);
 	g_player.sprite.offset.y -= 7;
-	g_player.pos = g_field.pos;
+	g_player.pos = Vec2_Create(GameObject_GetX(&g_field, CENTER_X), GameObject_GetY(&g_field, CENTER_Y) + 200);
 	g_player.shape = SHAPE_CIRCLE;
 
 	g_player_ctrl = GameController_Player_Create(&g_player, PlayerKeySet_Default_Create());
@@ -153,7 +153,7 @@ void UpdatePlay(void)
 			{
 				if (GameObject_IsAlive(&g_enemies[i]))
 				{
-					GameObject_Enemy_Update(&g_enemies[i]);
+					//GameObject_Enemy_Update(&g_enemies[i]);
 					GameObject_UpdatePosition(&g_enemies[i]);
 				}
 			}
@@ -190,7 +190,6 @@ void UpdatePlay(void)
 				{
 					if (GameObject_IsHit(&g_enemies[i], &g_player))
 					{
-						GameObject_Dispose(&g_enemies[i]);
 						GameObject_Dispose(&g_player);
 					}
 				}
@@ -312,8 +311,9 @@ BOOL AppearEnemy(void)
 			g_enemies[i] = GameObject_Enemy_Create();
 			g_enemies[i].shape = SHAPE_CIRCLE;
 			g_enemies[i].sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_enemy, Vec2_Create(0, GetRand(9) * 32.f), Vec2_Create(32, 32)));
-			GameObject_Enemy_SetPosDefault(&g_enemies[i], &g_field);
-			GameObject_Enemy_SetVelDefault(&g_enemies[i]);
+			g_enemies[i].pos = Vec2_Create(GameObject_GetX(&g_field, CENTER_X), GameObject_GetY(&g_field, CENTER_Y));
+			//GameObject_Enemy_SetPosDefault(&g_enemies[i], &g_field);
+			//GameObject_Enemy_SetVelDefault(&g_enemies[i]);
 			return TRUE;
 		}
 	}
