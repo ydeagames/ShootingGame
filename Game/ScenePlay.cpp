@@ -75,6 +75,7 @@ void InitializePlay(void)
 	g_player.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_player, Vec2_Create(), Vec2_Create(32, 32)), 1.5f);
 	g_player.sprite.offset.y -= 7;
 	g_player.pos = g_field.pos;
+	g_player.shape = SHAPE_CIRCLE;
 
 	g_player_ctrl = GameController_Player_Create(&g_player, PlayerKeySet_Default_Create());
 
@@ -142,7 +143,8 @@ void UpdatePlay(void)
 	}
 
 	{
-		GameObject_UpdatePosition(&g_player);
+		if (GameObject_IsAlive(&g_player))
+			GameObject_UpdatePosition(&g_player);
 		UpdatePlayerBullet();
 
 		{
@@ -159,8 +161,47 @@ void UpdatePlay(void)
 	}
 
 	{
-		GameObject_Field_CollisionVertical(&g_field, &g_player, CONNECTION_BARRIER, EDGESIDE_INNER);
-		GameObject_Field_CollisionHorizontal(&g_field, &g_player, CONNECTION_BARRIER, EDGESIDE_INNER);
+		{
+			int i;
+			for (i = 0; i < NUM_PLAYER_BULLETS; i++)
+			{
+				if (GameObject_IsAlive(&g_player_bullets[i]))
+				{
+					int j;
+					for (j = 0; j < NUM_ENEMIES; j++)
+					{
+						if (GameObject_IsAlive(&g_enemies[j]))
+							if (GameObject_IsHit(&g_player_bullets[i], &g_enemies[j]))
+							{
+								GameObject_Dispose(&g_player_bullets[i]);
+								GameObject_Dispose(&g_enemies[j]);
+							}
+					}
+				}
+			}
+		}
+
+		if (GameObject_IsAlive(&g_player))
+		{
+			int i;
+			for (i = 0; i < NUM_ENEMIES; i++)
+			{
+				if (GameObject_IsAlive(&g_enemies[i]))
+				{
+					if (GameObject_IsHit(&g_enemies[i], &g_player))
+					{
+						GameObject_Dispose(&g_enemies[i]);
+						GameObject_Dispose(&g_player);
+					}
+				}
+			}
+		}
+
+		if (GameObject_IsAlive(&g_player))
+		{
+			GameObject_Field_CollisionVertical(&g_field, &g_player, CONNECTION_BARRIER, EDGESIDE_INNER);
+			GameObject_Field_CollisionHorizontal(&g_field, &g_player, CONNECTION_BARRIER, EDGESIDE_INNER);
+		}
 		{
 			int i;
 			for (i = 0; i < NUM_PLAYER_BULLETS; i++)
@@ -207,6 +248,7 @@ BOOL ReloadPlayerBullet(int n_way)
 		for (i = 0; i < n_way; i++)
 		{
 			*bullets[i] = GameObject_Bullet_Create();
+			bullets[i]->shape = SHAPE_CIRCLE;
 			bullets[i]->sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_bullet, Vec2_Create(), Vec2_Create(32, 32)));
 			GameObject_Bullet_SetPosDefault(bullets[i], &g_player);
 		}
@@ -268,6 +310,7 @@ BOOL AppearEnemy(void)
 		if (!GameObject_IsAlive(&g_enemies[i]))
 		{
 			g_enemies[i] = GameObject_Enemy_Create();
+			g_enemies[i].shape = SHAPE_CIRCLE;
 			g_enemies[i].sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_enemy, Vec2_Create(0, GetRand(9) * 32.f), Vec2_Create(32, 32)));
 			GameObject_Enemy_SetPosDefault(&g_enemies[i], &g_field);
 			GameObject_Enemy_SetVelDefault(&g_enemies[i]);
@@ -312,7 +355,8 @@ void RenderPlay(void)
 			}
 		}
 
-		GameObject_Render(&g_player);
+		if (GameObject_IsAlive(&g_player))
+			GameObject_Render(&g_player);
 	}
 
 	SetDrawScreen(current);

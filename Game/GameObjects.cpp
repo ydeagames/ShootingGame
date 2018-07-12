@@ -90,7 +90,7 @@ void GameObject_Bullet_SetPosDefault(GameObject* obj, GameObject* player)
 void GameObject_Bullet_SetVelDefault(GameObject* obj, int num, int total)
 {
 	int n = 270 - (total - 1) * 10 + num * 20;
-	float angle = ToRadians((float) n);
+	float angle = ToRadians((float)n);
 	obj->vel.x = BULLET_VEL * cosf(angle);
 	obj->vel.y = BULLET_VEL * sinf(angle);
 }
