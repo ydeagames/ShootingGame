@@ -34,8 +34,8 @@ GameObject g_enemies[NUM_ENEMIES];
 int g_player_shot_count;
 int g_enemy_appear_count;
 
-GameObject g_screen_field;
-int g_screen;
+//GameObject g_screen_field;
+//int g_screen;
 
 
 // ä÷êîÇÃêÈåæ ==============================================================
@@ -91,6 +91,7 @@ void InitializePlay(void)
 			GameObject_Dispose(&g_enemies[i]);
 	}
 
+	/*
 	{
 		g_screen_field = GameObject_Create();
 		g_screen_field.size = Vec2_Create(GetMaxF(SCREEN_WIDTH, SCREEN_HEIGHT), GetMaxF(SCREEN_WIDTH, SCREEN_HEIGHT));
@@ -100,6 +101,7 @@ void InitializePlay(void)
 		g_screen_field.pos = g_field.pos;
 		g_screen_field.sprite.angle = ToRadians(0);
 	}
+	/**/
 }
 
 
@@ -190,7 +192,12 @@ void UpdatePlay(void)
 				{
 					if (GameObject_IsHit(&g_enemies[i], &g_player))
 					{
-						GameObject_Dispose(&g_player);
+						//GameObject_Dispose(&g_player);
+						DrawFormatString(GameObject_GetX(&g_field, LEFT, -10), GameObject_GetY(&g_field, TOP, -(i + 1) * 10), COLOR_WHITE, "ìñÇΩÇ¡ÇƒÇ¢ÇÈ");
+					}
+					else
+					{
+						DrawFormatString(GameObject_GetX(&g_field, LEFT, -10), GameObject_GetY(&g_field, TOP, -(i + 1) * 10), COLOR_WHITE, "ìñÇΩÇ¡ÇƒÇ¢Ç»Ç¢");
 					}
 				}
 			}
@@ -332,9 +339,9 @@ BOOL AppearEnemy(void)
 //----------------------------------------------------------------------
 void RenderPlay(void)
 {
-	int current = GetDrawScreen();
-	SetDrawScreen(g_screen);
-	ClearDrawScreen();
+	//int current = GetDrawScreen();
+	//SetDrawScreen(g_screen);
+	//ClearDrawScreen();
 
 	{
 		{
@@ -359,8 +366,8 @@ void RenderPlay(void)
 			GameObject_Render(&g_player);
 	}
 
-	SetDrawScreen(current);
-	GameObject_Render(&g_screen_field);
+	//SetDrawScreen(current);
+	//GameObject_Render(&g_screen_field);
 }
 
 
