@@ -9,33 +9,35 @@
 
 
 
+
 // 定数の定義 ==============================================================
 
 #define NUM_PLAYER_BULLETS 20
 #define NUM_ENEMIES 1
+#define NUM_ENEMY_BULLETS 100
 
-#define ENEMY_APPEAR_INTERVAL 30
-#define PLAYER_SHOOTING_INTERVAL 30
+#define PLAYER_SHOOTING_INTERVAL .5f
+#define ENEMY_APPEAR_INTERVAL .5f
+#define ENEMY_SHOOTING_INTERVAL .5f
+
+
 
 
 // グローバル変数の定義 ====================================================
-
-int g_count;
 
 GameResource g_resources;
 
 GameObject g_field;
 GameObject g_player;
+GameObject g_player_bullets[NUM_PLAYER_BULLETS];
 GameController g_player_ctrl;
 
-GameObject g_player_bullets[NUM_PLAYER_BULLETS];
 GameObject g_enemies[NUM_ENEMIES];
+GameObject g_enemy_bullets[NUM_ENEMY_BULLETS];
 
-int g_player_shot_count;
-int g_enemy_appear_count;
+GameTimer g_enemy_appear_count;
 
-//GameObject g_screen_field;
-//int g_screen;
+
 
 
 // 関数の宣言 ==============================================================
@@ -52,6 +54,10 @@ BOOL ShotPlayerBullet(int n_way);
 
 BOOL AppearEnemy(void);
 
+BOOL ShotEnemyBullet(const GameObject* enemy);
+BOOL UpdateEnemyBullet(void);
+
+
 
 
 // 関数の定義 ==============================================================
@@ -65,8 +71,6 @@ BOOL AppearEnemy(void);
 //----------------------------------------------------------------------
 void InitializePlay(void)
 {
-	g_count = 0;
-
 	g_resources = GameResource_Create();
 
 	g_field = GameObject_Field_Create();
@@ -87,21 +91,17 @@ void InitializePlay(void)
 
 	{
 		int i;
+		for (i = 0; i < NUM_ENEMY_BULLETS; i++)
+			GameObject_Dispose(&g_enemy_bullets[i]);
+	}
+
+	{
+		int i;
 		for (i = 0; i < NUM_ENEMIES; i++)
 			GameObject_Dispose(&g_enemies[i]);
 	}
 
-	/*
-	{
-		g_screen_field = GameObject_Create();
-		g_screen_field.size = Vec2_Create(GetMaxF(SCREEN_WIDTH, SCREEN_HEIGHT), GetMaxF(SCREEN_WIDTH, SCREEN_HEIGHT));
-		g_screen = MakeScreen((int)g_screen_field.size.x, (int)g_screen_field.size.y);
-		g_screen_field.sprite = GameSprite_Create(GameTexture_Create(g_screen, Vec2_Create(), g_screen_field.size));
-		g_screen_field.sprite.texture.center = Vec2_Scale(&g_field.size, .5f);
-		g_screen_field.pos = g_field.pos;
-		g_screen_field.sprite.angle = ToRadians(0);
-	}
-	/**/
+	g_enemy_appear_count = GameTimer_Create();
 }
 
 
@@ -116,16 +116,11 @@ void InitializePlay(void)
 void UpdatePlay(void)
 {
 	{
-		g_count++;
-		g_player_shot_count = GetMax(0, g_player_shot_count - 1);
-		g_enemy_appear_count = GetMax(0, g_enemy_appear_count - 1);
-	}
-
-	{
-		if (g_enemy_appear_count == 0)
+		if (GameTimer_IsPaused(&g_enemy_appear_count) || GameTimer_IsFinished(&g_enemy_appear_count))
 		{
 			AppearEnemy();
-			g_enemy_appear_count = ENEMY_APPEAR_INTERVAL;
+			GameTimer_SetRemaining(&g_enemy_appear_count, ENEMY_APPEAR_INTERVAL);
+			GameTimer_Resume(&g_enemy_appear_count);
 		}
 	}
 
@@ -157,9 +152,17 @@ void UpdatePlay(void)
 				{
 					//GameObject_Enemy_Update(&g_enemies[i]);
 					GameObject_UpdatePosition(&g_enemies[i]);
+					if (GameTimer_IsPaused(&g_enemies[i].count) || GameTimer_IsFinished(&g_enemies[i].count))
+					{
+						ShotEnemyBullet(&g_enemies[i]);
+						GameTimer_SetRemaining(&g_enemies[i].count, ENEMY_SHOOTING_INTERVAL);
+						GameTimer_Resume(&g_enemies[i].count);
+					}
 				}
 			}
 		}
+
+		UpdateEnemyBullet();
 	}
 
 	{
@@ -193,11 +196,11 @@ void UpdatePlay(void)
 					if (GameObject_IsHit(&g_enemies[i], &g_player))
 					{
 						//GameObject_Dispose(&g_player);
-						DrawFormatString(GameObject_GetX(&g_field, LEFT, -10), GameObject_GetY(&g_field, TOP, -(i + 1) * 10), COLOR_WHITE, "当たっている");
+						DrawFormatString((int) GameObject_GetX(&g_field, LEFT, -10), (int) GameObject_GetY(&g_field, TOP, -(i + 1) * 10), COLOR_WHITE, "当たっている");
 					}
 					else
 					{
-						DrawFormatString(GameObject_GetX(&g_field, LEFT, -10), GameObject_GetY(&g_field, TOP, -(i + 1) * 10), COLOR_WHITE, "当たっていない");
+						DrawFormatString((int) GameObject_GetX(&g_field, LEFT, -10), (int) GameObject_GetY(&g_field, TOP, -(i + 1) * 10), COLOR_WHITE, "当たっていない");
 					}
 				}
 			}
@@ -308,6 +311,36 @@ BOOL UpdatePlayerBullet(void)
 	return TRUE;
 }
 
+BOOL ShotEnemyBullet(const GameObject* enemy)
+{
+	int i;
+	for (i = 0; i < NUM_ENEMY_BULLETS; i++)
+	{
+		if (!GameObject_IsAlive(&g_enemy_bullets[i]))
+		{
+			g_enemy_bullets[i] = GameObject_Bullet_Create();
+			g_enemy_bullets[i].pos = enemy->pos;
+			g_enemy_bullets[i].vel = Vec2_Create(0, 5);
+
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+BOOL UpdateEnemyBullet(void)
+{
+	int i;
+	for (i = 0; i < NUM_ENEMY_BULLETS; i++)
+	{
+		if (GameObject_IsAlive(&g_enemy_bullets[i]))
+			GameObject_UpdatePosition(&g_enemy_bullets[i]);
+	}
+
+	return TRUE;
+}
+
 BOOL AppearEnemy(void)
 {
 	int i;
@@ -339,35 +372,35 @@ BOOL AppearEnemy(void)
 //----------------------------------------------------------------------
 void RenderPlay(void)
 {
-	//int current = GetDrawScreen();
-	//SetDrawScreen(g_screen);
-	//ClearDrawScreen();
-
 	{
+		int i;
+		for (i = 0; i < NUM_PLAYER_BULLETS; i++)
 		{
-			int i;
-			for (i = 0; i < NUM_PLAYER_BULLETS; i++)
-			{
-				if (GameObject_IsAlive(&g_player_bullets[i]))
-					GameObject_Render(&g_player_bullets[i]);
-			}
+			if (GameObject_IsAlive(&g_player_bullets[i]))
+				GameObject_Render(&g_player_bullets[i]);
 		}
-
-		{
-			int i;
-			for (i = 0; i < NUM_ENEMIES; i++)
-			{
-				if (GameObject_IsAlive(&g_enemies[i]))
-					GameObject_Render(&g_enemies[i]);
-			}
-		}
-
-		if (GameObject_IsAlive(&g_player))
-			GameObject_Render(&g_player);
 	}
 
-	//SetDrawScreen(current);
-	//GameObject_Render(&g_screen_field);
+	{
+		int i;
+		for (i = 0; i < NUM_ENEMIES; i++)
+		{
+			if (GameObject_IsAlive(&g_enemies[i]))
+				GameObject_Render(&g_enemies[i]);
+		}
+	}
+
+	{
+		int i;
+		for (i = 0; i < NUM_ENEMY_BULLETS; i++)
+		{
+			if (GameObject_IsAlive(&g_enemy_bullets[i]))
+				GameObject_Render(&g_enemy_bullets[i]);
+		}
+	}
+
+	if (GameObject_IsAlive(&g_player))
+		GameObject_Render(&g_player);
 }
 
 

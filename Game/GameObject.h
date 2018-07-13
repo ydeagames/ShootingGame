@@ -1,5 +1,6 @@
 #pragma once
 #include "Vec2.h"
+#include "GameTimer.h"
 
 // 列挙型の定義 ============================================================
 
@@ -70,6 +71,7 @@ typedef struct
 	BOOL alive;					// <表示状態>
 	int state;					// <状態>
 	int type;					// <タイプ>
+	GameTimer count;			// <カウンタ>
 } GameObject;
 
 // 定数の定義 ==============================================================
