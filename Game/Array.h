@@ -4,19 +4,16 @@
 typedef GameObject Object;
 
 typedef struct {
-	int size;
-	int mod_count;
-	Object* first;
 	Object* base;
-	Object* last;
+	size_t capacity;
+	size_t limit;
+	size_t size;
 } Array;
 
 Array Array_Create(void);
 
 void Array_Delete(Array* list);
 
-void Array_Get(Array* list, int index);
+Object* Array_Get(Array* list, int index);
 
 void Array_Set(Array* list, int index, Object element);
-
-void Array_Remove(Array* list, int index);

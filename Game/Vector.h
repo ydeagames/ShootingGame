@@ -6,10 +6,11 @@
 typedef GameObject Object;
 
 typedef struct {
-	int size;
-	int mod_count;
-	Object* first;
-	Object* last;
+	Object* first_capacity;
+	Object* first_size;
+	Object* base;
+	Object* last_size;
+	Object* last_capacity;
 } Vector;
 
 Vector Vector_Create(void);
