@@ -6,11 +6,10 @@ typedef GameObject Object;
 typedef struct {
 	Object* base;
 	size_t capacity;
-	size_t limit;
 	size_t size;
 } Array;
 
-Array Array_Create(void);
+Array Array_Create(size_t new_capacity);
 
 void Array_Delete(Array* list);
 

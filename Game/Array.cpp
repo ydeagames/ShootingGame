@@ -1,11 +1,9 @@
 #include "Array.h"
 
-#define DEFAULT_CAPACITY 10
-
-Array Array_Create(void)
+Array Array_Create(size_t new_capacity)
 {
-	Array obj = { NULL, 0, 0, 0 };
-	Array_ReserveRequired(&obj, DEFAULT_CAPACITY);
+	Array obj = { NULL, 0, 0 };
+	Array_ReserveRequired(&obj, new_capacity);
 	return obj;
 }
 
@@ -18,19 +16,22 @@ void Array_ReserveRequired(Array* list, size_t min_capacity)
 		list->base = (Object*)malloc(list->capacity * sizeof(Object));
 		memcpy(list->base, src.base, src.capacity);
 		free(src.base);
-		list->limit = min_capacity;
 	}
 }
 
 void Array_Reserve(Array* list, size_t min_capacity)
 {
-	if (list->capacity < min_capacity)
-	{
-		size_t old_capacity = list->capacity;
-		int new_capacity = max(old_capacity + (old_capacity >> 1), min_capacity);
+	size_t old_capacity = list->capacity;
+	int new_capacity = max(old_capacity + (old_capacity >> 1), min_capacity);
 
-		Array_ReserveRequired(list, new_capacity);
-	}
+	Array_ReserveRequired(list, new_capacity);
+}
+
+void Array_SetSize(Array* list, size_t size)
+{
+	Array_Reserve(list, size);
+
+	list->size = size;
 }
 
 void Array_Delete(Array* list)
