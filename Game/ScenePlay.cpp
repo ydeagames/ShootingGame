@@ -34,7 +34,7 @@ GameObject g_player;
 GameObject g_player_bullets[NUM_PLAYER_BULLETS];
 GameController g_player_ctrl;
 
-GameObject g_enemies[NUM_ENEMIES];
+Array g_enemies = Array_Create(NUM_ENEMIES);
 GameObject g_enemy_bullets[NUM_ENEMY_BULLETS];
 
 GameTimer g_enemy_appear_count;
@@ -99,8 +99,11 @@ void InitializePlay(void)
 
 	{
 		int i;
-		for (i = 0; i < NUM_ENEMIES; i++)
-			GameObject_Dispose(&g_enemies[i]);
+		for (i = 0; i < Array_GetSize(&g_enemies); i++)
+		{
+			Array_Set(&g_enemies, i, GameObject_Create());
+			GameObject_Dispose(Array_Get(&g_enemies, i));
+		}
 	}
 
 	g_enemy_appear_count = GameTimer_Create();
@@ -148,17 +151,18 @@ void UpdatePlay(void)
 
 		{
 			int i;
-			for (i = 0; i < NUM_ENEMIES; i++)
+			for (i = 0; i < Array_GetSize(&g_enemies); i++)
 			{
-				if (GameObject_IsAlive(&g_enemies[i]))
+				GameObject* enemy = Array_Get(&g_enemies, i);
+				if (GameObject_IsAlive(enemy))
 				{
 					//GameObject_Enemy_Update(&g_enemies[i]);
-					GameObject_UpdatePosition(&g_enemies[i]);
-					if (GameTimer_IsPaused(&g_enemies[i].count) || GameTimer_IsFinished(&g_enemies[i].count))
+					GameObject_UpdatePosition(enemy);
+					if (GameTimer_IsPaused(&enemy->count) || GameTimer_IsFinished(&enemy->count))
 					{
-						ShotEnemyBullet(&g_enemies[i]);
-						GameTimer_SetRemaining(&g_enemies[i].count, ENEMY_SHOOTING_INTERVAL);
-						GameTimer_Resume(&g_enemies[i].count);
+						ShotEnemyBullet(enemy);
+						GameTimer_SetRemaining(&enemy->count, ENEMY_SHOOTING_INTERVAL);
+						GameTimer_Resume(&enemy->count);
 					}
 				}
 			}
@@ -175,13 +179,14 @@ void UpdatePlay(void)
 				if (GameObject_IsAlive(&g_player_bullets[i]))
 				{
 					int j;
-					for (j = 0; j < NUM_ENEMIES; j++)
+					for (j = 0; j < Array_GetSize(&g_enemies); j++)
 					{
-						if (GameObject_IsAlive(&g_enemies[j]))
-							if (GameObject_IsHit(&g_player_bullets[i], &g_enemies[j]))
+						GameObject* enemy = Array_Get(&g_enemies, j);
+						if (GameObject_IsAlive(enemy))
+							if (GameObject_IsHit(&g_player_bullets[i], enemy))
 							{
 								GameObject_Dispose(&g_player_bullets[i]);
-								GameObject_Dispose(&g_enemies[j]);
+								GameObject_Dispose(enemy);
 							}
 					}
 				}
@@ -191,11 +196,12 @@ void UpdatePlay(void)
 		if (GameObject_IsAlive(&g_player))
 		{
 			int i;
-			for (i = 0; i < NUM_ENEMIES; i++)
+			for (i = 0; i < Array_GetSize(&g_enemies); i++)
 			{
-				if (GameObject_IsAlive(&g_enemies[i]))
+				GameObject* enemy = Array_Get(&g_enemies, i);
+				if (GameObject_IsAlive(enemy))
 				{
-					if (GameObject_IsHit(&g_enemies[i], &g_player))
+					if (GameObject_IsHit(enemy, &g_player))
 					{
 						//GameObject_Dispose(&g_player);
 						DrawFormatString((int) GameObject_GetX(&g_field, LEFT, -10), (int) GameObject_GetY(&g_field, TOP, -(i + 1) * 10.f), COLOR_WHITE, "“–‚½‚Á‚Ä‚¢‚é");
@@ -224,11 +230,12 @@ void UpdatePlay(void)
 		}
 		{
 			int i;
-			for (i = 0; i < NUM_ENEMIES; i++)
+			for (i = 0; i < Array_GetSize(&g_enemies); i++)
 			{
-				if (GameObject_Field_CollisionVertical(&g_field, &g_enemies[i], CONNECTION_NONE, EDGESIDE_OUTER) ||
-					GameObject_Field_CollisionHorizontal(&g_field, &g_enemies[i], CONNECTION_NONE, EDGESIDE_OUTER))
-					GameObject_Dispose(&g_enemies[i]);
+				GameObject* enemy = Array_Get(&g_enemies, i);
+				if (GameObject_Field_CollisionVertical(&g_field, enemy, CONNECTION_NONE, EDGESIDE_OUTER) ||
+					GameObject_Field_CollisionHorizontal(&g_field, enemy, CONNECTION_NONE, EDGESIDE_OUTER))
+					GameObject_Dispose(enemy);
 			}
 		}
 		{
@@ -374,14 +381,15 @@ BOOL UpdateEnemyBullet(void)
 BOOL AppearEnemy(void)
 {
 	int i;
-	for (i = 0; i < NUM_ENEMIES; i++)
+	for (i = 0; i < Array_GetSize(&g_enemies); i++)
 	{
-		if (!GameObject_IsAlive(&g_enemies[i]))
+		GameObject* enemy = Array_Get(&g_enemies, i);
+		if (!GameObject_IsAlive(enemy))
 		{
-			g_enemies[i] = GameObject_Enemy_Create();
-			g_enemies[i].shape = SHAPE_CIRCLE;
-			g_enemies[i].sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_enemy, Vec2_Create(0, GetRand(9) * 32.f), Vec2_Create(32, 32)));
-			g_enemies[i].pos = Vec2_Create(GameObject_GetX(&g_field, CENTER_X), GameObject_GetY(&g_field, CENTER_Y));
+			*enemy = GameObject_Enemy_Create();
+			enemy->shape = SHAPE_CIRCLE;
+			enemy->sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_enemy, Vec2_Create(0, GetRand(9) * 32.f), Vec2_Create(32, 32)));
+			enemy->pos = Vec2_Create(GameObject_GetX(&g_field, CENTER_X), GameObject_GetY(&g_field, CENTER_Y));
 			//GameObject_Enemy_SetPosDefault(&g_enemies[i], &g_field);
 			//GameObject_Enemy_SetVelDefault(&g_enemies[i]);
 			return TRUE;
@@ -413,10 +421,11 @@ void RenderPlay(void)
 
 	{
 		int i;
-		for (i = 0; i < NUM_ENEMIES; i++)
+		for (i = 0; i < Array_GetSize(&g_enemies); i++)
 		{
-			if (GameObject_IsAlive(&g_enemies[i]))
-				GameObject_Render(&g_enemies[i]);
+			GameObject* enemy = Array_Get(&g_enemies, i);
+			if (GameObject_IsAlive(enemy))
+				GameObject_Render(enemy);
 		}
 	}
 

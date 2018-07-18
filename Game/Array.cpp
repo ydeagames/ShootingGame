@@ -3,7 +3,7 @@
 Array Array_Create(size_t new_capacity)
 {
 	Array obj = { NULL, 0, 0 };
-	Array_ReserveRequired(&obj, new_capacity);
+	Array_SetSize(&obj, new_capacity);
 	return obj;
 }
 
