@@ -6,6 +6,7 @@
 #include "GameController.h"
 #include "GameResource.h"
 #include "GameUtils.h"
+#include <math.h>
 
 
 
@@ -196,11 +197,11 @@ void UpdatePlay(void)
 					if (GameObject_IsHit(&g_enemies[i], &g_player))
 					{
 						//GameObject_Dispose(&g_player);
-						DrawFormatString((int) GameObject_GetX(&g_field, LEFT, -10), (int) GameObject_GetY(&g_field, TOP, -(i + 1) * 10), COLOR_WHITE, "“–‚½‚Á‚Ä‚¢‚é");
+						DrawFormatString((int) GameObject_GetX(&g_field, LEFT, -10), (int) GameObject_GetY(&g_field, TOP, -(i + 1) * 10.f), COLOR_WHITE, "“–‚½‚Á‚Ä‚¢‚é");
 					}
 					else
 					{
-						DrawFormatString((int) GameObject_GetX(&g_field, LEFT, -10), (int) GameObject_GetY(&g_field, TOP, -(i + 1) * 10), COLOR_WHITE, "“–‚½‚Á‚Ä‚¢‚È‚¢");
+						DrawFormatString((int) GameObject_GetX(&g_field, LEFT, -10), (int) GameObject_GetY(&g_field, TOP, -(i + 1) * 10.f), COLOR_WHITE, "“–‚½‚Á‚Ä‚¢‚È‚¢");
 					}
 				}
 			}
@@ -227,6 +228,15 @@ void UpdatePlay(void)
 				if (GameObject_Field_CollisionVertical(&g_field, &g_enemies[i], CONNECTION_NONE, EDGESIDE_OUTER) ||
 					GameObject_Field_CollisionHorizontal(&g_field, &g_enemies[i], CONNECTION_NONE, EDGESIDE_OUTER))
 					GameObject_Dispose(&g_enemies[i]);
+			}
+		}
+		{
+			int i;
+			for (i = 0; i < NUM_ENEMY_BULLETS; i++)
+			{
+				if (GameObject_Field_CollisionVertical(&g_field, &g_enemy_bullets[i], CONNECTION_NONE, EDGESIDE_OUTER) ||
+					GameObject_Field_CollisionHorizontal(&g_field, &g_enemy_bullets[i], CONNECTION_NONE, EDGESIDE_OUTER))
+					GameObject_Dispose(&g_enemy_bullets[i]);
 			}
 		}
 	}
@@ -320,7 +330,13 @@ BOOL ShotEnemyBullet(const GameObject* enemy)
 		{
 			g_enemy_bullets[i] = GameObject_Bullet_Create();
 			g_enemy_bullets[i].pos = enemy->pos;
-			g_enemy_bullets[i].vel = Vec2_Create(0, 5);
+
+			{
+				float angle = Vec2_Angle(&Vec2_Sub(&g_player.pos, &enemy->pos));
+				g_enemy_bullets[i].vel = Vec2_Create(cosf(angle) * 5, sinf(angle) * 5);
+				GameTimer_SetRemaining(&g_enemy_bullets[i].count, 3.f);
+				GameTimer_Resume(&g_enemy_bullets[i].count);
+			}
 
 			return TRUE;
 		}
@@ -335,7 +351,20 @@ BOOL UpdateEnemyBullet(void)
 	for (i = 0; i < NUM_ENEMY_BULLETS; i++)
 	{
 		if (GameObject_IsAlive(&g_enemy_bullets[i]))
+		{
 			GameObject_UpdatePosition(&g_enemy_bullets[i]);
+
+			if (!GameTimer_IsFinished(&g_enemy_bullets[i].count))
+			{
+				float angle = Vec2_Angle(&g_enemy_bullets[i].vel);
+				float direction = Vec2_Angle(&Vec2_Sub(&g_player.pos, &g_enemy_bullets[i].pos));
+
+				float theta = GetLoopRangeF(direction - angle, -DX_PI_F, DX_PI_F);
+				float angle_direction = angle + ClampF(theta, -ToRadians(2), ToRadians(2));
+
+				g_enemy_bullets[i].vel = Vec2_Create(cosf(angle_direction) * BULLET_VEL, sinf(angle_direction) * BULLET_VEL);
+			}
+		}
 	}
 
 	return TRUE;

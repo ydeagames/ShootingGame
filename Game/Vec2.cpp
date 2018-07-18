@@ -15,37 +15,37 @@ Vec2 Vec2_Create(float x, float y)
 }
 
 // <ベクトルの長さ>
-float Vec2_Length(Vec2* vec)
+float Vec2_Length(const Vec2* vec)
 {
 	return sqrtf(Vec2_LengthSquared(vec));
 }
 
 // <ベクトルの長さの二乗>
-float Vec2_LengthSquared(Vec2* vec)
+float Vec2_LengthSquared(const Vec2* vec)
 {
 	return vec->x * vec->x + vec->y * vec->y;
 }
 
 // <もう一方のベクトルとの内積>
-float Vec2_Dot(Vec2* vec, Vec2* other)
+float Vec2_Dot(const Vec2* vec, const Vec2* other)
 {
 	return vec->x * other->x + vec->y * other->y;
 }
 
 // <もう一方のベクトルとの距離>
-float Vec2_LengthTo(Vec2* vec, Vec2* other)
+float Vec2_LengthTo(const Vec2* vec, const Vec2* other)
 {
 	return sqrtf(Vec2_LengthSquaredTo(vec, other));
 }
 
 // <もう一方のベクトルとの距離の二乗>
-float Vec2_LengthSquaredTo(Vec2* vec, Vec2* other)
+float Vec2_LengthSquaredTo(const Vec2* vec, const Vec2* other)
 {
 	return (other->x - vec->x) * (other->x - vec->x) + (other->y - vec->y) * (other->y - vec->y);
 }
 
 // <正規化（長さを1にした）ベクトル>
-Vec2 Vec2_Normalized(Vec2* vec)
+Vec2 Vec2_Normalized(const Vec2* vec)
 {
 	float length = Vec2_Length(vec);
 	if (length > 0)
@@ -54,31 +54,31 @@ Vec2 Vec2_Normalized(Vec2* vec)
 }
 
 // <同値のベクトルか>
-BOOL Vec2_EqualsEpsilon(Vec2* vec, Vec2* other, float epsilon)
+BOOL Vec2_EqualsEpsilon(const Vec2* vec, const Vec2* other, float epsilon)
 {
 	return fabsf(vec->x - other->x) < epsilon && fabsf(vec->y - other->y) < epsilon;
 }
 
 // <同値のベクトルか>
-BOOL Vec2_Equals(Vec2* vec, Vec2* other)
+BOOL Vec2_Equals(const Vec2* vec, const Vec2* other)
 {
 	return Vec2_EqualsEpsilon(vec, other, FLOAT_EPSILON);
 }
 
 // <0ベクトルか>
-BOOL Vec2_IsZero(Vec2* vec)
+BOOL Vec2_IsZero(const Vec2* vec)
 {
 	return Vec2_Equals(vec, &Vec2_Create());
 }
 
 // <ベクトルの角度>
-float Vec2_Angle(Vec2* vec)
+float Vec2_Angle(const Vec2* vec)
 {
 	return atan2f(vec->y, vec->x);
 }
 
 // <ベクトルを分解>
-void Vec2_Decompose(Vec2* vec, Vec2* angle, Vec2* vec_a, Vec2* vec_b)
+void Vec2_Decompose(const Vec2* vec, const Vec2* angle, Vec2* vec_a, Vec2* vec_b)
 {
 	float angle_rota = Vec2_Angle(angle);
 	float vec_rota = Vec2_Angle(vec);
@@ -95,31 +95,31 @@ void Vec2_Decompose(Vec2* vec, Vec2* angle, Vec2* vec_a, Vec2* vec_b)
 }
 
 // <ベクトルを加算>
-Vec2 Vec2_Add(Vec2* vec_a, Vec2* vec_b)
+Vec2 Vec2_Add(const Vec2* vec_a, const Vec2* vec_b)
 {
 	return Vec2_Create(vec_a->x + vec_b->x, vec_a->y + vec_b->y);
 }
 
 // <ベクトルを減算>
-Vec2 Vec2_Sub(Vec2* vec_a, Vec2* vec_b)
+Vec2 Vec2_Sub(const Vec2* vec_a, const Vec2* vec_b)
 {
 	return Vec2_Create(vec_a->x - vec_b->x, vec_a->y - vec_b->y);
 }
 
 // <ベクトルを減算>
-Vec2 Vec2_Scale(Vec2* vec, float scale)
+Vec2 Vec2_Scale(const Vec2* vec, float scale)
 {
 	return Vec2_Create(vec->x * scale, vec->y * scale);
 }
 
 // <ベクトルを反転>
-Vec2 Vec2_Negate(Vec2* vec)
+Vec2 Vec2_Negate(const Vec2* vec)
 {
 	return Vec2_Scale(vec, -1);
 }
 
 // <ベクトルを描画>
-void Vec2_Render(Vec2* vec, Vec2* base, unsigned int color, float Thickness)
+void Vec2_Render(const Vec2* vec, const Vec2* base, unsigned int color, float Thickness)
 {
 	float arrow_length = 10 + Thickness*Vec2_Length(vec)*.125f;
 	float arrow_rota = Vec2_Angle(vec);
