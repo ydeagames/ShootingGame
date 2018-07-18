@@ -11,6 +11,14 @@ typedef struct {
 
 Array Array_Create(size_t new_capacity);
 
+void Array_ReserveRequired(Array* list, size_t min_capacity);
+
+void Array_Reserve(Array* list, size_t min_capacity);
+
+void Array_SetSize(Array* list, size_t size);
+
+size_t Array_GetSize(Array* list);
+
 void Array_Delete(Array* list);
 
 Object* Array_Get(Array* list, int index);

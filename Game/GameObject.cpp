@@ -23,7 +23,7 @@ static BOOL GameObject_IsHitBox(GameObject* obj1, GameObject* obj2);
 // <テクスチャ作成>
 GameTexture GameTexture_Create(HGRP texture, Vec2 anchor, Vec2 size)
 {
-	return { texture, anchor, size, Vec2_Create(size.x / 2, size.y / 2) };
+	return{ texture, anchor, size, Vec2_Create(size.x / 2, size.y / 2) };
 }
 
 // <テクスチャなし>
@@ -32,12 +32,47 @@ GameTexture GameTexture_CreateNone()
 	return GameTexture_Create(TEXTURE_NONE, Vec2_Create(), Vec2_Create());
 }
 
+// <<スプライトアニメーション>> ----------------------------------------
+
+// <スプライトアニメーション作成>
+GameSpriteAnimation GameSpriteAnimation_Create(int num_frames, int num_columns, int frame_duration)
+{
+	return{ num_frames, num_columns, frame_duration, 0, 0 };
+}
+
+// <スプライトアニメーションなし>
+GameSpriteAnimation GameSpriteAnimation_CreateNone()
+{
+	return GameSpriteAnimation_Create(1, 1, 1);
+}
+
+// <スプライトアニメーション更新>
+void GameSpriteAnimation_Update(GameSpriteAnimation* animate_sprite)
+{
+	int result = 1;
+	int column, row;
+
+	animate_sprite->elapsed_time++;
+
+	if (animate_sprite->elapsed_time > animate_sprite->frame_duration)
+	{
+		animate_sprite->elapsed_time = 0;
+		animate_sprite->frame_index++;
+
+		if (animate_sprite->elapsed_time > animate_sprite->frame_duration)
+		{
+			animate_sprite->elapsed_time = 0;
+			animate_sprite->frame_index++;
+		}
+	}
+}
+
 // <<スプライト>> ------------------------------------------------------
 
 // <スプライト作成>
 GameSprite GameSprite_Create(GameTexture texture, float scale, float angle)
 {
-	return { COLOR_WHITE, texture, Vec2_Create(), scale, angle };
+	return{ COLOR_WHITE, texture, Vec2_Create(), scale, angle, GameSpriteAnimation_CreateNone() };
 }
 
 // <スプライトなし>

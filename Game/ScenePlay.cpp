@@ -7,6 +7,7 @@
 #include "GameResource.h"
 #include "GameUtils.h"
 #include <math.h>
+#include "Array.h"
 
 
 

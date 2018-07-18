@@ -21,10 +21,13 @@ void Array_ReserveRequired(Array* list, size_t min_capacity)
 
 void Array_Reserve(Array* list, size_t min_capacity)
 {
-	size_t old_capacity = list->capacity;
-	int new_capacity = max(old_capacity + (old_capacity >> 1), min_capacity);
+	if (list->capacity < min_capacity)
+	{
+		size_t old_capacity = list->capacity;
+		int new_capacity = max(old_capacity + (old_capacity >> 1), min_capacity);
 
-	Array_ReserveRequired(list, new_capacity);
+		Array_ReserveRequired(list, new_capacity);
+	}
 }
 
 void Array_SetSize(Array* list, size_t size)
@@ -34,10 +37,15 @@ void Array_SetSize(Array* list, size_t size)
 	list->size = size;
 }
 
+size_t Array_GetSize(Array* list)
+{
+	return list->size;
+}
+
 void Array_Delete(Array* list)
 {
 	free(list->base);
-	*list = { NULL, 0, 0, 0 };
+	*list = { NULL, 0, 0 };
 }
 
 Object* Array_Get(Array* list, int index)

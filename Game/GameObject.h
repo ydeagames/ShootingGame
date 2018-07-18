@@ -50,6 +50,16 @@ typedef struct
 	Vec2 center;				// <テクスチャ中心>
 } GameTexture;
 
+// <スプライトアニメーション>
+typedef struct
+{
+	int num_frames;				// 総フレーム数
+	int num_columns;			// 1行あたりのフレーム数
+	int frame_duration;			// フレーム間隔
+	int frame_index;			// 現在のフレームのインデックス
+	int elapsed_time;			// 現在のフレームの経過時間
+} GameSpriteAnimation;
+
 // <スプライトオブジェクト>
 typedef struct
 {
@@ -58,6 +68,7 @@ typedef struct
 	Vec2 offset;				// <オフセット>
 	float scale;				// <スケール>
 	float angle;				// <回転>
+	GameSpriteAnimation animation;	// <スプライトアニメーション>
 } GameSprite;
 
 // <ゲームオブジェクト>
@@ -89,6 +100,17 @@ GameTexture GameTexture_Create(HGRP texture, Vec2 anchor, Vec2 size);
 
 // <テクスチャなし>
 GameTexture GameTexture_CreateNone();
+
+// <<スプライトアニメーション>> ----------------------------------------
+
+// <スプライトアニメーション作成>
+GameSpriteAnimation GameSpriteAnimation_Create(int num_frames, int num_columns, int frame_duration);
+
+// <スプライトアニメーションなし>
+GameSpriteAnimation GameSpriteAnimation_CreateNone();
+
+// <スプライトアニメーション更新>
+void GameSpriteAnimation_Update(GameSpriteAnimation* obj);
 
 // <<スプライト>> ------------------------------------------------------
 
