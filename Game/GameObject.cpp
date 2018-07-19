@@ -327,10 +327,33 @@ void GameObject_Render(GameObject* obj)
 		{
 			if (obj->sprite_connection == CONNECTION_LOOP)
 			{
-				Vec2 spos = Vec2_Scale(obj->sprite.texture.center, -obj->sprite.scale);
-				Vec2 ssize = Vec2_Scale(obj->sprite.texture.size, obj->sprite.scale);
+				Vec2 center_offset = Vec2_Scale(&obj->sprite.texture.center, obj->sprite.scale);
+				Vec2 sp_pos = Vec2_Add(&obj->pos, &obj->sprite.offset);
+				Vec2 sp_size = Vec2_Scale(&obj->sprite.texture.size, obj->sprite.scale);
 
-				//float go_left = 
+				float go_left = GameObject_GetX(obj, LEFT);
+				float go_right = GameObject_GetX(obj, RIGHT);
+				float go_top = GameObject_GetY(obj, TOP);
+				float go_bottom = GameObject_GetY(obj, BOTTOM);
+
+				float sp_left = sp_pos.x - sp_size.x / 2;
+				float sp_right = sp_pos.x + sp_size.x / 2;
+				float sp_top = sp_pos.y - sp_size.y / 2;
+				float sp_bottom = sp_pos.y + sp_size.y / 2;
+
+				float offset_x = GetLoopRangeF(go_left, sp_left, sp_right) - sp_left;
+				float offset_y = GetLoopRangeF(go_top, sp_top, sp_bottom) - sp_top;
+
+				for (float iy = go_top - offset_y + center_offset.x; iy - sp_size.y / 2 < go_bottom; iy += sp_size.y)
+				{
+					for (float ix = go_left - offset_x + center_offset.y; ix - sp_size.x / 2 < go_right; ix += sp_size.x)
+					{
+						GameSprite_Render(&obj->sprite, &Vec2_Create(ix - obj->sprite.offset.x, iy - obj->sprite.offset.y));
+						//DrawBoxAA(ix -sp_size.x / 2, iy - sp_size.y / 2, ix + sp_size.x / 2, iy + sp_size.y / 2, obj->sprite.color, FALSE, .5f);
+					}
+				}
+
+				DrawBoxAA(sp_left, sp_top, sp_right, sp_bottom, obj->sprite.color, FALSE, .5f);
 			}
 			else
 				GameSprite_Render(&obj->sprite, &obj->pos);

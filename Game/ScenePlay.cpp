@@ -76,8 +76,12 @@ void InitializePlay(void)
 	g_resources = GameResource_Create();
 
 	g_field = GameObject_Field_Create();
-	g_field.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_map, Vec2_Create(), Vec2_Create(1024, 2048)));
-	g_field.sprite.offset.y = g_field.size.y / 2 - g_field.sprite.texture.size.y / 2;
+	g_field.size.x -= 80;
+	g_field.size.y -= 80;
+	g_field.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_map, Vec2_Create(), Vec2_Create(64, 64)));
+	g_field.sprite_connection = CONNECTION_LOOP;
+	//g_field.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_map, Vec2_Create(), Vec2_Create(1024, 2048)));
+	//g_field.sprite.offset.y = g_field.sprite.texture.size.y / 2 - g_field.size.y / 2;
 
 	g_player = GameObject_Player_Create();
 	g_player.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_player, Vec2_Create(), Vec2_Create(32, 32)), 1.5f);
@@ -147,7 +151,9 @@ void UpdatePlay(void)
 	}
 
 	{
+		g_field.sprite.offset.x++;
 		g_field.sprite.offset.y++;
+		g_field.sprite.angle += ToRadians(2);
 
 		if (GameObject_IsAlive(&g_player))
 			GameObject_UpdatePosition(&g_player);
