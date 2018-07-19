@@ -325,8 +325,11 @@ void GameObject_Render(GameObject* obj)
 	{
 		if (obj->sprite.texture.texture != TEXTURE_MISSING)
 		{
-			if (obj->sprite_connection == CONNECTION_LOOP)
+			switch (obj->sprite_connection)
 			{
+			case CONNECTION_LOOP:
+			{
+				// リピートタイル (回転、テクスチャ中心座標 には未対応)
 				Vec2 center_offset = Vec2_Scale(&obj->sprite.texture.center, obj->sprite.scale);
 				Vec2 sp_pos = Vec2_Add(&obj->pos, &obj->sprite.offset);
 				Vec2 sp_size = Vec2_Scale(&obj->sprite.texture.size, obj->sprite.scale);
@@ -344,19 +347,30 @@ void GameObject_Render(GameObject* obj)
 				float offset_x = GetLoopRangeF(go_left, sp_left, sp_right) - sp_left;
 				float offset_y = GetLoopRangeF(go_top, sp_top, sp_bottom) - sp_top;
 
-				for (float iy = go_top - offset_y + center_offset.x; iy - sp_size.y / 2 < go_bottom; iy += sp_size.y)
+				if (sp_size.x >= 1.f && sp_size.y >= 1.f)
 				{
-					for (float ix = go_left - offset_x + center_offset.y; ix - sp_size.x / 2 < go_right; ix += sp_size.x)
+					for (float iy = go_top - offset_y + center_offset.x; iy - sp_size.y / 2 < go_bottom; iy += sp_size.y)
 					{
-						GameSprite_Render(&obj->sprite, &Vec2_Create(ix - obj->sprite.offset.x, iy - obj->sprite.offset.y));
-						//DrawBoxAA(ix -sp_size.x / 2, iy - sp_size.y / 2, ix + sp_size.x / 2, iy + sp_size.y / 2, obj->sprite.color, FALSE, .5f);
+						for (float ix = go_left - offset_x + center_offset.y; ix - sp_size.x / 2 < go_right; ix += sp_size.x)
+						{
+							GameSprite_Render(&obj->sprite, &Vec2_Create(ix - obj->sprite.offset.x, iy - obj->sprite.offset.y));
+							//DrawBoxAA(ix -sp_size.x / 2, iy - sp_size.y / 2, ix + sp_size.x / 2, iy + sp_size.y / 2, obj->sprite.color, FALSE, .5f);
+						}
 					}
 				}
 
 				DrawBoxAA(sp_left, sp_top, sp_right, sp_bottom, obj->sprite.color, FALSE, .5f);
+
+				break;
 			}
-			else
+			case CONNECTION_BARRIER:
+			{
+				break;
+			}
+			default:
 				GameSprite_Render(&obj->sprite, &obj->pos);
+				break;
+			}
 		}
 		else
 		{
@@ -366,6 +380,7 @@ void GameObject_Render(GameObject* obj)
 			DrawBoxAA(GameObject_GetX(obj, CENTER_X), GameObject_GetY(obj, CENTER_Y), GameObject_GetX(obj, RIGHT), GameObject_GetY(obj, BOTTOM), COLOR_FUCHSIA, TRUE);
 			//DrawBoxAA(GameObject_GetX(obj, LEFT), GameObject_GetY(obj, TOP), GameObject_GetX(obj, RIGHT), GameObject_GetY(obj, BOTTOM), obj->sprite.color, FALSE, .5f);
 		}
+
 		// デバッグ当たり判定枠を表示
 		if (DEBUG_HITBOX)
 		{
@@ -384,110 +399,110 @@ void GameObject_Render(GameObject* obj)
 			}
 			}
 		}
+		}
 	}
-}
 
-// <<フィールドオブジェクト>> ------------------------------------------
+	// <<フィールドオブジェクト>> ------------------------------------------
 
-// <フィールドオブジェクト作成>
-GameObject GameObject_Field_Create(void)
-{
-	return GameObject_Create(Vec2_Create(SCREEN_CENTER_X, SCREEN_CENTER_Y), Vec2_Create(), Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT));
-}
-
-// <フィールド上下衝突処理>
-ObjectSide GameObject_Field_CollisionVertical(GameObject* field, GameObject* obj, ObjectConnection connection, ObjectEdgeSide edge)
-{
-	// ヒットサイド
-	ObjectSide side_hit = NONE;
-
-	// コウラ・上下壁当たり判定
+	// <フィールドオブジェクト作成>
+	GameObject GameObject_Field_Create(void)
 	{
-		// 縁に応じてパディングを調整
-		float padding_top = GameObject_GetY(field, TOP);
-		float padding_bottom = GameObject_GetY(field, BOTTOM);
-		switch (edge)
-		{
-		case EDGESIDE_INNER:
-			padding_top = GameObject_OffsetY(obj, BOTTOM, padding_top);
-			padding_bottom = GameObject_OffsetY(obj, TOP, padding_bottom);
-			break;
-		case EDGESIDE_OUTER:
-			padding_top = GameObject_OffsetY(obj, TOP, padding_top);
-			padding_bottom = GameObject_OffsetY(obj, BOTTOM, padding_bottom);
-			break;
-		}
-
-		// 当たり判定
-		if (obj->pos.y < padding_top)
-			side_hit = TOP;
-		else if (padding_bottom <= obj->pos.y)
-			side_hit = BOTTOM;
-
-		// フィールドのつながり
-		switch (connection)
-		{
-		case CONNECTION_BARRIER:
-			// 壁にあたったら調整
-			obj->pos.y = ClampF(obj->pos.y, padding_top, padding_bottom);
-			break;
-		case CONNECTION_LOOP:
-			// 壁にあたったらループ
-			obj->pos.y = GetLoopRangeF(obj->pos.y, padding_top, padding_bottom);
-			break;
-		}
+		return GameObject_Create(Vec2_Create(SCREEN_CENTER_X, SCREEN_CENTER_Y), Vec2_Create(), Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT));
 	}
 
-	return side_hit;
-}
-
-// <フィールド左右衝突処理>
-ObjectSide GameObject_Field_CollisionHorizontal(GameObject* field, GameObject* obj, ObjectConnection connection, ObjectEdgeSide edge)
-{
-	// ヒットサイド
-	ObjectSide side_hit = NONE;
-
-	// コウラ・左右壁当たり判定
+	// <フィールド上下衝突処理>
+	ObjectSide GameObject_Field_CollisionVertical(GameObject* field, GameObject* obj, ObjectConnection connection, ObjectEdgeSide edge)
 	{
-		// 縁に応じてパディングを調整
-		float padding_left = GameObject_GetX(field, LEFT);
-		float padding_right = GameObject_GetX(field, RIGHT);
-		switch (edge)
+		// ヒットサイド
+		ObjectSide side_hit = NONE;
+
+		// コウラ・上下壁当たり判定
 		{
-		case EDGESIDE_INNER:
-			padding_left = GameObject_OffsetX(obj, RIGHT, padding_left);
-			padding_right = GameObject_OffsetX(obj, LEFT, padding_right);
-			break;
-		case EDGESIDE_OUTER:
-			padding_left = GameObject_OffsetX(obj, LEFT, padding_left);
-			padding_right = GameObject_OffsetX(obj, RIGHT, padding_right);
-			break;
+			// 縁に応じてパディングを調整
+			float padding_top = GameObject_GetY(field, TOP);
+			float padding_bottom = GameObject_GetY(field, BOTTOM);
+			switch (edge)
+			{
+			case EDGESIDE_INNER:
+				padding_top = GameObject_OffsetY(obj, BOTTOM, padding_top);
+				padding_bottom = GameObject_OffsetY(obj, TOP, padding_bottom);
+				break;
+			case EDGESIDE_OUTER:
+				padding_top = GameObject_OffsetY(obj, TOP, padding_top);
+				padding_bottom = GameObject_OffsetY(obj, BOTTOM, padding_bottom);
+				break;
+			}
+
+			// 当たり判定
+			if (obj->pos.y < padding_top)
+				side_hit = TOP;
+			else if (padding_bottom <= obj->pos.y)
+				side_hit = BOTTOM;
+
+			// フィールドのつながり
+			switch (connection)
+			{
+			case CONNECTION_BARRIER:
+				// 壁にあたったら調整
+				obj->pos.y = ClampF(obj->pos.y, padding_top, padding_bottom);
+				break;
+			case CONNECTION_LOOP:
+				// 壁にあたったらループ
+				obj->pos.y = GetLoopRangeF(obj->pos.y, padding_top, padding_bottom);
+				break;
+			}
 		}
 
-		// 当たり判定
-		if (obj->pos.x < padding_left)
-			side_hit = LEFT;
-		else if (padding_right <= obj->pos.x)
-			side_hit = RIGHT;
-
-		// フィールドのつながり
-		switch (connection)
-		{
-		case CONNECTION_BARRIER:
-			// 壁にあたったら調整
-			obj->pos.x = ClampF(obj->pos.x, padding_left, padding_right);
-			break;
-		case CONNECTION_LOOP:
-			// 壁にあたったらループ
-			obj->pos.x = GetLoopRangeF(obj->pos.x, padding_left, padding_right);
-			break;
-		}
+		return side_hit;
 	}
 
-	return side_hit;
-}
+	// <フィールド左右衝突処理>
+	ObjectSide GameObject_Field_CollisionHorizontal(GameObject* field, GameObject* obj, ObjectConnection connection, ObjectEdgeSide edge)
+	{
+		// ヒットサイド
+		ObjectSide side_hit = NONE;
 
-// <フィールド描画>
-void GameObject_Field_Render(GameObject* field)
-{
-}
+		// コウラ・左右壁当たり判定
+		{
+			// 縁に応じてパディングを調整
+			float padding_left = GameObject_GetX(field, LEFT);
+			float padding_right = GameObject_GetX(field, RIGHT);
+			switch (edge)
+			{
+			case EDGESIDE_INNER:
+				padding_left = GameObject_OffsetX(obj, RIGHT, padding_left);
+				padding_right = GameObject_OffsetX(obj, LEFT, padding_right);
+				break;
+			case EDGESIDE_OUTER:
+				padding_left = GameObject_OffsetX(obj, LEFT, padding_left);
+				padding_right = GameObject_OffsetX(obj, RIGHT, padding_right);
+				break;
+			}
+
+			// 当たり判定
+			if (obj->pos.x < padding_left)
+				side_hit = LEFT;
+			else if (padding_right <= obj->pos.x)
+				side_hit = RIGHT;
+
+			// フィールドのつながり
+			switch (connection)
+			{
+			case CONNECTION_BARRIER:
+				// 壁にあたったら調整
+				obj->pos.x = ClampF(obj->pos.x, padding_left, padding_right);
+				break;
+			case CONNECTION_LOOP:
+				// 壁にあたったらループ
+				obj->pos.x = GetLoopRangeF(obj->pos.x, padding_left, padding_right);
+				break;
+			}
+		}
+
+		return side_hit;
+	}
+
+	// <フィールド描画>
+	void GameObject_Field_Render(GameObject* field)
+	{
+	}
