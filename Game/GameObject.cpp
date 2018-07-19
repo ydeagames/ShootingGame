@@ -93,7 +93,7 @@ GameSprite GameSprite_CreateNone()
 // <オブジェクト作成>
 GameObject GameObject_Create(Vec2 pos, Vec2 vel, Vec2 size)
 {
-	return{ pos, vel, size, SHAPE_BOX, GameSprite_CreateNone(), TRUE, 1, 0, GameTimer_Create() };
+	return{ pos, vel, size, SHAPE_BOX, GameSprite_CreateNone(), CONNECTION_NONE, TRUE, 1, 0, GameTimer_Create() };
 }
 
 // <オブジェクト削除>
@@ -269,6 +269,26 @@ BOOL GameObject_IsHit(GameObject* obj1, GameObject* obj2)
 	}
 }
 
+static void GameSprite_Render(const GameSprite* sprite, const Vec2* pos)
+{
+	int column = sprite->animation.frame_index%sprite->animation.num_columns;
+	int row = sprite->animation.frame_index%sprite->animation.num_columns;
+
+	Vec2 anchor = Vec2_Add(&sprite->texture.anchor, &Vec2_Create(sprite->texture.size.x * column, sprite->texture.size.y * row));
+
+	// スプライト描画
+	DrawRectRotaGraph2F(
+		pos->x + sprite->offset.x, pos->y + sprite->offset.y,
+		(int)anchor.x, (int)anchor.y,
+		(int)sprite->texture.size.x, (int)sprite->texture.size.y,
+		sprite->texture.center.x, sprite->texture.center.y,
+		(double)sprite->scale,
+		(double)sprite->angle,
+		sprite->texture.texture,
+		TRUE
+	);
+}
+
 // <オブジェクト描画>
 void GameObject_Render(GameObject* obj)
 {
@@ -304,22 +324,7 @@ void GameObject_Render(GameObject* obj)
 	{
 		if (obj->sprite.texture.texture != TEXTURE_MISSING)
 		{
-			int column = obj->sprite.animation.frame_index%obj->sprite.animation.num_columns;
-			int row = obj->sprite.animation.frame_index%obj->sprite.animation.num_columns;
-
-			Vec2 anchor = Vec2_Add(&obj->sprite.texture.anchor, &Vec2_Create(obj->sprite.texture.size.x * column, obj->sprite.texture.size.y * row));
-
-			// スプライト描画
-			DrawRectRotaGraph2F(
-				GameObject_GetX(obj, CENTER_X) + obj->sprite.offset.x, GameObject_GetY(obj, CENTER_Y) + obj->sprite.offset.y,
-				(int)anchor.x, (int)anchor.y,
-				(int)obj->sprite.texture.size.x, (int)obj->sprite.texture.size.y,
-				obj->sprite.texture.center.x, obj->sprite.texture.center.y,
-				(double)obj->sprite.scale,
-				(double)obj->sprite.angle,
-				obj->sprite.texture.texture,
-				TRUE
-			);
+			GameSprite_Render(&obj->sprite, &obj->pos);
 		}
 		else
 		{

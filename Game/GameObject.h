@@ -86,6 +86,7 @@ typedef struct
 	Vec2 size;					// <大きさ>
 	ObjectShape shape;			// <形>
 	GameSprite sprite;			// <スプライト>
+	ObjectConnection sprite_connection;	// <スプライトのつながり>
 	BOOL alive;					// <表示状態>
 	int state;					// <状態>
 	int type;					// <タイプ>
