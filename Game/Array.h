@@ -17,7 +17,7 @@ void Array_Reserve(Array* list, size_t min_capacity);
 
 void Array_SetSize(Array* list, size_t size);
 
-size_t Array_GetSize(Array* list);
+int Array_GetSize(Array* list);
 
 void Array_Delete(Array* list);
 

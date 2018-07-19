@@ -18,6 +18,8 @@
 #define TEXTURE_BULLET "Resources\\Textures\\Bullet.png"							// オープンテクスチャ
 #define TEXTURE_ENEMY_PROTECTED "Resources\\Textures\\Protected\\Enemy.png"			// リソース保護テクスチャ
 #define TEXTURE_ENEMY "Resources\\Textures\\Enemy.png"								// オープンテクスチャ
+#define TEXTURE_EXPLOSION_PROTECTED "Resources\\Textures\\Protected\\Explosion.png"	// リソース保護テクスチャ
+#define TEXTURE_EXPLOSION "Resources\\Textures\\Explosion.png"						// オープンテクスチャ
 
 // <動画> --------------------------------------------------------------
 #define MOVIE_LOGO "Resources\\Movies\\ydeagames.avi"									// ロゴムービー
@@ -51,9 +53,12 @@ GameResource GameResource_Create(void)
 	res.texture_enemy = LoadGraph(TEXTURE_ENEMY_PROTECTED);
 	if (res.texture_enemy == TEXTURE_MISSING)										// リソース保護テクスチャが無かったら
 		res.texture_enemy = LoadGraph(TEXTURE_ENEMY);								// オープンテクスチャを読み込む
+	res.texture_explosion = LoadGraph(TEXTURE_EXPLOSION_PROTECTED);
+	if (res.texture_explosion == TEXTURE_MISSING)									// リソース保護テクスチャが無かったら
+		res.texture_explosion = LoadGraph(TEXTURE_EXPLOSION);						// オープンテクスチャを読み込む
 
 	// 動画
-	res.movie_logo = LoadGraph(MOVIE_LOGO);												// オープンテクスチャを読み込む
+	res.movie_logo = LoadGraph(MOVIE_LOGO);											// オープンテクスチャを読み込む
 
 	return res;
 }
@@ -71,6 +76,7 @@ void GameResource_Delete(GameResource* res)
 	DeleteGraph(res->texture_player);
 	DeleteGraph(res->texture_bullet);
 	DeleteGraph(res->texture_enemy);
+	DeleteGraph(res->texture_explosion);
 
 	// 動画
 	DeleteGraph(res->movie_logo);

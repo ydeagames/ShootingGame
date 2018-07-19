@@ -39,6 +39,13 @@ typedef enum
 	SHAPE_CIRCLE,				// 円
 } ObjectShape;
 
+// <アニメーションの結果> ----------------------------------------------
+typedef enum
+{
+	ANIMATION_RUNNING,			// アニメーションが実行中の状態
+	ANIMATION_FINISHED,			// アニメーション再生が完了した状態
+} AnimationState;
+
 // 構造体の宣言 ============================================================
 
 // <テクスチャ>
@@ -110,7 +117,7 @@ GameSpriteAnimation GameSpriteAnimation_Create(int num_frames, int num_columns, 
 GameSpriteAnimation GameSpriteAnimation_CreateNone();
 
 // <スプライトアニメーション更新>
-void GameSpriteAnimation_Update(GameSpriteAnimation* obj);
+AnimationState GameSpriteAnimation_Update(GameSpriteAnimation* obj);
 
 // <<スプライト>> ------------------------------------------------------
 

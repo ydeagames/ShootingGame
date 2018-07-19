@@ -158,6 +158,8 @@ void UpdatePlay(void)
 				{
 					//GameObject_Enemy_Update(&g_enemies[i]);
 					GameObject_UpdatePosition(enemy);
+					GameSpriteAnimation_Update(&enemy->sprite.animation);
+
 					if (GameTimer_IsPaused(&enemy->count) || GameTimer_IsFinished(&enemy->count))
 					{
 						ShotEnemyBullet(enemy);
@@ -388,7 +390,8 @@ BOOL AppearEnemy(void)
 		{
 			*enemy = GameObject_Enemy_Create();
 			enemy->shape = SHAPE_CIRCLE;
-			enemy->sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_enemy, Vec2_Create(0, GetRand(9) * 32.f), Vec2_Create(32, 32)));
+			enemy->sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_explosion, Vec2_Create(0, 0), Vec2_Create(64, 64)));
+			enemy->sprite.animation = GameSpriteAnimation_Create(16, 4, 8);
 			enemy->pos = Vec2_Create(GameObject_GetX(&g_field, CENTER_X), GameObject_GetY(&g_field, CENTER_Y));
 			//GameObject_Enemy_SetPosDefault(&g_enemies[i], &g_field);
 			//GameObject_Enemy_SetVelDefault(&g_enemies[i]);

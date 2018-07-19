@@ -47,10 +47,9 @@ GameSpriteAnimation GameSpriteAnimation_CreateNone()
 }
 
 // <スプライトアニメーション更新>
-void GameSpriteAnimation_Update(GameSpriteAnimation* animate_sprite)
+AnimationState GameSpriteAnimation_Update(GameSpriteAnimation* animate_sprite)
 {
-	int result = 1;
-	int column, row;
+	AnimationState result = ANIMATION_FINISHED;
 
 	animate_sprite->elapsed_time++;
 
@@ -63,8 +62,16 @@ void GameSpriteAnimation_Update(GameSpriteAnimation* animate_sprite)
 		{
 			animate_sprite->elapsed_time = 0;
 			animate_sprite->frame_index++;
+
+			if (animate_sprite->frame_index >= animate_sprite->num_frames)
+			{
+				animate_sprite->frame_index = 0;
+				result = ANIMATION_RUNNING;
+			}
 		}
 	}
+
+	return result;
 }
 
 // <<スプライト>> ------------------------------------------------------
@@ -297,10 +304,15 @@ void GameObject_Render(GameObject* obj)
 	{
 		if (obj->sprite.texture.texture != TEXTURE_MISSING)
 		{
+			int column = obj->sprite.animation.frame_index%obj->sprite.animation.num_columns;
+			int row = obj->sprite.animation.frame_index%obj->sprite.animation.num_columns;
+
+			Vec2 anchor = Vec2_Add(&obj->sprite.texture.anchor, &Vec2_Create(obj->sprite.texture.size.x * column, obj->sprite.texture.size.y * row));
+
 			// スプライト描画
 			DrawRectRotaGraph2F(
 				GameObject_GetX(obj, CENTER_X) + obj->sprite.offset.x, GameObject_GetY(obj, CENTER_Y) + obj->sprite.offset.y,
-				(int)obj->sprite.texture.anchor.x, (int)obj->sprite.texture.anchor.y,
+				(int)anchor.x, (int)anchor.y,
 				(int)obj->sprite.texture.size.x, (int)obj->sprite.texture.size.y,
 				obj->sprite.texture.center.x, obj->sprite.texture.center.y,
 				(double)obj->sprite.scale,

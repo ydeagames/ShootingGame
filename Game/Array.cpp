@@ -37,9 +37,9 @@ void Array_SetSize(Array* list, size_t size)
 	list->size = size;
 }
 
-size_t Array_GetSize(Array* list)
+int Array_GetSize(Array* list)
 {
-	return list->size;
+	return (int)list->size;
 }
 
 void Array_Delete(Array* list)
