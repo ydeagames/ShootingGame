@@ -88,6 +88,27 @@ GameSprite GameSprite_CreateNone()
 	return GameSprite_Create(GameTexture_CreateNone(), 0, 0);
 }
 
+// <スプライト描画>
+void GameSprite_Render(const GameSprite* sprite, const Vec2* pos)
+{
+	int column = sprite->animation.frame_index%sprite->animation.num_columns;
+	int row = sprite->animation.frame_index%sprite->animation.num_columns;
+
+	Vec2 anchor = Vec2_Add(&sprite->texture.anchor, &Vec2_Create(sprite->texture.size.x * column, sprite->texture.size.y * row));
+
+	// スプライト描画
+	DrawRectRotaGraph2F(
+		pos->x + sprite->offset.x, pos->y + sprite->offset.y,
+		(int)anchor.x, (int)anchor.y,
+		(int)sprite->texture.size.x, (int)sprite->texture.size.y,
+		sprite->texture.center.x, sprite->texture.center.y,
+		(double)sprite->scale,
+		(double)sprite->angle,
+		sprite->texture.texture,
+		TRUE
+	);
+}
+
 // <<オブジェクト>> ----------------------------------------------------
 
 // <オブジェクト作成>
@@ -269,26 +290,6 @@ BOOL GameObject_IsHit(GameObject* obj1, GameObject* obj2)
 	}
 }
 
-static void GameSprite_Render(const GameSprite* sprite, const Vec2* pos)
-{
-	int column = sprite->animation.frame_index%sprite->animation.num_columns;
-	int row = sprite->animation.frame_index%sprite->animation.num_columns;
-
-	Vec2 anchor = Vec2_Add(&sprite->texture.anchor, &Vec2_Create(sprite->texture.size.x * column, sprite->texture.size.y * row));
-
-	// スプライト描画
-	DrawRectRotaGraph2F(
-		pos->x + sprite->offset.x, pos->y + sprite->offset.y,
-		(int)anchor.x, (int)anchor.y,
-		(int)sprite->texture.size.x, (int)sprite->texture.size.y,
-		sprite->texture.center.x, sprite->texture.center.y,
-		(double)sprite->scale,
-		(double)sprite->angle,
-		sprite->texture.texture,
-		TRUE
-	);
-}
-
 // <オブジェクト描画>
 void GameObject_Render(GameObject* obj)
 {
@@ -324,7 +325,15 @@ void GameObject_Render(GameObject* obj)
 	{
 		if (obj->sprite.texture.texture != TEXTURE_MISSING)
 		{
-			GameSprite_Render(&obj->sprite, &obj->pos);
+			if (obj->sprite_connection == CONNECTION_LOOP)
+			{
+				Vec2 spos = Vec2_Scale(obj->sprite.texture.center, -obj->sprite.scale);
+				Vec2 ssize = Vec2_Scale(obj->sprite.texture.size, obj->sprite.scale);
+
+				//float go_left = 
+			}
+			else
+				GameSprite_Render(&obj->sprite, &obj->pos);
 		}
 		else
 		{

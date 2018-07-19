@@ -16,6 +16,7 @@ typedef struct
 	HGRP texture_bullet;
 	HGRP texture_enemy;
 	HGRP texture_explosion;
+	HGRP texture_map;
 
 	// <“®‰æ>
 	HGRP movie_logo;

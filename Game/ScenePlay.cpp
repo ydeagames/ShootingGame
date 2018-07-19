@@ -76,6 +76,8 @@ void InitializePlay(void)
 	g_resources = GameResource_Create();
 
 	g_field = GameObject_Field_Create();
+	g_field.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_map, Vec2_Create(), Vec2_Create(1024, 2048)));
+	g_field.sprite.offset.y = g_field.size.y / 2 - g_field.sprite.texture.size.y / 2;
 
 	g_player = GameObject_Player_Create();
 	g_player.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_player, Vec2_Create(), Vec2_Create(32, 32)), 1.5f);
@@ -145,8 +147,11 @@ void UpdatePlay(void)
 	}
 
 	{
+		g_field.sprite.offset.y++;
+
 		if (GameObject_IsAlive(&g_player))
 			GameObject_UpdatePosition(&g_player);
+
 		UpdatePlayerBullet();
 
 		{
@@ -413,6 +418,8 @@ BOOL AppearEnemy(void)
 //----------------------------------------------------------------------
 void RenderPlay(void)
 {
+	GameObject_Render(&g_field);
+
 	{
 		int i;
 		for (i = 0; i < NUM_PLAYER_BULLETS; i++)
