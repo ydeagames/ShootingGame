@@ -357,12 +357,12 @@ void GameObject_Render(GameObject* obj)
 
 					if (sp_size.x >= 1.f && sp_size.y >= 1.f)
 					{
-						for (float iy = go_top - offset_y; iy - sp_size.y / 2 < go_bottom; iy += sp_size.y)
+						for (float iy = go_top + sp_size.x / 2 - offset_y - center_offset.x; iy < go_bottom; iy += sp_size.y)
 						{
-							for (float ix = go_left - offset_x; ix - sp_size.x / 2 < go_right; ix += sp_size.x)
+							for (float ix = go_left + sp_size.y / 2 - offset_x - center_offset.y; ix < go_right; ix += sp_size.x)
 							{
-								GameSprite_Render(&obj->sprite, &Vec2_Create(ix - obj->sprite.offset.x, iy - obj->sprite.offset.y));
-								DrawBoxAA(ix -sp_size.x / 2, iy - sp_size.y / 2, ix + sp_size.x / 2, iy + sp_size.y / 2, obj->sprite.color, FALSE, .5f);
+								GameSprite_Render(&obj->sprite, &Vec2_Create(ix + sp_size.x / 2 - obj->sprite.offset.x, iy + sp_size.y / 2 - obj->sprite.offset.y));
+								DrawBoxAA(ix, iy, ix + sp_size.x, iy + sp_size.y, obj->sprite.color, FALSE, .5f);
 							}
 						}
 					}
