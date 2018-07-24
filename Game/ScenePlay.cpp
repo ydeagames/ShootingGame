@@ -109,7 +109,7 @@ void InitializePlay(void)
 		int i;
 		for (i = 0; i < Array_GetSize(&g_enemies); i++)
 		{
-			Array_Set(&g_enemies, i, GameObject_Create());
+			Array_Set(&g_enemies, i, &GameObject_Create());
 			GameObject_Dispose(Array_Get(&g_enemies, i));
 		}
 	}
