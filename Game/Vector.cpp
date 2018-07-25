@@ -63,7 +63,7 @@ static void Vector_ReserveLastRequired(Vector* list, size_t min_capacity)
 static void Vector_ReserveLast(Vector* list, size_t min_capacity)
 {
 	// 終端に容量があるか確認
-	if (Vector_RemainingLastT(list) <= 0)
+	if (Vector_RemainingLastT(list) <= 1)
 	{
 		// 元のリストの容量を取得
 		size_t old_capacity = Vector_GetCapacityT(list);
@@ -91,8 +91,8 @@ static void Vector_ReserveFirstRequired(Vector* list, size_t min_capacity)
 	if (src.first_capacity == NULL)
 	{
 		// 終端にカーソルを移動
-		list->first = list->last_capacity;
-		list->last = list->last_capacity;
+		list->first = list->last_capacity - 1;
+		list->last = list->last_capacity - 1;
 	}
 	else
 	{
@@ -113,7 +113,7 @@ static void Vector_ReserveFirstRequired(Vector* list, size_t min_capacity)
 static void Vector_ReserveFirst(Vector* list, size_t min_capacity)
 {
 	// 先頭に容量があるか確認
-	if (Vector_RemainingFirstT(list) <= 0)
+	if (Vector_RemainingFirstT(list) <= 1)
 	{
 		// 元のリストの容量を取得
 		size_t old_capacity = Vector_GetCapacityT(list);
@@ -293,7 +293,7 @@ size_t Vector_RemainingFirstT(const Vector* list)
 {
 	if (list->first_capacity == NULL)
 		return 0;
-	return list->first - list->first_capacity;
+	return Vector_GetFirst(list) - list->first_capacity;
 }
 
 // 終端の空き容量を取得
@@ -301,7 +301,7 @@ size_t Vector_RemainingLastT(const Vector* list)
 {
 	if (list->first_capacity == NULL)
 		return 0;
-	return list->last_capacity - list->last;
+	return list->last_capacity - Vector_GetLast(list);
 }
 
 // 昇順の反復子を作成

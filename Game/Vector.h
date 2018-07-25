@@ -23,13 +23,16 @@
 // É}ÉNÉçÇÃíËã` ============================================================
 
 // ägí£forï∂
-#define foreach(vec, var, exp) \
+#define foreach_start(vec, var) \
 { \
-	VectorIterator itr; \
-	for (itr = Vector_NextIterator(vec); VectorIterator_HasNext(&itr);) \
+	VectorIterator itr_##var; \
+	for (itr_##var = Vector_NextIterator(vec); VectorIterator_HasNext(&itr_##var);) \
 	{ \
-		Object* var = VectorIterator_Next(&itr); \
-		exp \
+		int i_##var = VectorIterator_NextIndex(&itr_##var); \
+		Object* var = VectorIterator_Next(&itr_##var); \
+		{
+#define foreach_end \
+		} \
 	} \
 }
 
