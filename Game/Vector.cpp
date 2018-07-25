@@ -119,22 +119,51 @@ void Vector_Add(Vector* list, int index, const Object* element)
 	if (index < size / 2)
 	{
 		Vector_ReserveFirst(list, size + 1);
-		for ()
+		for (i = 0; i < index; i++)
+			list->first[i - 1] = list->first[i];
+		list->first--;
 	}
 	else
 	{
 		Vector_ReserveLast(list, size + 1);
-
+		for (i = 0; i < index; i++)
+			list->last[-(i - 1)] = list->last[-i];
+		list->last++;
 	}
 }
 
-void Vector_Set(Vector* list, int index, const Object* element);
+void Vector_Set(Vector* list, int index, const Object* element)
+{
+	list->first[index] = *element;
+}
 
-void Vector_RemoveLast(Vector* list);
+void Vector_RemoveLast(Vector* list)
+{
+	list->last--;
+}
 
-void Vector_RemoveFirst(Vector* list);
+void Vector_RemoveFirst(Vector* list)
+{
+	list->first++;
+}
 
-void Vector_Remove(Vector* list, int index);
+void Vector_Remove(Vector* list, int index)
+{
+	int i;
+	int size = Vector_GetSize(list);
+	if (index < size / 2)
+	{
+		for (i = index - 1; i >= 0; i--)
+			list->first[i + 1] = list->first[i];
+		list->first++;
+	}
+	else
+	{
+		for (i = index - 1; i >= 0; i--)
+			list->last[-(i + 1)] = list->last[-i];
+		list->last--;
+	}
+}
 
 int Vector_GetSize(Vector* list)
 {
