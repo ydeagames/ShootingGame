@@ -140,28 +140,28 @@ GameObject GameObject_Create(Vec2 pos = Vec2_Create(), Vec2 vel = Vec2_Create(),
 void GameObject_Dispose(GameObject* obj);
 
 // <オブジェクト確認>
-BOOL GameObject_IsAlive(GameObject* obj);
+BOOL GameObject_IsAlive(const GameObject* obj);
 
 // <オブジェクト座標更新>
 void GameObject_UpdatePosition(GameObject* obj);
 
 // <オブジェクトXオフセット>
-float GameObject_OffsetX(GameObject* obj, ObjectSide side, float pos = 0.f, float margin = 0.f);
+float GameObject_OffsetX(const GameObject* obj, ObjectSide side, float pos = 0.f, float margin = 0.f);
 
 // <オブジェクトXオフセット>
-float GameObject_OffsetY(GameObject* obj, ObjectSide side, float pos = 0.f, float margin = 0.f);
+float GameObject_OffsetY(const GameObject* obj, ObjectSide side, float pos = 0.f, float margin = 0.f);
 
 // <オブジェクトX位置ゲット>
-float GameObject_GetX(GameObject* obj, ObjectSide side, float margin = 0.f);
+float GameObject_GetX(const GameObject* obj, ObjectSide side, float margin = 0.f);
 
 // <オブジェクトY位置ゲット>
-float GameObject_GetY(GameObject* obj, ObjectSide side, float margin = 0.f);
+float GameObject_GetY(const GameObject* obj, ObjectSide side, float margin = 0.f);
 
 // <オブジェクト当たり判定>
-BOOL GameObject_IsHit(GameObject* obj1, GameObject* obj2);
+BOOL GameObject_IsHit(const GameObject* obj1, const GameObject* obj2);
 
 // <オブジェクト描画>
-void GameObject_Render(GameObject* obj);
+void GameObject_Render(const GameObject* obj);
 
 // <<フィールドオブジェクト>> ------------------------------------------
 
@@ -169,10 +169,10 @@ void GameObject_Render(GameObject* obj);
 GameObject GameObject_Field_Create(void);
 
 // <フィールド上下衝突処理>
-ObjectSide GameObject_Field_CollisionVertical(GameObject* field, GameObject* obj, ObjectConnection connection, ObjectEdgeSide edge);
+ObjectSide GameObject_Field_CollisionVertical(const GameObject* field, GameObject* obj, ObjectConnection connection, ObjectEdgeSide edge);
 
 // <フィールド左右衝突処理>
-ObjectSide GameObject_Field_CollisionHorizontal(GameObject* field, GameObject* obj, ObjectConnection connection, ObjectEdgeSide edge);
+ObjectSide GameObject_Field_CollisionHorizontal(const GameObject* field, GameObject* obj, ObjectConnection connection, ObjectEdgeSide edge);
 
 // <フィールド描画>
-void GameObject_Field_Render(GameObject* field);
+void GameObject_Field_Render(const GameObject* field);

@@ -124,7 +124,7 @@ void GameObject_Dispose(GameObject* obj)
 }
 
 // <オブジェクト確認>
-BOOL GameObject_IsAlive(GameObject* obj)
+BOOL GameObject_IsAlive(const GameObject* obj)
 {
 	return obj->alive;
 }
@@ -137,7 +137,7 @@ void GameObject_UpdatePosition(GameObject* obj)
 }
 
 // <オブジェクトXオフセット>
-float GameObject_OffsetX(GameObject* obj, ObjectSide side, float pos, float padding)
+float GameObject_OffsetX(const GameObject* obj, ObjectSide side, float pos, float padding)
 {
 	float offset = 0;
 	switch (side)
@@ -153,7 +153,7 @@ float GameObject_OffsetX(GameObject* obj, ObjectSide side, float pos, float padd
 }
 
 // <オブジェクトXオフセット>
-float GameObject_OffsetY(GameObject* obj, ObjectSide side, float pos, float padding)
+float GameObject_OffsetY(const GameObject* obj, ObjectSide side, float pos, float padding)
 {
 	float offset = 0;
 	switch (side)
@@ -169,19 +169,19 @@ float GameObject_OffsetY(GameObject* obj, ObjectSide side, float pos, float padd
 }
 
 // <オブジェクトX位置ゲット>
-float GameObject_GetX(GameObject* obj, ObjectSide side, float padding)
+float GameObject_GetX(const GameObject* obj, ObjectSide side, float padding)
 {
 	return GameObject_OffsetX(obj, side, obj->pos.x, padding);
 }
 
 // <オブジェクトY位置ゲット>
-float GameObject_GetY(GameObject* obj, ObjectSide side, float padding)
+float GameObject_GetY(const GameObject* obj, ObjectSide side, float padding)
 {
 	return GameObject_OffsetY(obj, side, obj->pos.y, padding);
 }
 
 // <矩形オブジェクト×矩形オブジェクト当たり判定>
-static BOOL GameObject_IsHitBox(GameObject* obj1, GameObject* obj2)
+static BOOL GameObject_IsHitBox(const GameObject* obj1, const GameObject* obj2)
 {
 	return (
 		GameObject_GetX(obj2, LEFT) < GameObject_GetX(obj1, RIGHT) &&
@@ -192,7 +192,7 @@ static BOOL GameObject_IsHitBox(GameObject* obj1, GameObject* obj2)
 }
 
 // <楕円オブジェクト×楕円オブジェクト当たり判定> // ※未使用
-static BOOL GameObject_IsHitOval(GameObject* obj1, GameObject* obj2)
+static BOOL GameObject_IsHitOval(const GameObject* obj1, const GameObject* obj2)
 {
 	// STEP1 : obj2を単位円にする変換をobj1に施す
 	float nx = obj1->size.x / 2;
@@ -225,7 +225,7 @@ static BOOL GameObject_IsHitOval(GameObject* obj1, GameObject* obj2)
 }
 
 // <楕円オブジェクト×点当たり判定> // ※未使用
-static BOOL GameObject_IsHitOvalPoint(GameObject* oval, Vec2* p)
+static BOOL GameObject_IsHitOvalPoint(const GameObject* oval, const Vec2* p)
 {
 	// 点に楕円→真円変換行列を適用
 	float tx = p->x - oval->pos.x;
@@ -238,7 +238,7 @@ static BOOL GameObject_IsHitOvalPoint(GameObject* oval, Vec2* p)
 }
 
 // <円オブジェクト×円オブジェクト当たり判定>
-static BOOL GameObject_IsHitCircle(GameObject* obj1, GameObject* obj2)
+static BOOL GameObject_IsHitCircle(const GameObject* obj1, const GameObject* obj2)
 {
 	float r1 = GetMinF(obj1->size.x, obj1->size.y) / 2;
 	float r2 = GetMinF(obj2->size.x, obj2->size.y) / 2;
@@ -247,7 +247,7 @@ static BOOL GameObject_IsHitCircle(GameObject* obj1, GameObject* obj2)
 }
 
 // <円オブジェクト×点当たり判定>
-static BOOL GameObject_IsHitCirclePoint(GameObject* circle, Vec2* p)
+static BOOL GameObject_IsHitCirclePoint(const GameObject* circle, const Vec2* p)
 {
 	float r1 = GetMinF(circle->size.x, circle->size.y) / 2;
 
@@ -255,7 +255,7 @@ static BOOL GameObject_IsHitCirclePoint(GameObject* circle, Vec2* p)
 }
 
 // <オブジェクト当たり判定>
-BOOL GameObject_IsHit(GameObject* obj1, GameObject* obj2)
+BOOL GameObject_IsHit(const GameObject* obj1, const GameObject* obj2)
 {
 	if (obj1->shape == SHAPE_BOX && obj2->shape == SHAPE_BOX)
 		return GameObject_IsHitBox(obj1, obj2);
@@ -267,7 +267,7 @@ BOOL GameObject_IsHit(GameObject* obj1, GameObject* obj2)
 		{
 			if (obj1->shape == SHAPE_CIRCLE)
 			{
-				GameObject* tmp = obj1;
+				const GameObject* tmp = obj1;
 				obj1 = obj2;
 				obj2 = tmp;
 			}
@@ -291,7 +291,7 @@ BOOL GameObject_IsHit(GameObject* obj1, GameObject* obj2)
 }
 
 // <オブジェクト描画>
-void GameObject_Render(GameObject* obj)
+void GameObject_Render(const GameObject* obj)
 {
 	// テクスチャを確認
 	if (obj->sprite.texture.texture == TEXTURE_NONE)
@@ -421,7 +421,7 @@ GameObject GameObject_Field_Create(void)
 }
 
 // <フィールド上下衝突処理>
-ObjectSide GameObject_Field_CollisionVertical(GameObject* field, GameObject* obj, ObjectConnection connection, ObjectEdgeSide edge)
+ObjectSide GameObject_Field_CollisionVertical(const GameObject* field, GameObject* obj, ObjectConnection connection, ObjectEdgeSide edge)
 {
 	// ヒットサイド
 	ObjectSide side_hit = NONE;
@@ -467,7 +467,7 @@ ObjectSide GameObject_Field_CollisionVertical(GameObject* field, GameObject* obj
 }
 
 // <フィールド左右衝突処理>
-ObjectSide GameObject_Field_CollisionHorizontal(GameObject* field, GameObject* obj, ObjectConnection connection, ObjectEdgeSide edge)
+ObjectSide GameObject_Field_CollisionHorizontal(const GameObject* field, GameObject* obj, ObjectConnection connection, ObjectEdgeSide edge)
 {
 	// ヒットサイド
 	ObjectSide side_hit = NONE;
@@ -513,6 +513,6 @@ ObjectSide GameObject_Field_CollisionHorizontal(GameObject* field, GameObject* o
 }
 
 // <フィールド描画>
-void GameObject_Field_Render(GameObject* field)
+void GameObject_Field_Render(const GameObject* field)
 {
 }

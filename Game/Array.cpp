@@ -73,7 +73,7 @@ size_t Array_GetSizeT(const Array* list)
 // サイズを設定
 void Array_SetSize(Array* list, int size)
 {
-	SetSizeT((size_t)size);
+	Array_SetSizeT(list, (size_t)size);
 }
 
 // サイズを取得
