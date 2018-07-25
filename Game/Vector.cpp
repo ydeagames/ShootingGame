@@ -1,6 +1,9 @@
 #include <assert.h>
 #include "Vector.h"
 
+// 初期容量
+#define DEFAULT_CAPACITY 8
+
 // 終端拡張
 static void Vector_ReserveLastRequired(Vector* list, size_t min_capacity)
 {
@@ -44,7 +47,7 @@ static void Vector_ReserveLast(Vector* list, size_t min_capacity)
 		// 元のリストの容量を取得
 		size_t old_capacity = Vector_GetCapacityT(list);
 		// 新たなリストの容量を計算
-		size_t new_capacity = max(old_capacity + (old_capacity >> 1), max(8, min_capacity));
+		size_t new_capacity = max(old_capacity + (old_capacity >> 1), max(DEFAULT_CAPACITY, min_capacity));
 
 		// 拡張
 		Vector_ReserveLastRequired(list, new_capacity);
@@ -94,7 +97,7 @@ static void Vector_ReserveFirst(Vector* list, size_t min_capacity)
 		// 元のリストの容量を取得
 		size_t old_capacity = Vector_GetCapacityT(list);
 		// 新たなリストの容量を計算
-		size_t new_capacity = max(old_capacity + (old_capacity >> 1), max(8, min_capacity));
+		size_t new_capacity = max(old_capacity + (old_capacity >> 1), max(DEFAULT_CAPACITY, min_capacity));
 
 		// 拡張
 		Vector_ReserveFirstRequired(list, new_capacity);

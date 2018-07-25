@@ -1,8 +1,7 @@
 #pragma once
 #include "GameObject.h"
 
-#define DEFAULT_CAPACITY 10
-
+// 拡張for文
 #define foreach(vec, var, exp) \
 { \
 	VectorIterator itr; \
@@ -13,8 +12,10 @@
 	} \
 }
 
+// このリストが扱うことのできる型
 typedef GameObject Object;
 
+// リスト型
 typedef struct {
 	Object* first_capacity;
 	Object* first;
@@ -22,6 +23,7 @@ typedef struct {
 	Object* last_capacity;
 } Vector;
 
+// リスト反復子型
 typedef struct {
 	Vector* list;
 	int current;
