@@ -1,8 +1,6 @@
 #include <assert.h>
 #include "Vector.h"
 
-#define max(a,b)	(((a) > (b)) ? (a) : (b))
-
 void Vector_ReserveLastRequired(Vector* list, size_t min_capacity)
 {
 	size_t capacity = Vector_GetCapacityT(list) + min_capacity;
