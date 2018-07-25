@@ -1,4 +1,5 @@
 #include "Array.h"
+#include <windows.h>
 
 void Array_ReserveRequired(Array* list, size_t min_capacity)
 {
@@ -24,14 +25,26 @@ void Array_Reserve(Array* list, size_t min_capacity)
 	}
 }
 
-void Array_SetSize(Array* list, size_t size)
+void Array_SetSizeT(Array* list, size_t size)
 {
 	Array_Reserve(list, size);
 
 	list->size = size;
 }
 
-int Array_GetSize(Array* list)
+size_t Array_GetSizeT(const Array* list)
+{
+	return list->size;
+}
+
+void Array_SetSize(Array* list, int size)
+{
+	Array_Reserve(list, (size_t)size);
+
+	list->size = (size_t)size;
+}
+
+int Array_GetSize(const Array* list)
 {
 	return (int)list->size;
 }
@@ -49,7 +62,7 @@ void Array_Delete(Array* list)
 	*list = { NULL, 0, 0 };
 }
 
-Object* Array_Get(Array* list, int index)
+Object* Array_Get(const Array* list, int index)
 {
 	return &list->base[index];
 }

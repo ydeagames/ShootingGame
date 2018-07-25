@@ -16,11 +16,11 @@ Vector Vector_Create(void);
 
 void Vector_Delete(Vector* list);
 
-Object* Vector_GetLast(Vector* list);
+Object* Vector_GetLast(const Vector* list);
 
-Object* Vector_GetFirst(Vector* list);
+Object* Vector_GetFirst(const Vector* list);
 
-Object* Vector_Get(Vector* list, int index);
+Object* Vector_Get(const Vector* list, int index);
 
 void Vector_AddLast(Vector* list, const Object* element);
 
@@ -36,4 +36,12 @@ void Vector_RemoveFirst(Vector* list);
 
 void Vector_Remove(Vector* list, int index);
 
-int Vector_GetSize(Vector* list);
+size_t Vector_GetSizeT(const Vector* list);
+
+int Vector_GetSize(const Vector* list);
+
+size_t Vector_GetCapacityT(const Vector* list);
+
+size_t Vector_RemainingFirstT(const Vector* list);
+
+size_t Vector_RemainingLastT(const Vector* list);
