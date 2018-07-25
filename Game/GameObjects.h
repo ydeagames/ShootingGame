@@ -31,7 +31,7 @@ typedef enum
 GameObject GameObject_Enemy_Create(void);
 
 // <敵オブジェクト座標デフォルト>
-void GameObject_Enemy_SetPosDefault(GameObject* obj, GameObject* field);
+void GameObject_Enemy_SetPosDefault(GameObject* obj, const GameObject* field);
 
 // <敵オブジェクト移動デフォルト>
 void GameObject_Enemy_SetVelDefault(GameObject* obj);
@@ -45,7 +45,7 @@ void GameObject_Enemy_Update(GameObject* obj);
 GameObject GameObject_Player_Create(void);
 
 // <プレイヤーオブジェクト座標Yデフォルト>
-void GameObject_Player_SetPosYDefault(GameObject* obj, GameObject* field);
+void GameObject_Player_SetPosYDefault(GameObject* obj, const GameObject* field);
 
 // <<弾オブジェクト>> ----------------------------------------------
 
@@ -53,7 +53,7 @@ void GameObject_Player_SetPosYDefault(GameObject* obj, GameObject* field);
 GameObject GameObject_Bullet_Create(void);
 
 // <弾オブジェクト座標デフォルト>
-void GameObject_Bullet_SetPosDefault(GameObject* obj, GameObject* player);
+void GameObject_Bullet_SetPosDefault(GameObject* obj, const GameObject* player);
 
 // <弾オブジェクト移動デフォルト>
 void GameObject_Bullet_SetVelDefault(GameObject* obj, int num = 0, int total = 1);

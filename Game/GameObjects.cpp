@@ -31,7 +31,7 @@ GameObject GameObject_Enemy_Create(void)
 }
 
 // <敵オブジェクト座標Xデフォルト>
-void GameObject_Enemy_SetPosDefault(GameObject* obj, GameObject* field)
+void GameObject_Enemy_SetPosDefault(GameObject* obj, const GameObject* field)
 {
 	obj->pos.x = GetRandRangeF(GameObject_GetX(field, LEFT), GameObject_GetX(field, RIGHT));
 	obj->pos.y = GameObject_GetY(field, TOP, 20);
@@ -64,7 +64,7 @@ GameObject GameObject_Player_Create(void)
 }
 
 // <プレイヤーオブジェクト座標Yデフォルト>
-void GameObject_Player_SetPosYDefault(GameObject* obj, GameObject* field)
+void GameObject_Player_SetPosYDefault(GameObject* obj, const GameObject* field)
 {
 	obj->pos.y = GameObject_OffsetY(obj, TOP, GameObject_GetY(field, BOTTOM), 16);
 }
@@ -80,7 +80,7 @@ GameObject GameObject_Bullet_Create(void)
 }
 
 // <弾オブジェクト座標デフォルト>
-void GameObject_Bullet_SetPosDefault(GameObject* obj, GameObject* player)
+void GameObject_Bullet_SetPosDefault(GameObject* obj, const GameObject* player)
 {
 	obj->pos = player->pos;
 	//obj->pos.y = GameObject_OffsetY(obj, BOTTOM, GameObject_GetY(player, BOTTOM));
