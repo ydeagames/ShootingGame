@@ -1,12 +1,16 @@
+#include <assert.h>
 #include "Vector.h"
-#include <windows.h>
+
+#define max(a,b)	(((a) > (b)) ? (a) : (b))
 
 void Vector_ReserveLastRequired(Vector* list, size_t min_capacity)
 {
 	size_t capacity = Vector_GetCapacityT(list) + min_capacity;
 	Vector src = *list;
+
 	list->first_capacity = (Object*)malloc(capacity * sizeof(Object));
 	list->last_capacity = list->first_capacity + capacity;
+
 	if (src.first_capacity == NULL)
 	{
 		list->first = list->first_capacity;
@@ -37,8 +41,10 @@ void Vector_ReserveFirstRequired(Vector* list, size_t min_capacity)
 {
 	size_t capacity = Vector_GetCapacityT(list) + min_capacity;
 	Vector src = *list;
+
 	list->first_capacity = (Object*)malloc(capacity * sizeof(Object));
 	list->last_capacity = list->first_capacity + capacity;
+
 	if (src.first_capacity == NULL)
 	{
 		list->first = list->last_capacity;
@@ -110,6 +116,8 @@ void Vector_Add(Vector* list, int index, const Object* element)
 	int i;
 	int size = Vector_GetSize(list);
 
+	assert((0 <= index && index <= size) && "IndexOutOfBoundsException");
+
 	if (index < size / 2)
 	{
 		Vector_ReserveFirst(list, size + 1);
@@ -157,7 +165,7 @@ void Vector_Remove(Vector* list, int index)
 	else
 	{
 		for (i = index; i > 0; i--)
-			Vector_GetLast(list)[1-i] = Vector_GetLast(list)[1-(i - 1)];
+			Vector_GetLast(list)[1 - i] = Vector_GetLast(list)[1 - (i - 1)];
 		list->last--;
 	}
 }
@@ -193,4 +201,55 @@ size_t Vector_RemainingLastT(const Vector* list)
 	if (list->first_capacity == NULL)
 		return 0;
 	return list->last_capacity - list->last;
+}
+
+VectorIterator Vector_NextIterator(Vector* list)
+{
+	return VectorIterator_Create(list, 0, 1);
+}
+
+VectorIterator Vector_PrevIterator(Vector* list)
+{
+	return VectorIterator_Create(list, Vector_GetSize(list) - 1, -1);
+}
+
+VectorIterator VectorIterator_Create(Vector* list, int current, int next)
+{
+	return{ list, current, next };
+}
+
+BOOL VectorIterator_HasNext(const VectorIterator* itr)
+{
+	if (itr->next > 0)
+		return itr->current < Vector_GetSize(itr->list);
+	else
+		return 0 <= itr->current;
+}
+
+Object* VectorIterator_Next(VectorIterator* itr)
+{
+	Object* obj = Vector_Get(itr->list, itr->current);
+	itr->current += itr->next;
+	return obj;
+}
+
+int VectorIterator_NextIndex(const VectorIterator* itr)
+{
+	return itr->current;
+}
+
+void VectorIterator_Add(VectorIterator* itr, const Object* element)
+{
+	Vector_Add(itr->list, itr->current++, element);
+}
+
+void VectorIterator_Set(VectorIterator* itr, const Object* element)
+{
+	Vector_Set(itr->list, itr->current, element);
+}
+
+void VectorIterator_Remove(VectorIterator* itr)
+{
+	Vector_Remove(itr->list, itr->current);
+	itr -= itr->next;
 }
