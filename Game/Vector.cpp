@@ -1,8 +1,29 @@
+//__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/
+//! @file   Vector.cpp
+//!
+//! @brief  C言語版 動的リストクラス
+//!
+//! @date   2018/07/26
+//!
+//! @author GF1 26 山口寛雅
+//!
+//!
+//! Copyright (c) 2018 山口寛雅
+//!
+//! This file is released under the MIT License.
+//! http://opensource.org/licenses/mit-license.php
+//__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/__/
+
+// ヘッダファイルの読み込み ================================================
 #include <assert.h>
 #include "Vector.h"
 
+// 定数の定義 ==============================================================
+
 // 初期容量
 #define DEFAULT_CAPACITY 8
+
+// 関数の定義 ==============================================================
 
 // 終端拡張
 static void Vector_ReserveLastRequired(Vector* list, size_t min_capacity)
