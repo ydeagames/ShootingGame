@@ -206,6 +206,8 @@ void Vector_Add(Vector* list, int index, const Object* element)
 	}
 	else
 	{
+		// 後ろからのインデックスを計算
+		index = size - index;
 		// 容量を確保
 		Vector_ReserveLast(list, size + 1);
 		// 終端から要素番号までの要素をずらす
@@ -256,6 +258,8 @@ void Vector_Remove(Vector* list, int index)
 	}
 	else
 	{
+		// 後ろからのインデックスを計算
+		index = size - index;
 		// 終端から要素番号までの要素をずらす
 		for (i = index; i > 0; i--)
 			Vector_GetLast(list)[1 - i] = Vector_GetLast(list)[1 - (i - 1)];
@@ -293,7 +297,7 @@ size_t Vector_RemainingFirstT(const Vector* list)
 {
 	if (list->first_capacity == NULL)
 		return 0;
-	return Vector_GetFirst(list) - list->first_capacity;
+	return list->first - list->first_capacity;
 }
 
 // 終端の空き容量を取得
@@ -301,7 +305,7 @@ size_t Vector_RemainingLastT(const Vector* list)
 {
 	if (list->first_capacity == NULL)
 		return 0;
-	return list->last_capacity - Vector_GetLast(list);
+	return list->last_capacity - list->last;
 }
 
 // 昇順の反復子を作成
@@ -380,8 +384,7 @@ void VectorIterator_Remove(VectorIterator* itr)
 	assert(itr->current_size == Vector_GetSize(itr->list) && "ConcurrentModificationException");
 	assert(itr->current_exists && "IllegalStateException: Not a fresh iterator");
 #endif
-	Vector_Remove(itr->list, itr->current);
-	itr->current -= itr->next;
+	Vector_Remove(itr->list, itr->current -= itr->next);
 #ifdef VECTOR_DEBUG
 	itr->current_size = Vector_GetSizeT(itr->list);
 	itr->current_exists = FALSE;

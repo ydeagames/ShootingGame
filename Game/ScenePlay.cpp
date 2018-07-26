@@ -159,9 +159,9 @@ void UpdatePlay(void)
 	}
 
 	{
-		foreach_start(&g_player_bullets, player_bullet)
+		foreach_start(&g_enemies, enemy)
 		{
-			foreach_start(&g_enemies, enemy)
+			foreach_start(&g_player_bullets, player_bullet)
 			{
 				if (GameObject_IsHit(player_bullet, enemy))
 				{
