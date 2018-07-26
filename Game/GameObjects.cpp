@@ -87,12 +87,12 @@ void GameObject_Bullet_SetPosDefault(GameObject* obj, const GameObject* player)
 }
 
 // <弾オブジェクト移動デフォルト>
-void GameObject_Bullet_SetVelDefault(GameObject* obj, int num, int total)
+void GameObject_Bullet_SetVelDefault(GameObject* obj, float offset_angle, int num, int total)
 {
 	int n = 270 - (total - 1) * 10 + num * 20;
 	float angle = ToRadians((float)n);
-	obj->vel.x = BULLET_VEL * cosf(angle);
-	obj->vel.y = BULLET_VEL * sinf(angle);
+	obj->vel.x = BULLET_VEL * cosf(offset_angle + angle);
+	obj->vel.y = BULLET_VEL * sinf(offset_angle + angle);
 }
 
 // <弾オブジェクトサイズ変更>

@@ -39,9 +39,9 @@ PlayerKeySet PlayerKeySet_Default_Create(void)
 // <<コントローラー>> --------------------------------------------------
 
 // <コントローラー作成>
-GameController GameController_Create(GameObject* object, void(*updateFunc)(GameController*), void(*updateCtrlFunc)(GameController*))
+GameController GameController_Create(const GameObject* field, GameObject* object, void(*updateFunc)(GameController*), void(*updateCtrlFunc)(GameController*))
 {
-	return{ object, updateFunc, updateCtrlFunc };
+	return{ field, object, updateFunc, updateCtrlFunc };
 }
 
 // <コントローラー更新>
@@ -59,9 +59,9 @@ void GameController_UpdateControl(GameController* ctrl)
 // <<デフォルトコントローラー>> ----------------------------------------
 
 // <デフォルトコントローラー作成>
-GameController GameController_Default_Create(GameObject* object)
+GameController GameController_Default_Create(GameObject* field, GameObject* object)
 {
-	return GameController_Create(object, GameController_Default_Update, GameController_Default_UpdateControl);
+	return GameController_Create(field, object, GameController_Default_Update, GameController_Default_UpdateControl);
 }
 
 void GameController_Default_Update(GameController* ctrl)
@@ -76,9 +76,9 @@ void GameController_Default_UpdateControl(GameController* ctrl)
 // <<プレイヤーコントローラー>> ----------------------------------------
 
 // <プレイヤーコントローラー作成>
-GameController GameController_Player_Create(GameObject* object, PlayerKeySet keys)
+GameController GameController_Player_Create(const GameObject* field, GameObject* object, PlayerKeySet keys)
 {
-	GameController ctrl = GameController_Create(object, GameController_Default_Update, GameController_Player_UpdateControl);
+	GameController ctrl = GameController_Create(field, object, GameController_Default_Update, GameController_Player_UpdateControl);
 	ctrl.player_keys = keys;
 	return ctrl;
 }
@@ -97,4 +97,18 @@ void GameController_Player_UpdateControl(GameController* ctrl)
 		ctrl->object->vel.x += 1;
 	ctrl->object->vel = Vec2_Normalized(&ctrl->object->vel);
 	ctrl->object->vel = Vec2_Scale(&ctrl->object->vel, PLAYER_VEL);
+	ctrl->object->vel = Vec2_Rotate(&ctrl->object->vel, ctrl->object->sprite.angle);
+
+	{
+		Vec2 mouse;
+		{
+			int mouse_x, mouse_y;
+			GetMousePoint(&mouse_x, &mouse_y);
+			mouse = Vec2_Create((float)mouse_x, (float)mouse_y);
+			mouse = Vec2_Sub(&mouse, &ctrl->field->pos);
+		}
+		SetMouseDispFlag(FALSE);
+		SetMousePoint((int)ctrl->field->pos.x, (int)ctrl->field->pos.y);
+		ctrl->object->sprite.angle += ToRadians(mouse.x / 5.f);
+	}
 }

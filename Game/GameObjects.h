@@ -56,7 +56,7 @@ GameObject GameObject_Bullet_Create(void);
 void GameObject_Bullet_SetPosDefault(GameObject* obj, const GameObject* player);
 
 // <弾オブジェクト移動デフォルト>
-void GameObject_Bullet_SetVelDefault(GameObject* obj, int num = 0, int total = 1);
+void GameObject_Bullet_SetVelDefault(GameObject* obj, float offset_angle, int num = 0, int total = 1);
 
 // <弾オブジェクトサイズ変更>
 void GameObject_Bullet_SetSize(GameObject* obj, float scale);

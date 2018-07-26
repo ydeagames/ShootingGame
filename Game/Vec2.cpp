@@ -77,6 +77,14 @@ float Vec2_Angle(const Vec2* vec)
 	return atan2f(vec->y, vec->x);
 }
 
+// <ベクトルの角度加算>
+Vec2 Vec2_Rotate(const Vec2* vec, float rot)
+{
+	float scale = Vec2_Length(vec);
+	float angle = Vec2_Angle(vec);
+	return Vec2_Create(cosf(angle + rot)*scale, sinf(angle + rot)*scale);
+}
+
 // <ベクトルを分解>
 void Vec2_Decompose(const Vec2* vec, const Vec2* angle, Vec2* vec_a, Vec2* vec_b)
 {
@@ -121,7 +129,7 @@ Vec2 Vec2_Negate(const Vec2* vec)
 // <ベクトルを描画>
 void Vec2_Render(const Vec2* vec, const Vec2* base, unsigned int color, float Thickness)
 {
-	float arrow_length = 10 + Thickness*Vec2_Length(vec)*.125f;
+	float arrow_length = 10 + Thickness * Vec2_Length(vec)*.125f;
 	float arrow_rota = Vec2_Angle(vec);
 	float arrow_rota1 = arrow_rota + ToRadians(-150);
 	float arrow_rota2 = arrow_rota + ToRadians(150);

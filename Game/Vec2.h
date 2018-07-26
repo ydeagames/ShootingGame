@@ -44,6 +44,9 @@ BOOL Vec2_IsZero(const Vec2* vec);
 // <ベクトルの角度>
 float Vec2_Angle(const Vec2* vec);
 
+// <ベクトルの角度加算>
+Vec2 Vec2_Rotate(const Vec2* vec, float rot);
+
 // <ベクトルを分解>
 void Vec2_Decompose(const Vec2* vec, const Vec2* angle, Vec2* vec_a, Vec2* vec_b);
 

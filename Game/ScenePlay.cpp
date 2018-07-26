@@ -35,6 +35,9 @@ Vector g_enemy_bullets;
 
 GameTimer g_enemy_appear_count;
 
+GameObject g_screen_field;
+int g_screen;
+
 
 
 
@@ -87,13 +90,23 @@ void InitializePlay(void)
 	g_player.pos = Vec2_Create(GameObject_GetX(&g_field, CENTER_X), GameObject_GetY(&g_field, CENTER_Y) + 200);
 	g_player.shape = SHAPE_CIRCLE;
 
-	g_player_ctrl = GameController_Player_Create(&g_player, PlayerKeySet_Default_Create());
+	g_player_ctrl = GameController_Player_Create(&g_field, &g_player, PlayerKeySet_Default_Create());
 
 	g_player_bullets = Vector_Create();
 	g_enemies = Vector_Create();
 	g_enemy_bullets = Vector_Create();
 
 	g_enemy_appear_count = GameTimer_Create();
+
+	{
+		g_screen_field = GameObject_Create();
+		g_screen_field.size = Vec2_Create(GetMaxF(SCREEN_WIDTH, SCREEN_HEIGHT), GetMaxF(SCREEN_WIDTH, SCREEN_HEIGHT));
+		g_screen = MakeScreen((int)g_screen_field.size.x, (int)g_screen_field.size.y);
+		g_screen_field.sprite = GameSprite_Create(GameTexture_Create(g_screen, Vec2_Create(), g_screen_field.size));
+		g_screen_field.sprite.texture.center = Vec2_Scale(&g_field.size, .5f);
+		g_screen_field.pos = g_field.pos;
+		g_screen_field.sprite.angle = ToRadians(0);
+	}
 }
 
 
@@ -172,6 +185,7 @@ void UpdatePlay(void)
 			} foreach_end;
 		} foreach_end;
 
+		/*
 		if (GameObject_IsAlive(&g_player))
 		{
 			foreach_start(&g_enemies, obj)
@@ -187,6 +201,7 @@ void UpdatePlay(void)
 				}
 			} foreach_end;
 		}
+		/**/
 
 		if (GameObject_IsAlive(&g_player))
 		{
@@ -250,7 +265,7 @@ BOOL ShotPlayerBullet(int n_way)
 	{
 		if (obj->state == 1)
 		{
-			GameObject_Bullet_SetVelDefault(obj, num_shot++, n_way);
+			GameObject_Bullet_SetVelDefault(obj, g_player.sprite.angle, num_shot++, n_way);
 			obj->state = 2;
 		}
 	} foreach_end;
@@ -330,25 +345,34 @@ BOOL AppearEnemy(void)
 //----------------------------------------------------------------------
 void RenderPlay(void)
 {
-	GameObject_Render(&g_field);
+	int current = GetDrawScreen();
+	SetDrawScreen(g_screen);
+	ClearDrawScreen();
 
-	foreach_start(&g_player_bullets, obj)
 	{
-		GameObject_Render(obj);
-	} foreach_end;
+		GameObject_Render(&g_field);
 
-	foreach_start(&g_enemies, obj)
-	{
-		GameObject_Render(obj);
-	} foreach_end;
+		foreach_start(&g_player_bullets, obj)
+		{
+			GameObject_Render(obj);
+		} foreach_end;
 
-	foreach_start(&g_enemy_bullets, obj)
-	{
-		GameObject_Render(obj);
-	} foreach_end;
+		foreach_start(&g_enemies, obj)
+		{
+			GameObject_Render(obj);
+		} foreach_end;
 
-	if (GameObject_IsAlive(&g_player))
-		GameObject_Render(&g_player);
+		foreach_start(&g_enemy_bullets, obj)
+		{
+			GameObject_Render(obj);
+		} foreach_end;
+
+		if (GameObject_IsAlive(&g_player))
+			GameObject_Render(&g_player);
+	}
+
+	SetDrawScreen(current);
+	GameObject_Render(&g_screen_field);
 }
 
 

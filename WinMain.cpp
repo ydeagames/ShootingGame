@@ -15,6 +15,13 @@
 
 
 
+// グローバル変数の定義 ====================================================
+
+HWND hWnd;
+
+
+
+
 // 関数定義 ================================================================
 
 //----------------------------------------------------------------------
@@ -65,6 +72,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return -1;    // エラーが起きたら直ちに終了
 	}
 
+	// ウィンドウ取得
+	hWnd = GetMainWindowHandle();
 
 	// 描画先を裏画面に設定
 	SetDrawScreen(DX_SCREEN_BACK);
