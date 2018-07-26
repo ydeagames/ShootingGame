@@ -42,6 +42,7 @@ BOOL GameContents_ShotPlayerBullet(GameContents* game, int n_way)
 		if (obj->state == 1)
 		{
 			GameObject_Bullet_SetVelDefault(obj, game->player.sprite.angle, num_shot++, n_way);
+			obj->vel = Vec2_Add(&obj->vel, &game->player.vel);
 			obj->state = 2;
 		}
 	} foreach_end;
@@ -67,6 +68,7 @@ BOOL GameContents_ShotEnemyBullet(GameContents* game, const GameObject* enemy)
 	{
 		float angle = Vec2_Angle(&Vec2_Sub(&game->player.pos, &enemy->pos));
 		obj.vel = Vec2_Create(cosf(angle) * 5, sinf(angle) * 5);
+		obj.vel = Vec2_Add(&obj.vel, &enemy->vel);
 		GameTimer_SetRemaining(&obj.count, 3.f);
 		GameTimer_Resume(&obj.count);
 	}
