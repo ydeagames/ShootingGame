@@ -57,7 +57,7 @@ void InitializePlay(void)
 
 	{
 		g_game.field = GameObject_Field_Create();
-		g_game.field.size = Vec2_Create(8192, 8192);
+		g_game.field.size = Vec2_Create(2048, 2048);
 		g_game.field.pos = Vec2_Scale(&g_game.field.size, .5f);
 		//g_game.field.size.x -= 80;
 		//g_game.field.size.y -= 80;
@@ -68,8 +68,7 @@ void InitializePlay(void)
 		g_game.field.sprite_connection = CONNECTION_LOOP;
 		//g_game.field.sprite.offset.y = g_game.field.sprite.texture.size.y / 2 - g_game.field.size.y / 2;
 
-		g_game.field_cloud = g_game.field;
-		g_game.field_cloud.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_cloud, Vec2_Create(), Vec2_Create(1024, 1024)));
+		g_game.field_cloud = GameSprite_Create(GameTexture_Create(g_resources.texture_cloud, Vec2_Create(), Vec2_Create(1024, 1024)));
 	}
 
 	g_game.player = GameObject_Player_Create();
@@ -135,7 +134,6 @@ void UpdatePlay(void)
 
 	{
 		g_game.field.sprite.offset = Vec2_Scale(&g_game.player.pos, -.5f);
-		g_game.field_cloud.sprite.offset = Vec2_Scale(&g_game.player.pos, -.8f);
 		//g_game.field.sprite.angle += ToRadians(2);
 
 		if (GameObject_IsAlive(&g_game.player))
@@ -238,7 +236,16 @@ void RenderPlay(void)
 		Vec2 offset = Vec2_Sub(&Vec2_Scale(&g_screen_field.size, .5f), &g_game.player.pos);
 
 		GameObject_Render(&g_game.field);
-		GameObject_Render(&g_game.field_cloud);
+		{
+			GameObject cloud = g_game.field;
+			cloud.sprite = g_game.field_cloud;
+			cloud.sprite.offset = Vec2_Scale(&g_game.field.sprite.offset, 1.5f);
+			GameObject_Render(&cloud);
+			cloud.sprite.offset = Vec2_Scale(&g_game.field.sprite.offset, 2.f);
+			GameObject_Render(&cloud);
+			cloud.sprite.offset = Vec2_Scale(&g_game.field.sprite.offset, 2.5f);
+			GameObject_Render(&cloud);
+		}
 		{
 			GameObject frame;
 			frame.pos = g_game.field.pos;

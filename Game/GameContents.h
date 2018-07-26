@@ -9,7 +9,7 @@
 typedef struct
 {
 	GameObject field;
-	GameObject field_cloud;
+	GameSprite field_cloud;
 	GameObject player;
 	Vector player_bullets;
 	Vector enemies;
