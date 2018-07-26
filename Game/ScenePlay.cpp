@@ -141,7 +141,7 @@ void UpdatePlay(void)
 
 		UpdatePlayerBullet();
 
-		foreach_start(&g_player_bullets, obj)
+		foreach_start(&g_enemies, obj)
 		{
 			//GameObject_Enemy_Update(&g_enemies[i]);
 			GameObject_UpdatePosition(obj);
@@ -167,6 +167,7 @@ void UpdatePlay(void)
 				{
 					VectorIterator_Remove(&itr_player_bullet);
 					VectorIterator_Remove(&itr_enemy);
+					break;
 				}
 			} foreach_end;
 		} foreach_end;
@@ -306,16 +307,14 @@ BOOL UpdateEnemyBullet(void)
 
 BOOL AppearEnemy(void)
 {
-	foreach_start(&g_enemies, obj)
-	{
-		*obj = GameObject_Enemy_Create();
-		obj->shape = SHAPE_CIRCLE;
-		obj->sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_explosion, Vec2_Create(0, 0), Vec2_Create(64, 64)));
-		obj->sprite.animation = GameSpriteAnimation_Create(16, 4, 8);
-		obj->pos = Vec2_Create(GameObject_GetX(&g_field, CENTER_X), GameObject_GetY(&g_field, CENTER_Y));
-		//GameObject_Enemy_SetPosDefault(&g_enemies[i], &g_field);
-		//GameObject_Enemy_SetVelDefault(&g_enemies[i]);
-	} foreach_end;
+	GameObject obj = GameObject_Enemy_Create();
+	obj.shape = SHAPE_CIRCLE;
+	obj.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_explosion, Vec2_Create(0, 0), Vec2_Create(64, 64)));
+	obj.sprite.animation = GameSpriteAnimation_Create(16, 4, 8);
+	obj.pos = Vec2_Create(GameObject_GetX(&g_field, CENTER_X), GameObject_GetY(&g_field, CENTER_Y));
+	//GameObject_Enemy_SetPosDefault(&g_enemies[i], &g_field);
+	//GameObject_Enemy_SetVelDefault(&g_enemies[i]);
+	Vector_AddLast(&g_enemies, &obj);
 
 	return TRUE;
 }

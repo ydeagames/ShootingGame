@@ -20,6 +20,11 @@
 // ヘッダファイルの読み込み ================================================
 #include "GameObject.h"
 
+// 定数の定義 ==============================================================
+
+// デバッグ
+#define VECTOR_DEBUG TRUE
+
 // マクロの定義 ============================================================
 
 // 拡張for文
@@ -56,6 +61,10 @@ typedef struct {
 	Vector* list;
 	int current;
 	int next;
+#ifdef VECTOR_DEBUG
+	BOOL current_exists;
+	size_t current_size;
+#endif
 } VectorIterator;
 
 // 関数の宣言 ==============================================================

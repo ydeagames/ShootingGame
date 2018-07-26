@@ -319,7 +319,12 @@ VectorIterator Vector_PrevIterator(Vector* list)
 // 反復子を作成
 VectorIterator VectorIterator_Create(Vector* list, int current, int next)
 {
-	return{ list, current, next };
+	return{
+		list, current, next
+#ifdef VECTOR_DEBUG
+		, FALSE, Vector_GetSizeT(list)
+#endif
+	};
 }
 
 // 次の要素が存在するか
@@ -336,6 +341,9 @@ Object* VectorIterator_Next(VectorIterator* itr)
 {
 	Object* obj = Vector_Get(itr->list, itr->current);
 	itr->current += itr->next;
+#ifdef VECTOR_DEBUG
+	itr->current_exists = TRUE;
+#endif
 	return obj;
 }
 
@@ -348,7 +356,15 @@ int VectorIterator_NextIndex(const VectorIterator* itr)
 // 現在の要素の前に追加 (※一度のNextにつき、一度しか呼び出すことはできません)
 void VectorIterator_Add(VectorIterator* itr, const Object* element)
 {
+#ifdef VECTOR_DEBUG
+	assert(itr->current_size == Vector_GetSizeT(itr->list) && "Not a fresh iterator");
+	assert(itr->current_exists && "IllegalStateException: Not a fresh iterator");
+#endif
 	Vector_Add(itr->list, itr->current++, element);
+#ifdef VECTOR_DEBUG
+	itr->current_size = Vector_GetSizeT(itr->list);
+	itr->current_exists = FALSE;
+#endif
 }
 
 // 現在の要素を置き換え
@@ -360,6 +376,14 @@ void VectorIterator_Set(VectorIterator* itr, const Object* element)
 // 現在の要素を削除する (※一度のNextにつき、一度しか呼び出すことはできません)
 void VectorIterator_Remove(VectorIterator* itr)
 {
+#ifdef VECTOR_DEBUG
+	assert(itr->current_size == Vector_GetSize(itr->list) && "ConcurrentModificationException");
+	assert(itr->current_exists && "IllegalStateException: Not a fresh iterator");
+#endif
 	Vector_Remove(itr->list, itr->current);
-	itr -= itr->next;
+	itr->current -= itr->next;
+#ifdef VECTOR_DEBUG
+	itr->current_size = Vector_GetSizeT(itr->list);
+	itr->current_exists = FALSE;
+#endif
 }
