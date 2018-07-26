@@ -60,7 +60,8 @@ typedef struct
 // <スプライトアニメーション>
 typedef struct
 {
-	int num_frames;				// 総フレーム数
+	int frame_start;			// 開始フレームのインデックス
+	int frame_end;				// 終了フレームのインデックス
 	int num_columns;			// 1行あたりのフレーム数
 	int frame_duration;			// フレーム間隔
 	int frame_index;			// 現在のフレームのインデックス
@@ -112,7 +113,7 @@ GameTexture GameTexture_CreateNone();
 // <<スプライトアニメーション>> ----------------------------------------
 
 // <スプライトアニメーション作成>
-GameSpriteAnimation GameSpriteAnimation_Create(int num_frames, int num_columns, int frame_duration);
+GameSpriteAnimation GameSpriteAnimation_Create(int frames_start, int frames_end, int num_columns, int frame_duration);
 
 // <スプライトアニメーションなし>
 GameSpriteAnimation GameSpriteAnimation_CreateNone();

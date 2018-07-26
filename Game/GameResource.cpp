@@ -16,14 +16,14 @@
 #define TEXTURE_PLAYER "Resources\\Textures\\Solvalou.png"							// オープンテクスチャ
 #define TEXTURE_BULLET_PROTECTED "Resources\\Textures\\Protected\\Bullet.png"		// リソース保護テクスチャ
 #define TEXTURE_BULLET "Resources\\Textures\\Bullet.png"							// オープンテクスチャ
-#define TEXTURE_ENEMY_PROTECTED "Resources\\Textures\\Protected\\Enemy.png"			// リソース保護テクスチャ
-#define TEXTURE_ENEMY "Resources\\Textures\\Enemy.png"								// オープンテクスチャ
+#define TEXTURE_ENEMY_PROTECTED "Resources\\Textures\\Protected\\Enemies.png"		// リソース保護テクスチャ
+#define TEXTURE_ENEMY "Resources\\Textures\\Enemies.png"							// オープンテクスチャ
 #define TEXTURE_EXPLOSION_PROTECTED "Resources\\Textures\\Protected\\Explosion.png"	// リソース保護テクスチャ
 #define TEXTURE_EXPLOSION "Resources\\Textures\\Explosion.png"						// オープンテクスチャ
-#define TEXTURE_MAP_PROTECTED "Resources\\Textures\\Protected\\Xevious_BG_map.png"	// リソース保護テクスチャ
-#define TEXTURE_MAP "Resources\\Textures\\Xevious_BG_map.png"						// オープンテクスチャ
+#define TEXTURE_MAP_PROTECTED "Resources\\Textures\\Protected\\Map.png"				// リソース保護テクスチャ
+#define TEXTURE_MAP "Resources\\Textures\\Map.png"									// オープンテクスチャ
 #define TEXTURE_CLOUD_PROTECTED "Resources\\Textures\\Protected\\Cloud.png"			// リソース保護テクスチャ
-#define TEXTURE_CLOUD "Resources\\Textures\\Cloud.png"						// オープンテクスチャ
+#define TEXTURE_CLOUD "Resources\\Textures\\Cloud.png"								// オープンテクスチャ
 
 // <動画> --------------------------------------------------------------
 #define MOVIE_LOGO "Resources\\Movies\\ydeagames.avi"								// ロゴムービー

@@ -101,11 +101,34 @@ BOOL GameContents_UpdateEnemyBullet(GameContents* game)
 
 BOOL GameContents_AppearEnemy(GameContents* game)
 {
+	struct FrameSet {
+		int start;
+		int end;
+	};
+	int i = 0;
+	struct FrameSet sets[16] = {
+		{0 + i,6 + i},
+		{7 + ++i,14 + i},
+		{15 + i,21 + i },{22 + i,22 + i },
+		{23 + i,29 + i },{30 + i,30 + i },
+		{31 + i,34 + i },{35 + i,38 + i },
+		{39 + i,42 + i },{43 + i,46 + i },
+		{47 + i,52 + i },
+		{53 + (i += 2),58 + i },{59 + i,59 + i },
+		{60 + ++i,63 + i },{64 + i,67 + i },
+		{68 + i,73 + i }
+	};
+
 	GameObject obj = GameObject_Enemy_Create();
 	obj.shape = SHAPE_CIRCLE;
-	obj.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_explosion, Vec2_Create(0, 0), Vec2_Create(64, 64)));
-	obj.sprite.animation = GameSpriteAnimation_Create(16, 4, 8);
-	obj.pos = Vec2_Create(GameObject_GetX(&game->field, CENTER_X), GameObject_GetY(&game->field, CENTER_Y));
+	obj.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_enemy, Vec2_Create(0, 0), Vec2_Create(36, 36)));
+	{
+		int type = GetRand(15);
+		obj.sprite.animation = GameSpriteAnimation_Create(sets[type].start, sets[type].end, 8, 8);
+	}
+	obj.pos = Vec2_Create(GetRandRangeF(GameObject_GetX(&game->field, LEFT), GameObject_GetX(&game->field, RIGHT)),
+		GetRandRangeF(GameObject_GetY(&game->field, TOP), GameObject_GetY(&game->field, BOTTOM)));
+	obj.vel = Vec2_Create(GetRandRangeF(-ENEMY_VEL, ENEMY_VEL), GetRandRangeF(-ENEMY_VEL, ENEMY_VEL));
 	//GameObject_Enemy_SetPosDefault(&game->enemies[i], &game->field);
 	//GameObject_Enemy_SetVelDefault(&game->enemies[i]);
 	Vector_AddLast(&game->enemies, &obj);

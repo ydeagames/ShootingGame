@@ -44,15 +44,15 @@ GameTexture GameTexture_CreateNone()
 // <<スプライトアニメーション>> ----------------------------------------
 
 // <スプライトアニメーション作成>
-GameSpriteAnimation GameSpriteAnimation_Create(int num_frames, int num_columns, int frame_duration)
+GameSpriteAnimation GameSpriteAnimation_Create(int frames_start, int frames_end, int num_columns, int frame_duration)
 {
-	return{ num_frames, num_columns, frame_duration, 0, 0 };
+	return{ frames_start, frames_end, num_columns, frame_duration, frames_start, 0 };
 }
 
 // <スプライトアニメーションなし>
 GameSpriteAnimation GameSpriteAnimation_CreateNone()
 {
-	return GameSpriteAnimation_Create(1, 1, 1);
+	return GameSpriteAnimation_Create(0, 0, 1, 1);
 }
 
 // <スプライトアニメーション更新>
@@ -67,16 +67,10 @@ AnimationState GameSpriteAnimation_Update(GameSpriteAnimation* animate_sprite)
 		animate_sprite->elapsed_time = 0;
 		animate_sprite->frame_index++;
 
-		if (animate_sprite->elapsed_time > animate_sprite->frame_duration)
+		if (animate_sprite->frame_index > animate_sprite->frame_end)
 		{
-			animate_sprite->elapsed_time = 0;
-			animate_sprite->frame_index++;
-
-			if (animate_sprite->frame_index >= animate_sprite->num_frames)
-			{
-				animate_sprite->frame_index = 0;
-				result = ANIMATION_RUNNING;
-			}
+			animate_sprite->frame_index = animate_sprite->frame_start;
+			result = ANIMATION_RUNNING;
 		}
 	}
 
@@ -389,7 +383,7 @@ void GameObject_Render(const GameObject* obj, const Vec2* translate)
 							for (float ix = go_left + sp_size.x / 2 - offset_x - center_offset.x; ix < go_right; ix += sp_size.x)
 							{
 								GameSprite_Render(&obj->sprite, &Vec2_Create(ix + sp_size.x / 2 - obj->sprite.offset.x, iy + sp_size.y / 2 - obj->sprite.offset.y));
-								
+
 								if (DEBUG_HITBOX)
 									DrawBoxAA(ix, iy, ix + sp_size.x, iy + sp_size.y, obj->sprite.color, FALSE, .5f);
 							}
