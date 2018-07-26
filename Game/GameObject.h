@@ -161,7 +161,7 @@ float GameObject_GetY(const GameObject* obj, ObjectSide side, float margin = 0.f
 BOOL GameObject_IsHit(const GameObject* obj1, const GameObject* obj2);
 
 // <オブジェクト描画>
-void GameObject_Render(const GameObject* obj);
+void GameObject_Render(const GameObject* obj, const Vec2* translate = &Vec2_Create());
 
 // <<フィールドオブジェクト>> ------------------------------------------
 

@@ -291,8 +291,16 @@ BOOL GameObject_IsHit(const GameObject* obj1, const GameObject* obj2)
 }
 
 // <オブジェクト描画>
-void GameObject_Render(const GameObject* obj)
+void GameObject_Render(const GameObject* obj, const Vec2* translate)
 {
+	float box_xl = GameObject_GetX(obj, LEFT) + translate->x;
+	float box_xc = GameObject_GetX(obj, CENTER_X) + translate->x;
+	float box_xr = GameObject_GetX(obj, RIGHT) + translate->x;
+	float box_yt = GameObject_GetY(obj, TOP) + translate->y;
+	float box_ym = GameObject_GetY(obj, CENTER_Y) + translate->y;
+	float box_yb = GameObject_GetY(obj, BOTTOM) + translate->y;
+	Vec2 box_t = Vec2_Create(box_xc, box_ym);
+
 	// テクスチャを確認
 	if (obj->sprite.texture.texture == TEXTURE_NONE)
 	{
@@ -302,9 +310,9 @@ void GameObject_Render(const GameObject* obj)
 		case SHAPE_BOX:
 			// 矩形描画
 			if (DEBUG_HITBOX)
-				DrawBoxAA(GameObject_GetX(obj, LEFT), GameObject_GetY(obj, TOP), GameObject_GetX(obj, RIGHT), GameObject_GetY(obj, BOTTOM), obj->sprite.color, FALSE, .5f);
+				DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
 			else
-				DrawBoxAA(GameObject_GetX(obj, LEFT), GameObject_GetY(obj, TOP), GameObject_GetX(obj, RIGHT), GameObject_GetY(obj, BOTTOM), obj->sprite.color, TRUE);
+				DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, TRUE);
 			break;
 		case SHAPE_CIRCLE:
 		{
@@ -312,11 +320,11 @@ void GameObject_Render(const GameObject* obj)
 			// 円
 			if (DEBUG_HITBOX)
 			{
-				DrawCircleAA(GameObject_GetX(obj, CENTER_X), GameObject_GetY(obj, CENTER_Y), r1, 120, obj->sprite.color, FALSE, .5f);
-				DrawBoxAA(GameObject_GetX(obj, LEFT), GameObject_GetY(obj, TOP), GameObject_GetX(obj, RIGHT), GameObject_GetY(obj, BOTTOM), obj->sprite.color, FALSE, .5f);
+				DrawCircleAA(box_xc, box_ym, r1, 120, obj->sprite.color, FALSE, .5f);
+				DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
 			}
 			else
-				DrawCircleAA(GameObject_GetX(obj, CENTER_X), GameObject_GetY(obj, CENTER_Y), r1, 120, obj->sprite.color, TRUE);
+				DrawCircleAA(box_xc, box_ym, r1, 120, obj->sprite.color, TRUE);
 			break;
 		}
 		}
@@ -332,13 +340,13 @@ void GameObject_Render(const GameObject* obj)
 			{
 				// リピートタイル (回転、テクスチャ中心座標 には未対応)
 				Vec2 center_offset = Vec2_Scale(&obj->sprite.texture.center, obj->sprite.scale);
-				Vec2 sp_pos = Vec2_Add(&obj->pos, &obj->sprite.offset);
+				Vec2 sp_pos = Vec2_Add(&box_t, &obj->sprite.offset);
 				Vec2 sp_size = Vec2_Scale(&obj->sprite.texture.size, obj->sprite.scale);
 
-				float go_left = GameObject_GetX(obj, LEFT);
-				float go_right = GameObject_GetX(obj, RIGHT);
-				float go_top = GameObject_GetY(obj, TOP);
-				float go_bottom = GameObject_GetY(obj, BOTTOM);
+				float go_left = box_xl;
+				float go_right = box_xr;
+				float go_top = box_yt;
+				float go_bottom = box_yb;
 
 				float sp_left = sp_pos.x - sp_size.x / 2;
 				float sp_right = sp_pos.x + sp_size.x / 2;
@@ -349,7 +357,7 @@ void GameObject_Render(const GameObject* obj)
 				{
 				case CONNECTION_BARRIER:
 					if (sp_left < go_right && go_left < sp_right && sp_top < go_bottom && go_top < sp_bottom)
-						GameSprite_Render(&obj->sprite, &obj->pos);
+						GameSprite_Render(&obj->sprite, &box_t);
 					break;
 				case CONNECTION_LOOP:
 					float offset_x = GetLoopRangeF(go_left, sp_left, sp_right) - sp_left;
@@ -378,17 +386,17 @@ void GameObject_Render(const GameObject* obj)
 				break;
 			}
 			default:
-				GameSprite_Render(&obj->sprite, &obj->pos);
+				GameSprite_Render(&obj->sprite, &box_t);
 				break;
 			}
 		}
 		else
 		{
 			// NULLテクスチャを表示
-			DrawBoxAA(GameObject_GetX(obj, LEFT), GameObject_GetY(obj, TOP), GameObject_GetX(obj, RIGHT), GameObject_GetY(obj, BOTTOM), COLOR_BLACK, TRUE);
-			DrawBoxAA(GameObject_GetX(obj, LEFT), GameObject_GetY(obj, TOP), GameObject_GetX(obj, CENTER_X), GameObject_GetY(obj, CENTER_Y), COLOR_FUCHSIA, TRUE);
-			DrawBoxAA(GameObject_GetX(obj, CENTER_X), GameObject_GetY(obj, CENTER_Y), GameObject_GetX(obj, RIGHT), GameObject_GetY(obj, BOTTOM), COLOR_FUCHSIA, TRUE);
-			//DrawBoxAA(GameObject_GetX(obj, LEFT), GameObject_GetY(obj, TOP), GameObject_GetX(obj, RIGHT), GameObject_GetY(obj, BOTTOM), obj->sprite.color, FALSE, .5f);
+			DrawBoxAA(box_xl, box_yt, box_xr, box_yb, COLOR_BLACK, TRUE);
+			DrawBoxAA(box_xl, box_yt, box_xc, box_ym, COLOR_FUCHSIA, TRUE);
+			DrawBoxAA(box_xc, box_ym, box_xr, box_yb, COLOR_FUCHSIA, TRUE);
+			//DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
 		}
 
 		// デバッグ当たり判定枠を表示
@@ -398,13 +406,13 @@ void GameObject_Render(const GameObject* obj)
 			{
 			default:
 			case SHAPE_BOX:
-				DrawBoxAA(GameObject_GetX(obj, LEFT), GameObject_GetY(obj, TOP), GameObject_GetX(obj, RIGHT), GameObject_GetY(obj, BOTTOM), obj->sprite.color, FALSE, .5f);
+				DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
 				break;
 			case SHAPE_CIRCLE:
 			{
 				float r1 = GetMinF(obj->size.x, obj->size.y) / 2;
-				DrawCircleAA(GameObject_GetX(obj, CENTER_X), GameObject_GetY(obj, CENTER_Y), r1, 120, obj->sprite.color, FALSE, .5f);
-				DrawBoxAA(GameObject_GetX(obj, LEFT), GameObject_GetY(obj, TOP), GameObject_GetX(obj, RIGHT), GameObject_GetY(obj, BOTTOM), obj->sprite.color, FALSE, .5f);
+				DrawCircleAA(box_xc, box_ym, r1, 120, obj->sprite.color, FALSE, .5f);
+				DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
 				break;
 			}
 			}
