@@ -13,6 +13,7 @@
 #include "InputManager.h"
 #include "SceneManager.h"
 #include "GameObject.h"
+#include "GameResource.h"
 
 
 
@@ -22,6 +23,8 @@
 
 
 // グローバル変数の定義 ====================================================
+
+GameResource g_resources;
 
 
 
@@ -47,6 +50,10 @@ void FinalizeGame(void);    // ゲームの終了処理
 //----------------------------------------------------------------------
 void InitializeGame(void)
 {
+	SetUpMemoryLeakDetector();
+
+	g_resources = GameResource_Create();
+
 	InitializeSceneManager(SCENE_LOGO);
 }
 
@@ -93,4 +100,6 @@ void RenderGame(void)
 void FinalizeGame(void)
 {
 	FinalizeSceneManager();
+
+	GameResource_Delete(&g_resources);
 }

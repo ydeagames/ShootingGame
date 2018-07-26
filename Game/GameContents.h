@@ -9,12 +9,12 @@
 typedef struct
 {
 	GameObject field;
+	GameObject field_cloud;
 	GameObject player;
 	Vector player_bullets;
 	Vector enemies;
 	Vector enemy_bullets;
 	GameTimer enemy_appear_count;
-	GameResource resources;
 } GameContents;
 
 // ŠÖ”‚ÌéŒ¾ ==============================================================

@@ -1,5 +1,6 @@
 #include "GameController.h"
 #include "InputManager.h"
+#include "GameMain.h"
 
 // —ñ‹“Œ^‚Ì’è‹` ============================================================
 
@@ -100,15 +101,16 @@ void GameController_Player_UpdateControl(GameController* ctrl)
 	ctrl->object->vel = Vec2_Rotate(&ctrl->object->vel, ctrl->object->sprite.angle);
 
 	{
+		Vec2 center = Vec2_Create(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 		Vec2 mouse;
 		{
 			int mouse_x, mouse_y;
 			GetMousePoint(&mouse_x, &mouse_y);
 			mouse = Vec2_Create((float)mouse_x, (float)mouse_y);
-			mouse = Vec2_Sub(&mouse, &ctrl->field->pos);
+			mouse = Vec2_Sub(&mouse, &center);
 		}
 		SetMouseDispFlag(FALSE);
-		SetMousePoint((int)ctrl->field->pos.x, (int)ctrl->field->pos.y);
+		SetMousePoint((int)center.x, (int)center.y);
 		ctrl->object->sprite.angle += ToRadians(mouse.x / 5.f);
 	}
 }

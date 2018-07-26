@@ -53,26 +53,25 @@ void FinalizePlay(void);    // ÉQÅ[ÉÄÇÃèIóπèàóù
 //----------------------------------------------------------------------
 void InitializePlay(void)
 {
-	g_game.resources = GameResource_Create();
-
 	{
-		float diagonal;
 		g_game.field = GameObject_Field_Create();
-		diagonal = Vec2_Length(&g_game.field.size);
-		g_game.field.size = Vec2_Create(diagonal, diagonal);
+		g_game.field.size = Vec2_Create(8192, 8192);
 		g_game.field.pos = Vec2_Scale(&g_game.field.size, .5f);
 		//g_game.field.size.x -= 80;
 		//g_game.field.size.y -= 80;
 		//g_game.field.sprite = GameSprite_Create(GameTexture_Create(g_game.resources.texture_map, Vec2_Create(), Vec2_Create(64, 64)), 1.5f);
 		//g_game.field.sprite = GameSprite_Create(GameTexture_Create(g_game.resources.texture_map, Vec2_Create(), Vec2_Create(256, 256)), 1.f);
-		g_game.field.sprite = GameSprite_Create(GameTexture_Create(g_game.resources.texture_map, Vec2_Create(), Vec2_Create(1024, 2048)));
+		g_game.field.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_map, Vec2_Create(), Vec2_Create(1024, 2048)));
 		//g_game.field.sprite.texture.center.x += 20;
 		g_game.field.sprite_connection = CONNECTION_LOOP;
 		//g_game.field.sprite.offset.y = g_game.field.sprite.texture.size.y / 2 - g_game.field.size.y / 2;
+
+		g_game.field_cloud = g_game.field;
+		g_game.field_cloud.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_cloud, Vec2_Create(), Vec2_Create(1024, 1024)));
 	}
 
 	g_game.player = GameObject_Player_Create();
-	g_game.player.sprite = GameSprite_Create(GameTexture_Create(g_game.resources.texture_player, Vec2_Create(), Vec2_Create(32, 32)), 1.5f);
+	g_game.player.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_player, Vec2_Create(), Vec2_Create(32, 32)), 1.5f);
 	g_game.player.sprite.texture.center.y += 7;
 	g_game.player.pos = Vec2_Create(GameObject_GetX(&g_game.field, CENTER_X), GameObject_GetY(&g_game.field, CENTER_Y) + 200);
 	g_game.player.shape = SHAPE_CIRCLE;
@@ -86,8 +85,9 @@ void InitializePlay(void)
 	g_game.enemy_appear_count = GameTimer_Create();
 
 	{
+		float diagonal = Vec2_Length(&g_game.field.size);
 		g_screen_field = GameObject_Create();
-		g_screen_field.size = g_game.field.size;
+		g_screen_field.size = Vec2_Create(diagonal, diagonal);
 		g_screen_field.pos = Vec2_Create(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 		g_screen = MakeScreen((int)g_screen_field.size.x, (int)g_screen_field.size.y);
 		g_screen_field.sprite = GameSprite_Create(GameTexture_Create(g_screen, Vec2_Create(), g_screen_field.size));
@@ -132,8 +132,8 @@ void UpdatePlay(void)
 	}
 
 	{
-		g_game.field.sprite.offset.x--;
-		g_game.field.sprite.offset.y--;
+		g_game.field.sprite.offset = Vec2_Scale(&g_game.player.pos, -.5f);
+		g_game.field_cloud.sprite.offset = Vec2_Scale(&g_game.player.pos, -1.f);
 		//g_game.field.sprite.angle += ToRadians(2);
 
 		if (GameObject_IsAlive(&g_game.player))
@@ -235,6 +235,7 @@ void RenderPlay(void)
 		Vec2 offset = Vec2_Sub(&g_game.field.pos, &g_game.player.pos);
 
 		GameObject_Render(&g_game.field);
+		GameObject_Render(&g_game.field_cloud);
 		{
 			GameObject frame;
 			frame.pos = g_game.field.pos;
@@ -277,8 +278,6 @@ void RenderPlay(void)
 //----------------------------------------------------------------------
 void FinalizePlay(void)
 {
-	GameResource_Delete(&g_game.resources);
-
 	Vector_Delete(&g_game.player_bullets);
 	Vector_Delete(&g_game.enemies);
 	Vector_Delete(&g_game.enemy_bullets);

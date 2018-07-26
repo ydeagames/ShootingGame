@@ -54,9 +54,9 @@ static void Vector_ReserveLastRequired(Vector* list, size_t min_capacity)
 		list->last = list->first + size;
 		// 元のリストから新たなリストへ内容をコピー
 		memcpy(Vector_GetFirst(list), Vector_GetFirst(&src), size * sizeof(Object));
+		// 元のリストのメモリを開放
+		free(src.first_capacity);
 	}
-	// 元のリストのメモリを開放
-	free(src.first_capacity);
 }
 
 // 終端自動拡張
@@ -104,9 +104,9 @@ static void Vector_ReserveFirstRequired(Vector* list, size_t min_capacity)
 		list->first = list->last - size;
 		// 元のリストから新たなリストへ内容をコピー
 		memcpy(Vector_GetFirst(list), Vector_GetFirst(&src), size * sizeof(Object));
+		// 元のリストのメモリを開放
+		free(src.first_capacity);
 	}
-	// 元のリストのメモリを開放
-	free(src.first_capacity);
 }
 
 // 先頭自動拡張
@@ -135,8 +135,10 @@ Vector Vector_Create(void)
 // デストラクタ
 void Vector_Delete(Vector* list)
 {
-	// リストのメモリを開放
-	free(list->first_capacity);
+	// 初期化済みか確認
+	if (list->first_capacity != NULL)
+		// リストのメモリを開放
+		free(list->first_capacity);
 	// NULLで初期化
 	*list = { NULL, NULL, NULL, NULL };
 }

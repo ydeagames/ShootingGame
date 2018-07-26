@@ -11,6 +11,8 @@
 // 多重インクルードの防止 ==================================================
 #pragma once
 
+#include "GameResource.h"
+
 
 
 
@@ -31,6 +33,13 @@
 
 #define SCREEN_CENTER_X (SCREEN_WIDTH  / 2)    // 画面の中央(X座標)
 #define SCREEN_CENTER_Y (SCREEN_HEIGHT / 2)    // 画面の中央(Y座標)
+
+
+
+
+// グローバル変数の宣言 ====================================================
+
+extern GameResource g_resources;
 
 
 

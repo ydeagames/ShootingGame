@@ -1,6 +1,7 @@
 #include "GameContents.h"
 #include "GameObjects.h"
 #include "GameUtils.h"
+#include "GameMain.h"
 #include <math.h>
 
 // ŠÖ”‚Ì’è‹` ==============================================================
@@ -12,7 +13,7 @@ BOOL GameContents_ReloadPlayerBullet(GameContents* game, int n_way)
 	{
 		GameObject obj = GameObject_Bullet_Create();
 		obj.shape = SHAPE_CIRCLE;
-		obj.sprite = GameSprite_Create(GameTexture_Create(game->resources.texture_bullet, Vec2_Create(), Vec2_Create(32, 32)));
+		obj.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_bullet, Vec2_Create(), Vec2_Create(32, 32)));
 		GameObject_Bullet_SetPosDefault(&obj, &game->player);
 		Vector_AddLast(&game->player_bullets, &obj);
 	}
@@ -102,7 +103,7 @@ BOOL GameContents_AppearEnemy(GameContents* game)
 {
 	GameObject obj = GameObject_Enemy_Create();
 	obj.shape = SHAPE_CIRCLE;
-	obj.sprite = GameSprite_Create(GameTexture_Create(game->resources.texture_explosion, Vec2_Create(0, 0), Vec2_Create(64, 64)));
+	obj.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_explosion, Vec2_Create(0, 0), Vec2_Create(64, 64)));
 	obj.sprite.animation = GameSpriteAnimation_Create(16, 4, 8);
 	obj.pos = Vec2_Create(GameObject_GetX(&game->field, CENTER_X), GameObject_GetY(&game->field, CENTER_Y));
 	//GameObject_Enemy_SetPosDefault(&game->enemies[i], &game->field);
