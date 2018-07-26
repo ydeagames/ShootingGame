@@ -131,6 +131,11 @@ GameSprite GameSprite_CreateNone();
 // <スプライト描画>
 void GameSprite_Render(const GameSprite* sprite, const Vec2* pos);
 
+// <<ティック>> --------------------------------------------------------
+
+// <オブジェクト作成>
+void GameTick_Update(void);
+
 // <<オブジェクト>> ----------------------------------------------------
 
 // <オブジェクト作成>

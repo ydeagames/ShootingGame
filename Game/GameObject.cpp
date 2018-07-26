@@ -8,6 +8,15 @@
 // <デバッグ用当たり判定表示>
 #define DEBUG_HITBOX TRUE
 
+// 変数の定義 ==============================================================
+
+// <<ティック>> --------------------------------------------------------
+
+// <最終時刻>
+static int g_lastcount = -1;
+// <デルタミリ秒>
+static int g_deltamilliseconds = 0;
+
 // 関数の宣言 ==============================================================
 
 static BOOL GameObject_IsHitOvalPoint(GameObject* oval, Vec2* p);
@@ -109,6 +118,16 @@ void GameSprite_Render(const GameSprite* sprite, const Vec2* pos)
 	);
 }
 
+// <<ティック>> --------------------------------------------------------
+
+// <オブジェクト作成>
+void GameTick_Update(void)
+{
+	int now = GetNowCount();
+	g_deltamilliseconds = GetMin(100, now - g_lastcount);
+	g_lastcount = now;
+}
+
 // <<オブジェクト>> ----------------------------------------------------
 
 // <オブジェクト作成>
@@ -132,8 +151,8 @@ BOOL GameObject_IsAlive(const GameObject* obj)
 // <オブジェクト座標更新>
 void GameObject_UpdatePosition(GameObject* obj)
 {
-	obj->pos.x += obj->vel.x;
-	obj->pos.y += obj->vel.y;
+	obj->pos.x += obj->vel.x * (g_deltamilliseconds / 17.f);
+	obj->pos.y += obj->vel.y * (g_deltamilliseconds / 17.f);
 }
 
 // <オブジェクトXオフセット>

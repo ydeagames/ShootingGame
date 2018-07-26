@@ -12,6 +12,7 @@
 
 #include "InputManager.h"
 #include "SceneManager.h"
+#include "GameObject.h"
 
 
 
@@ -61,6 +62,7 @@ void InitializeGame(void)
 void UpdateGame(void)
 {
 	UpdateInputManager();
+	GameTick_Update();
 	UpdateSceneManager();
 }
 
