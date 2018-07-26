@@ -53,6 +53,8 @@ void FinalizePlay(void);    // ÉQÅ[ÉÄÇÃèIóπèàóù
 //----------------------------------------------------------------------
 void InitializePlay(void)
 {
+	SetMouseDispFlag(FALSE);
+
 	{
 		g_game.field = GameObject_Field_Create();
 		g_game.field.size = Vec2_Create(8192, 8192);
@@ -73,7 +75,7 @@ void InitializePlay(void)
 	g_game.player = GameObject_Player_Create();
 	g_game.player.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_player, Vec2_Create(), Vec2_Create(32, 32)), 1.5f);
 	g_game.player.sprite.texture.center.y += 7;
-	g_game.player.pos = Vec2_Create(GameObject_GetX(&g_game.field, CENTER_X), GameObject_GetY(&g_game.field, CENTER_Y) + 200);
+	g_game.player.pos = Vec2_Create(GameObject_GetX(&g_game.field, CENTER_X), GameObject_GetY(&g_game.field, CENTER_Y));
 	g_game.player.shape = SHAPE_CIRCLE;
 
 	g_player_ctrl = GameController_Player_Create(&g_game.field, &g_game.player, PlayerKeySet_Default_Create());
@@ -85,13 +87,13 @@ void InitializePlay(void)
 	g_game.enemy_appear_count = GameTimer_Create();
 
 	{
-		float diagonal = Vec2_Length(&g_game.field.size);
+		float diagonal = Vec2_Length(&Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT));
 		g_screen_field = GameObject_Create();
 		g_screen_field.size = Vec2_Create(diagonal, diagonal);
 		g_screen_field.pos = Vec2_Create(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 		g_screen = MakeScreen((int)g_screen_field.size.x, (int)g_screen_field.size.y);
 		g_screen_field.sprite = GameSprite_Create(GameTexture_Create(g_screen, Vec2_Create(), g_screen_field.size));
-		g_screen_field.sprite.texture.center = Vec2_Scale(&g_game.field.size, .5f);
+		//g_screen_field.sprite.texture.center = Vec2_Scale(&g_game.field.size, .5f);
 		g_screen_field.sprite.angle = ToRadians(0);
 	}
 }
@@ -133,7 +135,7 @@ void UpdatePlay(void)
 
 	{
 		g_game.field.sprite.offset = Vec2_Scale(&g_game.player.pos, -.5f);
-		g_game.field_cloud.sprite.offset = Vec2_Scale(&g_game.player.pos, -1.f);
+		g_game.field_cloud.sprite.offset = Vec2_Scale(&g_game.player.pos, -.8f);
 		//g_game.field.sprite.angle += ToRadians(2);
 
 		if (GameObject_IsAlive(&g_game.player))
@@ -232,7 +234,8 @@ void RenderPlay(void)
 	ClearDrawScreen();
 
 	{
-		Vec2 offset = Vec2_Sub(&g_game.field.pos, &g_game.player.pos);
+		Vec2 screen_center = g_screen_field.pos;
+		Vec2 offset = Vec2_Sub(&Vec2_Scale(&g_screen_field.size, .5f), &g_game.player.pos);
 
 		GameObject_Render(&g_game.field);
 		GameObject_Render(&g_game.field_cloud);
@@ -278,6 +281,9 @@ void RenderPlay(void)
 //----------------------------------------------------------------------
 void FinalizePlay(void)
 {
+	DeleteGraph(g_screen);
+	SetMouseDispFlag(TRUE);
+
 	Vector_Delete(&g_game.player_bullets);
 	Vector_Delete(&g_game.enemies);
 	Vector_Delete(&g_game.enemy_bullets);

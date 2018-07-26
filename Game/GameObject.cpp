@@ -426,12 +426,16 @@ void GameObject_Render(const GameObject* obj, const Vec2* translate)
 			default:
 			case SHAPE_BOX:
 				DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
+				DrawLineAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, .5f);
+				DrawLineAA(box_xr, box_yt, box_xl, box_yb, obj->sprite.color, .5f);
 				break;
 			case SHAPE_CIRCLE:
 			{
 				float r1 = GetMinF(obj->size.x, obj->size.y) / 2;
 				DrawCircleAA(box_xc, box_ym, r1, 120, obj->sprite.color, FALSE, .5f);
 				DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
+				DrawLineAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, .5f);
+				DrawLineAA(box_xr, box_yt, box_xl, box_yb, obj->sprite.color, .5f);
 				break;
 			}
 			}

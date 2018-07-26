@@ -109,7 +109,6 @@ void GameController_Player_UpdateControl(GameController* ctrl)
 			mouse = Vec2_Create((float)mouse_x, (float)mouse_y);
 			mouse = Vec2_Sub(&mouse, &center);
 		}
-		SetMouseDispFlag(FALSE);
 		SetMousePoint((int)center.x, (int)center.y);
 		ctrl->object->sprite.angle += ToRadians(mouse.x / 5.f);
 	}
