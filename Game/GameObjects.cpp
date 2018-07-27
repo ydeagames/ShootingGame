@@ -23,10 +23,30 @@
 // <<敵オブジェクト>> ----------------------------------------------
 
 // <敵オブジェクト作成>
-GameObject GameObject_Enemy_Create(void)
+GameObject GameObject_Enemy_Create(int texture)
 {
+	struct FrameSet {
+		int start;
+		int end;
+	};
+	struct FrameSet sets[16] = {
+		{ 0 + 0,6 + 0 },
+		{ 7 + 1,14 + 1 },
+		{ 15 + 1,21 + 1 },{ 22 + 1,22 + 1 },
+		{ 23 + 1,29 + 1 },{ 30 + 1,30 + 1 },
+		{ 31 + 1,34 + 1 },{ 35 + 1,38 + 1 },
+		{ 39 + 1,42 + 1 },{ 43 + 1,46 + 1 },
+		{ 47 + 1,52 + 1 },
+		{ 53 + 3,58 + 3 },{ 59 + 3,59 + 3 },
+		{ 60 + 4,63 + 4 },{ 64 + 4,67 + 4 },
+		{ 68 + 4,73 + 4 }
+	};
+
 	GameObject obj = GameObject_Create(Vec2_Create(), Vec2_Create(), Vec2_Create(ENEMY_WIDTH, ENEMY_HEIGHT));
-	obj.type = GetRand(1) ? TYPE_ENEMY1 : TYPE_ENEMY2;
+	obj.type = TYPE_ENEMY1;
+	obj.shape = SHAPE_CIRCLE;
+	obj.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_enemy, Vec2_Create(0, 0), Vec2_Create(36, 36)));
+	obj.sprite.animation = GameSpriteAnimation_Create(sets[texture].start, sets[texture].end, 8, 8);
 	return obj;
 }
 
@@ -106,4 +126,37 @@ void GameObject_Bullet_SetSize(GameObject* obj, float scale)
 void GameObject_Bullet_Grow(GameObject* obj)
 {
 	GameObject_Bullet_SetSize(obj, obj->sprite.scale + BULLET_GROW_SPEED);
+}
+
+// <オブジェクトループ描画>
+void GameObject_RenderLoop(const GameObject* obj, const GameObject* tile_area, GameObject* tile_obj, const Vec2* translate)
+{
+	float box_xc = GameObject_GetX(obj, CENTER_X) + translate->x;
+	float box_ym = GameObject_GetY(obj, CENTER_Y) + translate->y;
+	Vec2 box_t = Vec2_Create(box_xc, box_ym);
+	float go_left = GameObject_GetX(obj, LEFT);
+	float go_right = GameObject_GetX(obj, RIGHT);
+	float go_top = GameObject_GetY(obj, TOP);
+	float go_bottom = GameObject_GetY(obj, BOTTOM);
+
+	float sp_left = GameObject_GetX(tile_area, LEFT);
+	float sp_right = GameObject_GetX(tile_area, RIGHT);
+	float sp_top = GameObject_GetY(tile_area, TOP);
+	float sp_bottom = GameObject_GetY(tile_area, BOTTOM);
+
+	Vec2 sp_pos = Vec2_Add(&box_t, &obj->sprite.offset);
+	Vec2 sp_size = Vec2_Scale(&obj->sprite.texture.size, obj->sprite.scale);
+	float offset_x = GetLoopRangeF(go_left, sp_left, sp_right) - sp_left;
+	float offset_y = GetLoopRangeF(go_top, sp_top, sp_bottom) - sp_top;
+
+	if (sp_size.x >= 1.f && sp_size.y >= 1.f)
+	{
+		for (float iy = go_top + sp_size.y / 2 - offset_y/* - center_offset.y*/; iy < go_bottom; iy += sp_size.y)
+		{
+			for (float ix = go_left + sp_size.x / 2 - offset_x/* - center_offset.x*/; ix < go_right; ix += sp_size.x)
+			{
+				GameObject_Render(tile_obj, translate);
+			}
+		}
+	}
 }

@@ -304,42 +304,6 @@ BOOL GameObject_IsHit(const GameObject* obj1, const GameObject* obj2)
 	}
 }
 
-// <オブジェクトループ描画>
-void GameObject_RenderLoop(const GameObject* obj, const GameObject* tile, Vector* objects, const Vec2* translate)
-{
-	float box_xc = GameObject_GetX(obj, CENTER_X) + translate->x;
-	float box_ym = GameObject_GetY(obj, CENTER_Y) + translate->y;
-	Vec2 box_t = Vec2_Create(box_xc, box_ym);
-	float go_left = GameObject_GetX(obj, LEFT);
-	float go_right = GameObject_GetX(obj, RIGHT);
-	float go_top = GameObject_GetY(obj, TOP);
-	float go_bottom = GameObject_GetY(obj, BOTTOM);
-
-	float sp_left = GameObject_GetX(tile, LEFT);
-	float sp_right = GameObject_GetX(tile, RIGHT);
-	float sp_top = GameObject_GetY(tile, TOP);
-	float sp_bottom = GameObject_GetY(tile, BOTTOM);
-
-	Vec2 sp_pos = Vec2_Add(&box_t, &obj->sprite.offset);
-	Vec2 sp_size = Vec2_Scale(&obj->sprite.texture.size, obj->sprite.scale);
-	float offset_x = GetLoopRangeF(go_left, sp_left, sp_right) - sp_left;
-	float offset_y = GetLoopRangeF(go_top, sp_top, sp_bottom) - sp_top;
-
-	if (sp_size.x >= 1.f && sp_size.y >= 1.f)
-	{
-		for (float iy = go_top + sp_size.y / 2 - offset_y/* - center_offset.y*/; iy < go_bottom; iy += sp_size.y)
-		{
-			for (float ix = go_left + sp_size.x / 2 - offset_x/* - center_offset.x*/; ix < go_right; ix += sp_size.x)
-			{
-				foreach_start(objects, obj)
-				{
-					GameObject_Render(obj, translate);
-				} foreach_end;
-			}
-		}
-	}
-}
-
 // <オブジェクト描画>
 void GameObject_Render(const GameObject* obj, const Vec2* translate)
 {

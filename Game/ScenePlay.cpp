@@ -22,10 +22,11 @@
 GameContents g_game;
 GameController g_player_ctrl;
 
+GameObject g_window_field;
 GameObject g_screen_field;
 int g_screen;
 
-
+BOOL g_cleared;
 
 
 // ŠÖ”‚ÌéŒ¾ ==============================================================
@@ -50,6 +51,8 @@ void FinalizePlay(void);    // ƒQ[ƒ€‚ÌI—¹ˆ—
 void InitializePlay(void)
 {
 	SetMouseDispFlag(FALSE);
+
+	g_cleared = FALSE;
 
 	{
 		g_game.field = GameObject_Field_Create();
@@ -82,14 +85,34 @@ void InitializePlay(void)
 	g_game.enemy_appear_count = GameTimer_Create();
 
 	{
-		float diagonal = Vec2_Length(&Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT));
-		g_screen_field = GameObject_Create();
+		g_window_field = GameObject_Create();
+		g_window_field.size = Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT);
+		g_window_field.pos = Vec2_Create(SCREEN_CENTER_X, SCREEN_CENTER_Y);
+	}
+	{
+		float diagonal = Vec2_Length(&g_window_field.size);
+		g_screen_field = g_window_field;
 		g_screen_field.size = Vec2_Create(diagonal, diagonal);
-		g_screen_field.pos = Vec2_Create(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 		g_screen = MakeScreen((int)g_screen_field.size.x, (int)g_screen_field.size.y);
 		g_screen_field.sprite = GameSprite_Create(GameTexture_Create(g_screen, Vec2_Create(), g_screen_field.size));
 		//g_screen_field.sprite.texture.center = Vec2_Scale(&g_game.field.size, .5f);
 		g_screen_field.sprite.angle = ToRadians(0);
+	}
+
+	{
+		GameObject enemy;
+		enemy = GameObject_Enemy_Create(9);
+		enemy.sprite.scale *= 4;
+		enemy.size = Vec2_Scale(&enemy.size, 4);
+		enemy.type = TYPE_ENEMY2;
+		enemy.pos = Vec2_Create(GameObject_GetX(&g_game.field, LEFT, -200), GameObject_GetY(&g_game.field, TOP, -200));
+		Vector_AddLast(&g_game.enemies, &enemy);
+		enemy.pos = Vec2_Create(GameObject_GetX(&g_game.field, RIGHT, -200), GameObject_GetY(&g_game.field, TOP, -200));
+		Vector_AddLast(&g_game.enemies, &enemy);
+		enemy.pos = Vec2_Create(GameObject_GetX(&g_game.field, LEFT, -200), GameObject_GetY(&g_game.field, BOTTOM, -200));
+		Vector_AddLast(&g_game.enemies, &enemy);
+		enemy.pos = Vec2_Create(GameObject_GetX(&g_game.field, RIGHT, -200), GameObject_GetY(&g_game.field, BOTTOM, -200));
+		Vector_AddLast(&g_game.enemies, &enemy);
 	}
 }
 
@@ -142,26 +165,33 @@ void UpdatePlay(void)
 			{
 				if (GameObject_IsHit(player_bullet, enemy))
 				{
+					if (enemy->type == TYPE_ENEMY2)
+					{
+						if (enemy->state++ > 10)
+							VectorIterator_Remove(&itr_enemy);
+					} else
+						VectorIterator_Remove(&itr_enemy);
 					VectorIterator_Remove(&itr_player_bullet);
-					VectorIterator_Remove(&itr_enemy);
 					break;
 				}
 			} foreach_end;
 		} foreach_end;
 
-		/*
+		//*
 		if (GameObject_IsAlive(&g_game.player))
 		{
 			foreach_start(&g_game.enemies, obj)
 			{
 				if (GameObject_IsHit(obj, &g_game.player))
 				{
-					//GameObject_Dispose(&g_game.player);
-					DrawFormatString((int)GameObject_GetX(&g_game.field, LEFT, -10), (int)GameObject_GetY(&g_game.field, TOP, -(i_obj + 1) * 10.f), COLOR_WHITE, "“–‚½‚Á‚Ä‚¢‚é");
+					RequestScene(SCENE_RESULT);
 				}
-				else
+			} foreach_end;
+			foreach_start(&g_game.enemy_bullets, obj)
+			{
+				if (GameObject_IsHit(obj, &g_game.player))
 				{
-					DrawFormatString((int)GameObject_GetX(&g_game.field, LEFT, -10), (int)GameObject_GetY(&g_game.field, TOP, -(i_obj + 1) * 10.f), COLOR_WHITE, "“–‚½‚Á‚Ä‚¢‚È‚¢");
+					RequestScene(SCENE_RESULT);
 				}
 			} foreach_end;
 		}
@@ -214,6 +244,7 @@ void RenderPlay(void)
 	{
 		Vec2 screen_center = g_screen_field.pos;
 		Vec2 offset = Vec2_Sub(&Vec2_Scale(&g_screen_field.size, .5f), &g_game.player.pos);
+		GameObject tilearea = g_window_field;
 
 		GameObject_Render(&g_game.field);
 		{

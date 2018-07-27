@@ -40,7 +40,7 @@
 // ƒOƒ[ƒoƒ‹•Ï”‚ÌéŒ¾ ====================================================
 
 extern GameResource g_resources;
-
+extern BOOL g_cleared;
 
 
 

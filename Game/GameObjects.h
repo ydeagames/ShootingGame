@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Vector.h"
 
 // 定数の定義 ==============================================================
 
@@ -28,7 +29,7 @@ typedef enum
 // <<敵オブジェクト>> ----------------------------------------------
 
 // <敵オブジェクト作成>
-GameObject GameObject_Enemy_Create(void);
+GameObject GameObject_Enemy_Create(int texture);
 
 // <敵オブジェクト座標デフォルト>
 void GameObject_Enemy_SetPosDefault(GameObject* obj, const GameObject* field);
@@ -63,3 +64,6 @@ void GameObject_Bullet_SetSize(GameObject* obj, float scale);
 
 // <弾オブジェクト成長>
 void GameObject_Bullet_Grow(GameObject* obj);
+
+// <オブジェクトループ描画>
+void GameObject_RenderLoop(const GameObject* obj, const GameObject* tile_area, GameObject* tile_obj, const Vec2* translate);

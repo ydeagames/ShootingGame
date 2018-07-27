@@ -3,12 +3,13 @@
 #include "GameUtils.h"
 #include "GameMain.h"
 #include <math.h>
+#include "SceneManager.h"
 
 // ’è”‚Ì’è‹` ==============================================================
 
-#define PLAYER_SHOOTING_INTERVAL .5f
+#define PLAYER_SHOOTING_INTERVAL 3.5f
 #define ENEMY_APPEAR_INTERVAL .5f
-#define ENEMY_SHOOTING_INTERVAL .5f
+#define ENEMY_SHOOTING_INTERVAL 3.5f
 
 // ŠÖ”‚Ì’è‹` ==============================================================
 
@@ -16,7 +17,11 @@ void GameContents_Update(GameContents* game)
 {
 	if (GameTimer_IsPaused(&game->enemy_appear_count) || GameTimer_IsFinished(&game->enemy_appear_count))
 	{
-		GameContents_AppearEnemy(game);
+		if (!GameContents_AppearEnemy(game))
+		{
+			g_cleared = TRUE;
+			RequestScene(SCENE_RESULT);
+		}
 		GameTimer_SetRemaining(&game->enemy_appear_count, ENEMY_APPEAR_INTERVAL);
 		GameTimer_Resume(&game->enemy_appear_count);
 	}
@@ -137,34 +142,29 @@ BOOL GameContents_UpdateEnemyBullet(GameContents* game)
 
 BOOL GameContents_AppearEnemy(GameContents* game)
 {
-	struct FrameSet {
-		int start;
-		int end;
-	};
-	struct FrameSet sets[16] = {
-		{0 + 0,6 + 0},
-		{7 + 1,14 + 1},
-		{15 + 1,21 + 1 },{22 + 1,22 + 1 },
-		{23 + 1,29 + 1 },{30 + 1,30 + 1 },
-		{31 + 1,34 + 1 },{35 + 1,38 + 1 },
-		{39 + 1,42 + 1 },{43 + 1,46 + 1 },
-		{47 + 1,52 + 1 },
-		{53 + 3,58 + 3 },{59 + 3,59 + 3 },
-		{60 + 4,63 + 4 },{64 + 4,67 + 4 },
-		{68 + 4,73 + 4 }
-	};
-
-	GameObject obj = GameObject_Enemy_Create();
-	obj.shape = SHAPE_CIRCLE;
-	obj.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_enemy, Vec2_Create(0, 0), Vec2_Create(36, 36)));
+	GameObject obj = GameObject_Enemy_Create(GetRand(15));
 	{
-		int type = GetRand(15);
-		obj.sprite.animation = GameSpriteAnimation_Create(sets[type].start, sets[type].end, 8, 8);
+		Vector tmp = Vector_Create();
+		foreach_start(&game->enemies, obj)
+		{
+			if (obj->type == TYPE_ENEMY2)
+				Vector_AddLast(&tmp, obj);
+		} foreach_end;
+		if (Vector_GetSize(&tmp) > 0)
+		{
+			obj.pos = Vector_Get(&tmp, GetRand(Vector_GetSize(&tmp) - 1))->pos;
+			Vector_Delete(&tmp);
+		}
+		else
+		{
+			Vector_Delete(&tmp);
+			return FALSE;
+		}
 	}
-	do {
-		obj.pos = Vec2_Create(GetRandRangeF(GameObject_GetX(&game->field, LEFT), GameObject_GetX(&game->field, RIGHT)),
-			GetRandRangeF(GameObject_GetY(&game->field, TOP), GameObject_GetY(&game->field, BOTTOM)));
-	} while (Vec2_LengthSquaredTo(&obj.pos, &game->player.pos) < Vec2_LengthSquared(&Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT)));
+	//do {
+	//	obj.pos = Vec2_Create(GetRandRangeF(GameObject_GetX(&game->field, LEFT), GameObject_GetX(&game->field, RIGHT)),
+	//		GetRandRangeF(GameObject_GetY(&game->field, TOP), GameObject_GetY(&game->field, BOTTOM)));
+	//} while (Vec2_LengthSquaredTo(&obj.pos, &game->player.pos) < Vec2_LengthSquared(&Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT)));
 	obj.vel = Vec2_Create(GetRandRangeF(-ENEMY_VEL, ENEMY_VEL), GetRandRangeF(-ENEMY_VEL, ENEMY_VEL));
 	//GameObject_Enemy_SetPosDefault(&game->enemies[i], &game->field);
 	//GameObject_Enemy_SetVelDefault(&game->enemies[i]);
