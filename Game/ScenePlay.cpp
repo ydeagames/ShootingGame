@@ -112,7 +112,7 @@ void UpdatePlay(void)
 		if (GameTimer_IsPaused(&g_game.enemy_appear_count) || GameTimer_IsFinished(&g_game.enemy_appear_count))
 		{
 			GameContents_AppearEnemy(&g_game);
-			GameTimer_SetRemaining(&g_game.enemy_appear_count, ENEMY_APPEAR_INTERVAL*1000000000);
+			GameTimer_SetRemaining(&g_game.enemy_appear_count, ENEMY_APPEAR_INTERVAL);
 			GameTimer_Resume(&g_game.enemy_appear_count);
 		}
 	}

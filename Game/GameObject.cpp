@@ -95,7 +95,7 @@ GameSprite GameSprite_CreateNone()
 void GameSprite_Render(const GameSprite* sprite, const Vec2* pos)
 {
 	int column = sprite->animation.frame_index%sprite->animation.num_columns;
-	int row = sprite->animation.frame_index%sprite->animation.num_columns;
+	int row = sprite->animation.frame_index/sprite->animation.num_columns;
 
 	Vec2 anchor = Vec2_Add(&sprite->texture.anchor, &Vec2_Create(sprite->texture.size.x * column, sprite->texture.size.y * row));
 
