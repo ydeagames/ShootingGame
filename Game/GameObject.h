@@ -94,6 +94,8 @@ typedef struct
 	GameTimer count;			// <カウンタ>
 } GameObject;
 
+struct Vector;
+
 // 定数の定義 ==============================================================
 
 // <テクスチャ>
@@ -130,7 +132,7 @@ GameSprite GameSprite_Create(GameTexture texture, float scale = 1, float angle =
 GameSprite GameSprite_CreateNone();
 
 // <オブジェクトループ描画>
-//void GameObject_RenderLoop(const GameObject* obj, const GameObject* tile, Vector* objects, const Vec2* translate);
+void GameObject_RenderLoop(const GameObject* obj, const GameObject* tile, struct Vector* objects, const Vec2* translate);
 
 // <スプライト描画>
 void GameSprite_Render(const GameSprite* sprite, const Vec2* pos);

@@ -49,7 +49,7 @@ typedef GameObject Object;
 // \‘¢‘Ì‚ÌéŒ¾ ============================================================
 
 // ƒŠƒXƒgŒ^
-typedef struct {
+typedef struct Vector{
 	Object* first_capacity;
 	Object* first;
 	Object* last;

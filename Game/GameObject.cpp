@@ -305,7 +305,7 @@ BOOL GameObject_IsHit(const GameObject* obj1, const GameObject* obj2)
 }
 
 // <オブジェクトループ描画>
-void GameObject_RenderLoop(const GameObject* obj, const GameObject* tile, Vector* objects, const Vec2* translate)
+void GameObject_RenderLoop(const GameObject* obj, const GameObject* tile, struct Vector* objects, const Vec2* translate)
 {
 	float box_xc = GameObject_GetX(obj, CENTER_X) + translate->x;
 	float box_ym = GameObject_GetY(obj, CENTER_Y) + translate->y;
