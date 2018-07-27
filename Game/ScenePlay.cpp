@@ -199,19 +199,22 @@ void UpdatePlay(void)
 		{
 			if (GameObject_Field_CollisionVertical(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_OUTER) ||
 				GameObject_Field_CollisionHorizontal(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_OUTER))
-				GameObject_Dispose(obj);
+				VectorIterator_Remove(&itr_obj);
 		} foreach_end;
 		foreach_start(&g_game.enemies, obj)
 		{
-			if (GameObject_Field_CollisionVertical(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_OUTER) ||
-				GameObject_Field_CollisionHorizontal(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_OUTER))
-				VectorIterator_Remove(&itr_obj);
+			if (GameObject_Field_CollisionVertical(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_INNER))
+				obj->vel.y *= -1;
+			if (GameObject_Field_CollisionHorizontal(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_INNER))
+				obj->vel.x *= -1;
+			obj->pos.x = ClampF(obj->pos.x, GameObject_GetX(obj, LEFT), GameObject_GetX(obj, RIGHT));
+			obj->pos.y = ClampF(obj->pos.y, GameObject_GetY(obj, TOP), GameObject_GetY(obj, BOTTOM));
 		} foreach_end;
 		foreach_start(&g_game.enemy_bullets, obj)
 		{
 			if (GameObject_Field_CollisionVertical(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_OUTER) ||
 				GameObject_Field_CollisionHorizontal(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_OUTER))
-				GameObject_Dispose(obj);
+				VectorIterator_Remove(&itr_obj);
 		} foreach_end;
 	}
 }
