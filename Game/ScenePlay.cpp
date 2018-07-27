@@ -14,10 +14,6 @@
 
 // ’è”‚Ì’è‹` ==============================================================
 
-#define PLAYER_SHOOTING_INTERVAL .5f
-#define ENEMY_APPEAR_INTERVAL .5f
-#define ENEMY_SHOOTING_INTERVAL .5f
-
 
 
 
@@ -108,14 +104,7 @@ void InitializePlay(void)
 //----------------------------------------------------------------------
 void UpdatePlay(void)
 {
-	{
-		if (GameTimer_IsPaused(&g_game.enemy_appear_count) || GameTimer_IsFinished(&g_game.enemy_appear_count))
-		{
-			GameContents_AppearEnemy(&g_game);
-			GameTimer_SetRemaining(&g_game.enemy_appear_count, ENEMY_APPEAR_INTERVAL);
-			GameTimer_Resume(&g_game.enemy_appear_count);
-		}
-	}
+	GameContents_Update(&g_game);
 
 	{
 		if (IsKeyPressed(PAD_INPUT_2))
@@ -124,11 +113,11 @@ void UpdatePlay(void)
 		GameController_Update(&g_player_ctrl);
 		GameController_UpdateControl(&g_player_ctrl);
 
-		if (IsKeyPressed(PAD_INPUT_1))
+		if (IsMousePressed(MOUSE_INPUT_1))
 			GameContents_ReloadPlayerBullet(&g_game, 3);
-		if (IsKeyDown(PAD_INPUT_1))
+		if (IsMouseDown(MOUSE_INPUT_1))
 			GameContents_GrowPlayerBullet(&g_game);
-		if (IsKeyReleased(PAD_INPUT_1))
+		if (IsMouseReleased(MOUSE_INPUT_1))
 			GameContents_ShotPlayerBullet(&g_game, 3);
 	}
 
@@ -141,19 +130,7 @@ void UpdatePlay(void)
 
 		GameContents_UpdatePlayerBullet(&g_game);
 
-		foreach_start(&g_game.enemies, obj)
-		{
-			//GameObject_Enemy_Update(&g_game.enemies[i]);
-			GameObject_UpdatePosition(obj);
-			GameSpriteAnimation_Update(&obj->sprite.animation);
-
-			if (GameTimer_IsPaused(&obj->count) || GameTimer_IsFinished(&obj->count))
-			{
-				GameContents_ShotEnemyBullet(&g_game, obj);
-				GameTimer_SetRemaining(&obj->count, ENEMY_SHOOTING_INTERVAL);
-				GameTimer_Resume(&obj->count);
-			}
-		} foreach_end;
+		GameContents_UpdateEnemies(&g_game);
 
 		GameContents_UpdateEnemyBullet(&g_game);
 	}

@@ -4,7 +4,23 @@
 #include "GameMain.h"
 #include <math.h>
 
+// ’è”‚Ì’è‹` ==============================================================
+
+#define PLAYER_SHOOTING_INTERVAL .5f
+#define ENEMY_APPEAR_INTERVAL .5f
+#define ENEMY_SHOOTING_INTERVAL .5f
+
 // ŠÖ”‚Ì’è‹` ==============================================================
+
+void GameContents_Update(GameContents* game)
+{
+	if (GameTimer_IsPaused(&game->enemy_appear_count) || GameTimer_IsFinished(&game->enemy_appear_count))
+	{
+		GameContents_AppearEnemy(game);
+		GameTimer_SetRemaining(&game->enemy_appear_count, ENEMY_APPEAR_INTERVAL);
+		GameTimer_Resume(&game->enemy_appear_count);
+	}
+}
 
 BOOL GameContents_ReloadPlayerBullet(GameContents* game, int n_way)
 {
@@ -74,7 +90,26 @@ BOOL GameContents_ShotEnemyBullet(GameContents* game, const GameObject* enemy)
 		GameTimer_Resume(&obj.count);
 	}
 
-	//Vector_AddLast(&game->enemy_bullets, &obj);
+	Vector_AddLast(&game->enemy_bullets, &obj);
+	return TRUE;
+}
+
+BOOL GameContents_UpdateEnemies(GameContents* game)
+{
+	foreach_start(&game->enemies, obj)
+	{
+		//GameObject_Enemy_Update(&g_game.enemies[i]);
+		GameObject_UpdatePosition(obj);
+		GameSpriteAnimation_Update(&obj->sprite.animation);
+
+		if (GameTimer_IsPaused(&obj->count) || GameTimer_IsFinished(&obj->count))
+		{
+			GameContents_ShotEnemyBullet(game, obj);
+			GameTimer_SetRemaining(&obj->count, ENEMY_SHOOTING_INTERVAL);
+			GameTimer_Resume(&obj->count);
+		}
+	} foreach_end;
+
 	return TRUE;
 }
 
@@ -125,11 +160,15 @@ BOOL GameContents_AppearEnemy(GameContents* game)
 		int type = GetRand(15);
 		obj.sprite.animation = GameSpriteAnimation_Create(sets[type].start, sets[type].end, 8, 8);
 	}
-	obj.pos = Vec2_Create(GetRandRangeF(GameObject_GetX(&game->field, LEFT), GameObject_GetX(&game->field, RIGHT)),
-		GetRandRangeF(GameObject_GetY(&game->field, TOP), GameObject_GetY(&game->field, BOTTOM)));
+	do {
+		obj.pos = Vec2_Create(GetRandRangeF(GameObject_GetX(&game->field, LEFT), GameObject_GetX(&game->field, RIGHT)),
+			GetRandRangeF(GameObject_GetY(&game->field, TOP), GameObject_GetY(&game->field, BOTTOM)));
+	} while (Vec2_LengthSquaredTo(&obj.pos, &game->player.pos) < Vec2_LengthSquared(&Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT)));
 	obj.vel = Vec2_Create(GetRandRangeF(-ENEMY_VEL, ENEMY_VEL), GetRandRangeF(-ENEMY_VEL, ENEMY_VEL));
 	//GameObject_Enemy_SetPosDefault(&game->enemies[i], &game->field);
 	//GameObject_Enemy_SetVelDefault(&game->enemies[i]);
+	GameTimer_SetRemaining(&obj.count, ENEMY_SHOOTING_INTERVAL);
+	GameTimer_Resume(&obj.count);
 	Vector_AddLast(&game->enemies, &obj);
 
 	return TRUE;
