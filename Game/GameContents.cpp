@@ -82,6 +82,7 @@ BOOL GameContents_ShotEnemyBullet(GameContents* game, const GameObject* enemy)
 	GameObject obj = GameObject_Bullet_Create();
 	obj.pos = enemy->pos;
 
+	//if (Vec2_LengthSquaredTo(&game->player.pos, &enemy->pos) < Vec2_LengthSquared(&Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT)))
 	{
 		float angle = Vec2_Angle(&Vec2_Sub(&game->player.pos, &enemy->pos));
 		obj.vel = Vec2_Create(cosf(angle) * 5, sinf(angle) * 5);
@@ -121,13 +122,13 @@ BOOL GameContents_UpdateEnemyBullet(GameContents* game)
 
 		if (!GameTimer_IsFinished(&obj->count))
 		{
-			float angle = Vec2_Angle(&obj->vel);
-			float direction = Vec2_Angle(&Vec2_Sub(&game->player.pos, &obj->pos));
+			//float angle = Vec2_Angle(&obj->vel);
+			//float direction = Vec2_Angle(&Vec2_Sub(&game->player.pos, &obj->pos));
 
-			float theta = GetLoopRangeF(direction - angle, -DX_PI_F, DX_PI_F);
-			float angle_direction = angle + ClampF(theta, -ToRadians(2), ToRadians(2));
+			//float theta = GetLoopRangeF(direction - angle, -DX_PI_F, DX_PI_F);
+			//float angle_direction = angle + ClampF(theta, -ToRadians(2), ToRadians(2));
 
-			obj->vel = Vec2_Create(cosf(angle_direction) * BULLET_VEL, sinf(angle_direction) * BULLET_VEL);
+			//obj->vel = Vec2_Create(cosf(angle_direction) * BULLET_VEL, sinf(angle_direction) * BULLET_VEL);
 		}
 	} foreach_end;
 

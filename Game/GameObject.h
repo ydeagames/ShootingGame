@@ -129,6 +129,9 @@ GameSprite GameSprite_Create(GameTexture texture, float scale = 1, float angle =
 // <スプライトなし>
 GameSprite GameSprite_CreateNone();
 
+// <オブジェクトループ描画>
+//void GameObject_RenderLoop(const GameObject* obj, const GameObject* tile, Vector* objects, const Vec2* translate);
+
 // <スプライト描画>
 void GameSprite_Render(const GameSprite* sprite, const Vec2* pos);
 
