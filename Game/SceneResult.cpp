@@ -1,37 +1,99 @@
-#include "SceneResult.h"
+#include "SceneTitle.h"
 #include "SceneManager.h"
 #include "InputManager.h"
+#include "GameMain.h"
+#include "GameObject.h"
+#include "GameUtils.h"
+
+// 定数の定義 ==============================================================
+
+#define FONT_DESC_SIZE 72
+
+// タイトルテクスチャ
+#define TEXTURE_RESULT "Resources\\Textures\\Result\\result.png"
+#define TEXTURE_TEXT "Resources\\Textures\\Result\\press_button_back.png"
 
 // グローバル変数の定義 ====================================================
 
-int g_result_count;
+static int g_count;
+
+static HFNT g_font_desc;
+
+static HGRP g_texture_result;
+static HGRP g_texture_text;
+
 
 // 関数の定義 ==============================================================
 
-// リザルトシーンの初期化処理
+// タイトルシーンの初期化処理
 void InitializeResult(void)
 {
-	g_result_count = 0;
+	g_count = 0;
+
+	// フォント
+	g_font_desc = CreateFontToHandle("HGP創英角ｺﾞｼｯｸUB", FONT_DESC_SIZE, DX_FONTTYPE_ANTIALIASING_4X4);
+
+	// テクスチャを読み込む
+	g_texture_result = LoadGraph(TEXTURE_RESULT);
+	g_texture_text = LoadGraph(TEXTURE_TEXT);
 }
 
-// リザルトシーンの更新処理
+// タイトルシーンの更新処理
 void UpdateResult(void)
 {
-	//if (g_result_count++ >= 180)
+	g_count++;
+
 	if (IsKeyPressed(PAD_INPUT_2))
 		RequestScene(SCENE_TITLE);
 }
 
-// リザルトシーンの描画処理
+// タイトルシーンの描画処理
 void RenderResult(void)
 {
-	DrawFormatString(10, 10, COLOR_WHITE, "リザルトシーン");
-	//DrawFormatString(10, 25, COLOR_WHITE, "カウント: %3d / 180", g_result_count);
-	DrawFormatString(10, 25, COLOR_WHITE, "PRESS X TO BACK TO TITLE");
+	int bright = (int)GetEasingValue(ESG_INCUBIC, GetPercentageRange((float)g_count, 60 * 0, 60 * 0.5f), 255);		// フェードイン
+	SetDrawBright(bright, bright, bright);
+	{
+		DrawRotaGraph(SCREEN_CENTER_X, SCREEN_CENTER_Y, 1, 0, g_texture_result, TRUE);
+		{
+			int duration = 90;
+			int idle = 30;
+
+			DrawRotaGraph(SCREEN_CENTER_X, SCREEN_CENTER_Y + 96, 1, 0, g_texture_text, TRUE);
+			{
+				SetDrawBlendMode(DX_BLENDMODE_ALPHA,
+					(int)GetEasingValueRange(ESG_INCIRC, GetPercentageRange((float)(g_count % (duration + idle)), 0, (float)duration), 255, 32));
+				DrawRotaGraph(SCREEN_CENTER_X, SCREEN_CENTER_Y + 96,
+					GetEasingValueRange(ESG_LINEAR, GetPercentageRange((float)(g_count % (duration + idle)), 0, (float)duration), 1.1f, 1.f),
+					0, g_texture_text, TRUE
+				);
+				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+			}
+		}
+
+		//DrawFormatString(10, 10, COLOR_WHITE, "タイトルシーン");
+		//DrawFormatString(10, 25, COLOR_WHITE, "カウント: %3d / 180", g_result_count);
+
+		{
+			GameObject box = GameObject_Field_Create();
+			box.sprite.color = COLOR_BLACK;
+			box.pos.y += 5;
+			box.size.x -= 100;
+			box.size.y = 110;
+			SetDrawBlendMode(DX_BLENDMODE_ALPHA, 64);
+			GameObject_Render(&box);
+			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		}
+
+		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 0, COLOR_WHITE, g_font_desc, g_cleared ? "クリア!" : "Game Over");
+	}
+	SetDrawBright(255, 255, 255);
 }
 
-// リザルトシーンの終了処理
+// タイトルシーンの終了処理
 void FinalizeResult(void)
 {
+	DeleteFontToHandle(g_font_desc);
 
+	// テクスチャアンロード
+	DeleteGraph(g_texture_result);
 }

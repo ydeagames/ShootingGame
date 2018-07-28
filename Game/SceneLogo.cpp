@@ -52,8 +52,8 @@ void RenderLogo(void)
 		}
 	}
 
-	DrawFormatString(10, 10, COLOR_WHITE, "ロゴシーン");
-	DrawFormatString(10, 25, COLOR_WHITE, "カウント: %3d / 180", g_logo_count);
+	//DrawFormatString(10, 10, COLOR_WHITE, "ロゴシーン");
+	//DrawFormatString(10, 25, COLOR_WHITE, "カウント: %3d / 180", g_logo_count);
 }
 
 // ロゴシーンの終了処理
