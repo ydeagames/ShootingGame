@@ -7,9 +7,11 @@
 // 定数の定義 ==============================================================
 
 // <デバッグ用当たり判定表示>
-#define DEBUG_HITBOX FALSE
+#define DEBUG_HITBOX (g_debug_mode)
 
-// 変数の定義 ==============================================================
+// グローバル変数の定義 ====================================================
+
+BOOL g_debug_mode = FALSE;
 
 // <<ティック>> --------------------------------------------------------
 
@@ -129,7 +131,7 @@ void GameTick_Update(void)
 // <オブジェクト作成>
 GameObject GameObject_Create(Vec2 pos, Vec2 vel, Vec2 size)
 {
-	return{ pos, vel, size, SHAPE_BOX, GameSprite_CreateNone(), CONNECTION_NONE, TRUE, 1, 0, GameTimer_Create() };
+	return{ pos, vel, size, SHAPE_BOX, GameSprite_CreateNone(), FALSE, 0, CONNECTION_NONE, TRUE, 1, 0, GameTimer_Create() };
 }
 
 // <オブジェクト削除>
@@ -317,34 +319,7 @@ void GameObject_Render(const GameObject* obj, const Vec2* translate)
 	Vec2 box_t = Vec2_Create(box_xc, box_ym);
 
 	// テクスチャを確認
-	if (obj->sprite.texture.texture == TEXTURE_NONE)
-	{
-		switch (obj->shape)
-		{
-		default:
-		case SHAPE_BOX:
-			// 矩形描画
-			if (DEBUG_HITBOX)
-				DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
-			else
-				DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, TRUE);
-			break;
-		case SHAPE_CIRCLE:
-		{
-			float r1 = GetMinF(obj->size.x, obj->size.y) / 2;
-			// 円
-			if (DEBUG_HITBOX)
-			{
-				DrawCircleAA(box_xc, box_ym, r1, 120, obj->sprite.color, FALSE, .5f);
-				DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
-			}
-			else
-				DrawCircleAA(box_xc, box_ym, r1, 120, obj->sprite.color, TRUE);
-			break;
-		}
-		}
-	}
-	else
+	if (obj->sprite.texture.texture != TEXTURE_NONE)
 	{
 		if (obj->sprite.texture.texture != TEXTURE_MISSING)
 		{
@@ -392,9 +367,6 @@ void GameObject_Render(const GameObject* obj, const Vec2* translate)
 						}
 					}
 
-					if (DEBUG_HITBOX)
-						DrawBoxAA(sp_left, sp_top, sp_right, sp_bottom, obj->sprite.color, FALSE, .5f);
-
 					break;
 				}
 
@@ -413,29 +385,42 @@ void GameObject_Render(const GameObject* obj, const Vec2* translate)
 			DrawBoxAA(box_xc, box_ym, box_xr, box_yb, COLOR_FUCHSIA, TRUE);
 			//DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
 		}
+	}
 
-		// デバッグ当たり判定枠を表示
+	// 図形描画
+	switch (obj->shape)
+	{
+	default:
+	case SHAPE_BOX:
+		// 矩形描画
+		if (obj->fill)
+			DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, TRUE);
+		if (obj->edge > 0)
+			DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, obj->edge);
 		if (DEBUG_HITBOX)
 		{
-			switch (obj->shape)
-			{
-			default:
-			case SHAPE_BOX:
-				DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
-				DrawLineAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, .5f);
-				DrawLineAA(box_xr, box_yt, box_xl, box_yb, obj->sprite.color, .5f);
-				break;
-			case SHAPE_CIRCLE:
-			{
-				float r1 = GetMinF(obj->size.x, obj->size.y) / 2;
-				DrawCircleAA(box_xc, box_ym, r1, 120, obj->sprite.color, FALSE, .5f);
-				DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
-				DrawLineAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, .5f);
-				DrawLineAA(box_xr, box_yt, box_xl, box_yb, obj->sprite.color, .5f);
-				break;
-			}
-			}
+			DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
+			DrawLineAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, .5f);
+			DrawLineAA(box_xr, box_yt, box_xl, box_yb, obj->sprite.color, .5f);
 		}
+		break;
+	case SHAPE_CIRCLE:
+	{
+		float r1 = GetMinF(obj->size.x, obj->size.y) / 2;
+		// 円
+		if (obj->fill)
+			DrawCircleAA(box_xc, box_ym, r1, 120, obj->sprite.color, TRUE);
+		if (obj->edge > 0)
+			DrawCircleAA(box_xc, box_ym, r1, 120, obj->sprite.color, FALSE, obj->edge);
+		if (DEBUG_HITBOX)
+		{
+			DrawCircleAA(box_xc, box_ym, r1, 120, obj->sprite.color, FALSE, .5f);
+			DrawBoxAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, FALSE, .5f);
+			DrawLineAA(box_xl, box_yt, box_xr, box_yb, obj->sprite.color, .5f);
+			DrawLineAA(box_xr, box_yt, box_xl, box_yb, obj->sprite.color, .5f);
+		}
+		break;
+	}
 	}
 }
 

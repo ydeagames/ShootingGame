@@ -52,6 +52,8 @@ void InitializeGame(void)
 {
 	SetUpMemoryLeakDetector();
 
+	SetJoypadInputToKeyInput(DX_INPUT_KEY_PAD1, PAD_INPUT_11, KEY_INPUT_F3);
+
 	g_resources = GameResource_Create();
 
 	InitializeSceneManager(SCENE_LOGO);
@@ -70,6 +72,13 @@ void UpdateGame(void)
 {
 	UpdateInputManager();
 	GameTick_Update();
+
+	if (IsKeyPressed(PAD_INPUT_11))
+	{
+		extern BOOL g_debug_mode;
+		g_debug_mode = !g_debug_mode;
+	}
+
 	UpdateSceneManager();
 }
 

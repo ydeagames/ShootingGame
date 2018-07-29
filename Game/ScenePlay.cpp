@@ -58,6 +58,7 @@ void InitializePlay(void)
 		g_game.field = GameObject_Field_Create();
 		g_game.field.size = Vec2_Create(2048, 2048);
 		g_game.field.pos = Vec2_Scale(&g_game.field.size, .5f);
+		g_game.field.edge = 1;
 		//g_game.field.size.x -= 80;
 		//g_game.field.size.y -= 80;
 		//g_game.field.sprite = GameSprite_Create(GameTexture_Create(g_game.resources.texture_map, Vec2_Create(), Vec2_Create(64, 64)), 1.5f);
@@ -286,7 +287,7 @@ void RenderPlay(void)
 			GameObject_Render(&cloud);
 		}
 		{
-			GameObject frame;
+			GameObject frame = GameObject_Create();
 			frame.pos = g_game.field.pos;
 			frame.size = g_game.field.size;
 			GameObject_Render(&frame, &offset);
