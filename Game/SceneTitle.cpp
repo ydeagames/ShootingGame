@@ -66,10 +66,10 @@ void RenderTitle(void)
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
 
-		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 0, COLOR_WHITE, g_resources.font_menu, "①マウスとWASDキーで操作します。");
-		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 1, COLOR_WHITE, g_resources.font_menu, "②弾をたくさんあて、四隅の敵を倒します。");
+		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 0, COLOR_WHITE, g_resources.font_menu, "①マウスとWASDキーで操作します。マウスを繋げてネ！");
+		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 1, COLOR_WHITE, g_resources.font_menu, "②長押しでチャージ弾も！弾をたくさんあて、四隅の敵を倒します");
 		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 2, COLOR_WHITE, g_resources.font_menu, "③四隅の敵から敵が沸きます");
-		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 3, COLOR_WHITE, g_resources.font_menu, "④クリックして弾をぶつけよう 長押しでチャージ弾も！");
+		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 3, COLOR_WHITE, g_resources.font_menu, "④クリックして弾をぶつけよう！");
 	}
 	SetDrawBright(255, 255, 255);
 }
