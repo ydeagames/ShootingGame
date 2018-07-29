@@ -33,8 +33,7 @@ BOOL GameContents_ReloadPlayerBullet(GameContents* game, int n_way)
 	for (i = 0; i < n_way; i++)
 	{
 		GameObject obj = GameObject_Bullet_Create();
-		obj.shape = SHAPE_CIRCLE;
-		obj.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_bullet, Vec2_Create(), Vec2_Create(32, 32)));
+		obj.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_bullet, Vec2_Create(32, 0), Vec2_Create(32, 32)));
 		GameObject_Bullet_SetPosDefault(&obj, &game->player);
 		Vector_AddLast(&game->player_bullets, &obj);
 	}
@@ -93,6 +92,7 @@ BOOL GameContents_ShotEnemyBullet(GameContents* game, const GameObject* enemy)
 		float angle = GetRandF(DX_PI_F*2);
 		obj.vel = Vec2_Create(cosf(angle) * 5, sinf(angle) * 5);
 		obj.vel = Vec2_Add(&obj.vel, &enemy->vel);
+		GameObject_Bullet_SetSize(&obj, 2);
 		GameTimer_SetRemaining(&obj.count, 3.f);
 		GameTimer_Resume(&obj.count);
 	}

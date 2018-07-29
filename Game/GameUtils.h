@@ -61,3 +61,8 @@ float GetPercentValue(float percent, float max);
 
 // min～maxの範囲でのpercent%の位置
 float GetPercentValueRange(float percent, float min, float max);
+
+// H : 色相　有効範囲 0.0f ～ 360.0f
+// S : 彩度　有効範囲 0.0f ～ 1.0f
+// V : 明度　有効範囲 0.0f ～ 1.0f
+int GetColorHSV(float H, float S, float V);

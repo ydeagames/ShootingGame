@@ -58,7 +58,6 @@ void InitializePlay(void)
 		g_game.field = GameObject_Field_Create();
 		g_game.field.size = Vec2_Create(2048, 2048);
 		g_game.field.pos = Vec2_Scale(&g_game.field.size, .5f);
-		g_game.field.edge = 1;
 		//g_game.field.size.x -= 80;
 		//g_game.field.size.y -= 80;
 		//g_game.field.sprite = GameSprite_Create(GameTexture_Create(g_game.resources.texture_map, Vec2_Create(), Vec2_Create(64, 64)), 1.5f);
@@ -287,10 +286,14 @@ void RenderPlay(void)
 			GameObject_Render(&cloud);
 		}
 		{
+			static float color = 0;
 			GameObject frame = GameObject_Create();
+			frame.edge = 4;
+			frame.sprite.color = GetColorHSV(color, 1, 1);
 			frame.pos = g_game.field.pos;
 			frame.size = g_game.field.size;
 			GameObject_Render(&frame, &offset);
+			color = GetLoopF(color + 1, 360);
 		}
 
 		foreach_start(&g_game.player_bullets, obj)

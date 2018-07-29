@@ -95,6 +95,8 @@ void GameObject_Player_SetPosYDefault(GameObject* obj, const GameObject* field)
 GameObject GameObject_Bullet_Create(void)
 {
 	GameObject obj = GameObject_Create(Vec2_Create(), Vec2_Create(), Vec2_Create(BULLET_WIDTH, BULLET_HEIGHT));
+	obj.shape = SHAPE_CIRCLE;
+	obj.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_bullet, Vec2_Create(0, 0), Vec2_Create(32, 32)));
 	obj.type = TYPE_PLAYER_BULLET;
 	return obj;
 }
