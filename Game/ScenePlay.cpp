@@ -99,6 +99,12 @@ void InitializePlay(void)
 		g_screen_field.sprite.angle = ToRadians(0);
 	}
 
+	g_game.explosion = GameSprite_Create(GameTexture_Create(g_resources.texture_explosion, Vec2_Create(0, 0), Vec2_Create(64, 64)));
+	g_game.explosion.animation = GameSpriteAnimation_Create(0, 15, 4, 8);
+	g_game.msg_show = GameTimer_Create();
+	GameTimer_SetRemaining(&g_game.msg_show, 2);
+	GameTimer_Resume(&g_game.msg_show);
+
 	{
 		GameObject enemy;
 		enemy = GameObject_Enemy_Create(9);
@@ -167,14 +173,36 @@ void UpdatePlay(void)
 				{
 					if (enemy->type == TYPE_ENEMY2)
 					{
-						if (enemy->state++ > 10)
-							VectorIterator_Remove(&itr_enemy);
-					} else
+						if (Vec2_LengthSquaredTo(&g_game.player.pos, &enemy->pos) < Vec2_LengthSquared(&Vec2_Scale(&g_window_field.size, .5f)))
+							if (enemy->state++ > 10)
+							{
+								enemy->sprite = g_game.explosion;
+								GameTimer_SetRemaining(&g_game.msg_show, 2);
+							}
+					}
+					else
 						VectorIterator_Remove(&itr_enemy);
 					VectorIterator_Remove(&itr_player_bullet);
 					break;
 				}
 			} foreach_end;
+		} foreach_end;
+
+		g_game.num_enemy2 = 0;
+		foreach_start(&g_game.enemies, enemy)
+		{
+			if (enemy->type == TYPE_ENEMY2)
+			{
+				if (enemy->state > 10)
+				{
+					if (enemy->sprite.animation.result == ANIMATION_FINISHED)
+					{
+						VectorIterator_Remove(&itr_enemy);
+					}
+				}
+				else
+					g_game.num_enemy2++;
+			}
 		} foreach_end;
 
 		//*
@@ -286,6 +314,14 @@ void RenderPlay(void)
 	SetDrawScreen(current);
 	g_screen_field.sprite.angle = -g_game.player.sprite.angle;
 	GameObject_Render(&g_screen_field);
+
+	if (!GameTimer_IsFinished(&g_game.msg_show))
+	{
+		char* msg = g_game.num_enemy2 >= 4 ? "l‹÷‚Ì“G‚ğ“|‚¹I" : "‚Ì‚±‚è%d‘ÌI";
+		int width = GetDrawFormatStringWidth(msg, g_game.num_enemy2);
+		DrawFormatStringToHandle((int)(GameObject_GetX(&g_window_field, CENTER_X) - width / 2), (int)(GameObject_GetY(&g_window_field, CENTER_Y) + 20), COLOR_RED,
+			g_resources.font_menu, msg, g_game.num_enemy2);
+	}
 }
 
 

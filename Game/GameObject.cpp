@@ -47,7 +47,7 @@ GameTexture GameTexture_CreateNone()
 // <スプライトアニメーション作成>
 GameSpriteAnimation GameSpriteAnimation_Create(int frames_start, int frames_end, int num_columns, int frame_duration)
 {
-	return{ frames_start, frames_end, num_columns, frame_duration, frames_start, 0 };
+	return{ frames_start, frames_end, num_columns, frame_duration, frames_start, 0, TRUE, ANIMATION_RUNNING };
 }
 
 // <スプライトアニメーションなし>
@@ -59,7 +59,7 @@ GameSpriteAnimation GameSpriteAnimation_CreateNone()
 // <スプライトアニメーション更新>
 AnimationState GameSpriteAnimation_Update(GameSpriteAnimation* animate_sprite)
 {
-	AnimationState result = ANIMATION_FINISHED;
+	animate_sprite->result = ANIMATION_RUNNING;
 
 	animate_sprite->elapsed_time++;
 
@@ -70,12 +70,13 @@ AnimationState GameSpriteAnimation_Update(GameSpriteAnimation* animate_sprite)
 
 		if (animate_sprite->frame_index > animate_sprite->frame_end)
 		{
-			animate_sprite->frame_index = animate_sprite->frame_start;
-			result = ANIMATION_RUNNING;
+			if (animate_sprite->loop_flag)
+				animate_sprite->frame_index = animate_sprite->frame_start;
+			animate_sprite->result = ANIMATION_FINISHED;
 		}
 	}
 
-	return result;
+	return animate_sprite->result;
 }
 
 // <<スプライト>> ------------------------------------------------------

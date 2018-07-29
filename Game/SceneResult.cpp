@@ -4,6 +4,7 @@
 #include "GameMain.h"
 #include "GameObject.h"
 #include "GameUtils.h"
+#include "Easings.h"
 
 // ’è”‚Ì’è‹` ==============================================================
 

@@ -10,11 +10,14 @@ typedef struct
 {
 	GameObject field;
 	GameSprite field_cloud;
+	GameSprite explosion;
 	GameObject player;
 	Vector player_bullets;
 	Vector enemies;
 	Vector enemy_bullets;
 	GameTimer enemy_appear_count;
+	GameTimer msg_show;
+	int num_enemy2;
 } GameContents;
 
 // ŠÖ”‚ÌéŒ¾ ==============================================================

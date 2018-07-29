@@ -1,5 +1,4 @@
 #pragma once
-#include "Easings.h"
 
 // ®”a‚Æb‚ğ“ü‚ê‘Ö‚¦
 void Swap(int* a, int* b);

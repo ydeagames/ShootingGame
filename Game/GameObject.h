@@ -66,6 +66,8 @@ typedef struct
 	int frame_duration;			// フレーム間隔
 	int frame_index;			// 現在のフレームのインデックス
 	int elapsed_time;			// 現在のフレームの経過時間
+	BOOL loop_flag;				// アニメーションのループ
+	AnimationState result;		// 最後の状態
 } GameSpriteAnimation;
 
 // <スプライトオブジェクト>

@@ -89,7 +89,8 @@ BOOL GameContents_ShotEnemyBullet(GameContents* game, const GameObject* enemy)
 
 	//if (Vec2_LengthSquaredTo(&game->player.pos, &enemy->pos) < Vec2_LengthSquared(&Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT)))
 	{
-		float angle = Vec2_Angle(&Vec2_Sub(&game->player.pos, &enemy->pos));
+		//float angle = Vec2_Angle(&Vec2_Sub(&game->player.pos, &enemy->pos));
+		float angle = GetRandF(DX_PI_F*2);
 		obj.vel = Vec2_Create(cosf(angle) * 5, sinf(angle) * 5);
 		obj.vel = Vec2_Add(&obj.vel, &enemy->vel);
 		GameTimer_SetRemaining(&obj.count, 3.f);
