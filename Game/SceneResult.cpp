@@ -67,7 +67,7 @@ void RenderResult(void)
 		}
 
 		{
-			float width = GetDrawFormatStringWidthToHandle(g_resources.font_main, g_cleared ? "Clear!" : "Game Over");
+			int width = GetDrawFormatStringWidthToHandle(g_resources.font_main, g_cleared ? "Clear!" : "Game Over");
 			DrawFormatStringToHandle(SCREEN_CENTER_X - width / 2, SCREEN_CENTER_Y - 35 + 20 * 0, COLOR_WHITE, g_resources.font_main, g_cleared ? "Clear!" : "Game Over");
 		}
 	}

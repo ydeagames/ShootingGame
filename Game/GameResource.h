@@ -10,6 +10,13 @@ typedef struct
 	HFNT font_menu;
 
 	// <サウンド>
+	HSND sound_bgm;
+	HSND sound_se_hit;
+	HSND sound_se_hit_boss;
+	HSND sound_se_charge;
+	HSND sound_se_shoot;
+	HSND sound_se_shootbig;
+	HSND sound_se_dead;
 
 	// <テクスチャ>
 	// タイトル

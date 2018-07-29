@@ -47,7 +47,10 @@ BOOL GameContents_GrowPlayerBullet(GameContents* game)
 	{
 		if (obj->state == 1)
 		{
+			BOOL last = obj->sprite.scale > BULLET_CHARGE_SIZE;
 			GameObject_Bullet_Grow(obj);
+			if (!last && obj->sprite.scale > BULLET_CHARGE_SIZE)
+				PlaySoundMem(g_resources.sound_se_charge, DX_PLAYTYPE_LOOP);
 			GameObject_Bullet_SetPosDefault(obj, &game->player);
 		}
 	} foreach_end;
@@ -65,8 +68,15 @@ BOOL GameContents_ShotPlayerBullet(GameContents* game, int n_way)
 			GameObject_Bullet_SetVelDefault(obj, game->player.sprite.angle, num_shot++, n_way);
 			obj->vel = Vec2_Add(&obj->vel, &game->player.vel);
 			obj->state = 2;
+
+			if (obj->sprite.scale > BULLET_CHARGE_SIZE)
+				PlaySoundMem(g_resources.sound_se_shootbig, DX_PLAYTYPE_BACK);
+			else
+				PlaySoundMem(g_resources.sound_se_shoot, DX_PLAYTYPE_BACK);
 		}
 	} foreach_end;
+
+	StopSoundMem(g_resources.sound_se_charge);
 
 	return TRUE;
 }

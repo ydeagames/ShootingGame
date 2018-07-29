@@ -125,9 +125,9 @@ void GameObject_Bullet_SetSize(GameObject* obj, float scale)
 }
 
 // <弾オブジェクト成長>
-void GameObject_Bullet_Grow(GameObject* obj)
+void GameObject_Bullet_Grow(GameObject* obj, float grow)
 {
-	GameObject_Bullet_SetSize(obj, obj->sprite.scale + BULLET_GROW_SPEED);
+	GameObject_Bullet_SetSize(obj, obj->sprite.scale + grow);
 }
 
 // <オブジェクトループ描画>

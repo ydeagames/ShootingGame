@@ -120,6 +120,8 @@ void InitializePlay(void)
 		enemy.pos = Vec2_Create(GameObject_GetX(&g_game.field, RIGHT, -200), GameObject_GetY(&g_game.field, BOTTOM, -200));
 		Vector_AddLast(&g_game.enemies, &enemy);
 	}
+
+	PlaySoundMem(g_resources.sound_bgm, DX_PLAYTYPE_LOOP);
 }
 
 
@@ -177,12 +179,19 @@ void UpdatePlay(void)
 							if (enemy->state++ > 10)
 							{
 								enemy->sprite = g_game.explosion;
+								PlaySoundMem(g_resources.sound_se_hit_boss, DX_PLAYTYPE_BACK);
 								GameTimer_SetRemaining(&g_game.msg_show, 2);
 							}
 					}
 					else
+					{
+						PlaySoundMem(g_resources.sound_se_hit, DX_PLAYTYPE_BACK);
 						VectorIterator_Remove(&itr_enemy);
-					VectorIterator_Remove(&itr_player_bullet);
+					}
+					if (enemy->type != TYPE_ENEMY2 && player_bullet->sprite.scale > BULLET_CHARGE_SIZE)
+						GameObject_Bullet_Grow(player_bullet, -BULLET_GROW_SPEED * 8);
+					else
+						VectorIterator_Remove(&itr_player_bullet);
 					break;
 				}
 			} foreach_end;
@@ -212,6 +221,7 @@ void UpdatePlay(void)
 			{
 				if (GameObject_IsHit(obj, &g_game.player))
 				{
+					PlaySoundMem(g_resources.sound_se_dead, DX_PLAYTYPE_BACK);
 					RequestScene(SCENE_RESULT);
 				}
 			} foreach_end;
@@ -219,6 +229,7 @@ void UpdatePlay(void)
 			{
 				if (GameObject_IsHit(obj, &g_game.player))
 				{
+					PlaySoundMem(g_resources.sound_se_dead, DX_PLAYTYPE_BACK);
 					RequestScene(SCENE_RESULT);
 				}
 			} foreach_end;
@@ -339,6 +350,9 @@ void RenderPlay(void)
 //----------------------------------------------------------------------
 void FinalizePlay(void)
 {
+	StopSoundMem(g_resources.sound_bgm);
+	StopSoundMem(g_resources.sound_se_charge);
+
 	DeleteGraph(g_screen);
 	SetMouseDispFlag(TRUE);
 

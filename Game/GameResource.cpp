@@ -10,6 +10,13 @@
 #define FONT_NAME_MENU "HGP創英角ｺﾞｼｯｸUB"
 
 // <サウンド> ----------------------------------------------------------
+#define SOUND_BGM "Resources\\Audio\\nv_01.mp3"
+#define SOUND_SE_HIT "Resources\\Audio\\Protected\\xev_se_EnemyStriken_Zapper.wav"
+#define SOUND_SE_HIT_BOSS "Resources\\Audio\\Protected\\xev_se_EnemyStriken_Blaster.wav"
+#define SOUND_SE_CHARGE "Resources\\Audio\\Protected\\xev_se_Andorgenesis_loop.wav"
+#define SOUND_SE_SHOOT "Resources\\Audio\\Protected\\xev_se_ZapperShoot.wav"
+#define SOUND_SE_SHOOTBIG "Resources\\Audio\\Protected\\xev_se_EnemyStriken_Blaster.wav"
+#define SOUND_SE_DEAD "Resources\\Audio\\Protected\\xev_se_Miss.wav"
 
 // <テクスチャ> --------------------------------------------------------
 // タイトル
@@ -53,6 +60,13 @@ GameResource GameResource_Create(void)
 	res.font_menu = CreateFontToHandle(FONT_NAME_MENU, FONT_SIZE_MENU, 16, DX_FONTTYPE_ANTIALIASING_4X4);
 
 	// サウンド
+	res.sound_bgm = LoadSoundMem(SOUND_BGM);
+	res.sound_se_hit = LoadSoundMem(SOUND_SE_HIT);
+	res.sound_se_hit_boss = LoadSoundMem(SOUND_SE_HIT_BOSS);
+	res.sound_se_charge = LoadSoundMem(SOUND_SE_CHARGE);
+	res.sound_se_shoot = LoadSoundMem(SOUND_SE_SHOOT);
+	res.sound_se_shootbig = LoadSoundMem(SOUND_SE_SHOOTBIG);
+	res.sound_se_dead = LoadSoundMem(SOUND_SE_DEAD);
 
 	// テクスチャ
 	// ロゴ動画
@@ -94,6 +108,13 @@ void GameResource_Delete(GameResource* res)
 	RemoveFontResourceEx(FONT_FILE_MAIN_CUSTOM, FR_PRIVATE, NULL);
 
 	// サウンド
+	DeleteSoundMem(res->sound_bgm);
+	DeleteSoundMem(res->sound_se_hit);
+	DeleteSoundMem(res->sound_se_hit_boss);
+	DeleteSoundMem(res->sound_se_charge);
+	DeleteSoundMem(res->sound_se_shoot);
+	DeleteSoundMem(res->sound_se_shootbig);
+	DeleteSoundMem(res->sound_se_dead);
 
 	// テクスチャ
 	// ロゴ動画

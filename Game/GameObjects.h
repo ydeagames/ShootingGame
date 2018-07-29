@@ -11,6 +11,8 @@
 // <弾>
 #define BULLET_VEL 3.f		// 敵の速度
 
+#define BULLET_GROW_SPEED .1f
+
 // 列挙型の定義 ============================================================
 
 // <種類> --------------------------------------------------------------
@@ -63,7 +65,7 @@ void GameObject_Bullet_SetVelDefault(GameObject* obj, float offset_angle, int nu
 void GameObject_Bullet_SetSize(GameObject* obj, float scale);
 
 // <弾オブジェクト成長>
-void GameObject_Bullet_Grow(GameObject* obj);
+void GameObject_Bullet_Grow(GameObject* obj, float grow = BULLET_GROW_SPEED);
 
 // <オブジェクトループ描画>
 void GameObject_RenderLoop(const GameObject* obj, const GameObject* tile_area, GameObject* tile_obj, const Vec2* translate);
