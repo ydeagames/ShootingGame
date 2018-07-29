@@ -12,12 +12,19 @@ typedef struct
 	// <サウンド>
 
 	// <テクスチャ>
+	// タイトル
+	HGRP texture_title;
+	HGRP texture_title_text;
+	// プレイ
 	HGRP texture_player;
 	HGRP texture_bullet;
 	HGRP texture_enemy;
 	HGRP texture_explosion;
 	HGRP texture_map;
 	HGRP texture_cloud;
+	// リザルト
+	HGRP texture_result;
+	HGRP texture_result_text;
 
 	// <動画>
 	HGRP movie_logo;

@@ -6,12 +6,16 @@
 // <フォント> ----------------------------------------------------------
 #define FONT_FILE_MAIN_CUSTOM "Resources\\Fonts\\TheSlavicFont-Regular.ttf"		// カスタムフォントファイル
 #define FONT_NAME_MAIN_CUSTOM "The Slavic Font"									// カスタムフォントネーム
-#define FONT_NAME_SPACERACE "HGP創英角ｺﾞｼｯｸUB"											// フォールバック用フォントネーム
+#define FONT_NAME "HGP創英角ｺﾞｼｯｸUB"										// フォールバック用フォントネーム
 #define FONT_NAME_MENU "HGP創英角ｺﾞｼｯｸUB"
 
 // <サウンド> ----------------------------------------------------------
 
 // <テクスチャ> --------------------------------------------------------
+// タイトル
+#define TEXTURE_TITLE "Resources\\Textures\\Title\\title.png"
+#define TEXTURE_TITLE_TEXT "Resources\\Textures\\Title\\press_button.png"
+// プレイ
 #define TEXTURE_PLAYER_PROTECTED "Resources\\Textures\\Protected\\Solvalou.png"		// リソース保護テクスチャ
 #define TEXTURE_PLAYER "Resources\\Textures\\Solvalou.png"							// オープンテクスチャ
 #define TEXTURE_BULLET_PROTECTED "Resources\\Textures\\Protected\\Bullet.png"		// リソース保護テクスチャ
@@ -24,6 +28,9 @@
 #define TEXTURE_MAP "Resources\\Textures\\Map.png"									// オープンテクスチャ
 #define TEXTURE_CLOUD_PROTECTED "Resources\\Textures\\Protected\\Cloud.png"			// リソース保護テクスチャ
 #define TEXTURE_CLOUD "Resources\\Textures\\Cloud.png"								// オープンテクスチャ
+// リザルト
+#define TEXTURE_RESULT "Resources\\Textures\\Result\\result.png"
+#define TEXTURE_RESULT_TEXT "Resources\\Textures\\Result\\press_button_back.png"
 
 // <動画> --------------------------------------------------------------
 #define MOVIE_LOGO "Resources\\Movies\\ydeagames.avi"								// ロゴムービー
@@ -42,12 +49,18 @@ GameResource GameResource_Create(void)
 	if (AddFontResourceEx(FONT_FILE_MAIN_CUSTOM, FR_PRIVATE, NULL) > 0)
 		res.font_main = CreateFontToHandle(FONT_NAME_MAIN_CUSTOM, FONT_SIZE_MAIN, 3, DX_FONTTYPE_ANTIALIASING_4X4);
 	else
-		res.font_main = CreateFontToHandle(FONT_NAME_SPACERACE, FONT_SIZE_MAIN, 3, DX_FONTTYPE_ANTIALIASING_4X4);
-	res.font_menu = CreateFontToHandle(FONT_NAME_MENU, FONT_SIZE_MENU, 3, DX_FONTTYPE_ANTIALIASING_4X4);
+		res.font_main = CreateFontToHandle(FONT_NAME, FONT_SIZE_MAIN, 3, DX_FONTTYPE_ANTIALIASING_4X4);
+	res.font_menu = CreateFontToHandle(FONT_NAME_MENU, FONT_SIZE_MENU, 16, DX_FONTTYPE_ANTIALIASING_4X4);
 
 	// サウンド
 
 	// テクスチャ
+	// ロゴ動画
+	res.movie_logo = LoadGraph(MOVIE_LOGO);
+	// タイトル
+	res.texture_title = LoadGraph(TEXTURE_TITLE);
+	res.texture_title_text = LoadGraph(TEXTURE_TITLE_TEXT);
+	// プレイ
 	res.texture_player = LoadGraph(TEXTURE_PLAYER_PROTECTED);
 	if (res.texture_player == TEXTURE_MISSING)										// リソース保護テクスチャが無かったら
 		res.texture_player = LoadGraph(TEXTURE_PLAYER);								// オープンテクスチャを読み込む
@@ -66,9 +79,9 @@ GameResource GameResource_Create(void)
 	res.texture_cloud = LoadGraph(TEXTURE_CLOUD_PROTECTED);
 	if (res.texture_cloud == TEXTURE_MISSING)										// リソース保護テクスチャが無かったら
 		res.texture_cloud = LoadGraph(TEXTURE_CLOUD);								// オープンテクスチャを読み込む
-
-	// 動画
-	res.movie_logo = LoadGraph(MOVIE_LOGO);											// オープンテクスチャを読み込む
+	// リザルト
+	res.texture_result = LoadGraph(TEXTURE_RESULT);
+	res.texture_result_text = LoadGraph(TEXTURE_RESULT_TEXT);
 
 	return res;
 }
@@ -83,13 +96,19 @@ void GameResource_Delete(GameResource* res)
 	// サウンド
 
 	// テクスチャ
+	// ロゴ動画
+	DeleteGraph(res->movie_logo);
+	// タイトル
+	DeleteGraph(res->texture_title);
+	DeleteGraph(res->texture_title_text);
+	// プレイ
 	DeleteGraph(res->texture_player);
 	DeleteGraph(res->texture_bullet);
 	DeleteGraph(res->texture_enemy);
 	DeleteGraph(res->texture_explosion);
 	DeleteGraph(res->texture_map);
 	DeleteGraph(res->texture_cloud);
-
-	// 動画
-	DeleteGraph(res->movie_logo);
+	// タイトル
+	DeleteGraph(res->texture_result);
+	DeleteGraph(res->texture_result_text);
 }

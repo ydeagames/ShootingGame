@@ -8,21 +8,9 @@
 
 // 定数の定義 ==============================================================
 
-#define FONT_DESC_SIZE 16
-
-// タイトルテクスチャ
-#define TEXTURE_TITLE "Resources\\Textures\\Title\\title.png"
-#define TEXTURE_TEXT "Resources\\Textures\\Title\\press_button.png"
-
 // グローバル変数の定義 ====================================================
 
 static int g_count;
-
-static HFNT g_font_desc;
-
-static HGRP g_texture_title;
-static HGRP g_texture_text;
-
 
 // 関数の定義 ==============================================================
 
@@ -30,13 +18,6 @@ static HGRP g_texture_text;
 void InitializeTitle(void)
 {
 	g_count = 0;
-
-	// フォント
-	g_font_desc = CreateFontToHandle("HGP創英角ｺﾞｼｯｸUB", FONT_DESC_SIZE, DX_FONTTYPE_ANTIALIASING_4X4);
-
-	// テクスチャを読み込む
-	g_texture_title = LoadGraph(TEXTURE_TITLE);
-	g_texture_text = LoadGraph(TEXTURE_TEXT);
 }
 
 // タイトルシーンの更新処理
@@ -54,18 +35,18 @@ void RenderTitle(void)
 	int bright = (int)GetEasingValue(ESG_INCUBIC, GetPercentageRange((float)g_count, 60 * 0, 60 * 0.5f), 255);		// フェードイン
 	SetDrawBright(bright, bright, bright);
 	{
-		DrawRotaGraph(SCREEN_CENTER_X, SCREEN_CENTER_Y, 1, 0, g_texture_title, TRUE);
+		DrawRotaGraph(SCREEN_CENTER_X, SCREEN_CENTER_Y, 1, 0, g_resources.texture_title, TRUE);
 		{
 			int duration = 90;
 			int idle = 30;
 
-			DrawRotaGraph(SCREEN_CENTER_X, SCREEN_CENTER_Y + 96, 1, 0, g_texture_text, TRUE);
+			DrawRotaGraph(SCREEN_CENTER_X, SCREEN_CENTER_Y + 96, 1, 0, g_resources.texture_title_text, TRUE);
 			{
 				SetDrawBlendMode(DX_BLENDMODE_ALPHA, 
 					(int)GetEasingValueRange(ESG_INCIRC, GetPercentageRange((float)(g_count % (duration + idle)), 0, (float)duration), 255, 32));
 				DrawRotaGraph(SCREEN_CENTER_X, SCREEN_CENTER_Y + 96,
 					GetEasingValueRange(ESG_LINEAR, GetPercentageRange((float)(g_count % (duration + idle)), 0, (float)duration), 1.1f, 1.f),
-					0, g_texture_text, TRUE
+					0, g_resources.texture_title_text, TRUE
 				);
 				SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 			}
@@ -85,10 +66,10 @@ void RenderTitle(void)
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
 
-		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 0, COLOR_WHITE, g_font_desc, "①マウスとWASDキーで操作します。");
-		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 1, COLOR_WHITE, g_font_desc, "②弾をたくさんあて、四隅の敵を倒します。");
-		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 2, COLOR_WHITE, g_font_desc, "③四隅の敵から敵が沸きます");
-		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 3, COLOR_WHITE, g_font_desc, "④クリックして弾をぶつけよう");
+		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 0, COLOR_WHITE, g_resources.font_menu, "①マウスとWASDキーで操作します。");
+		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 1, COLOR_WHITE, g_resources.font_menu, "②弾をたくさんあて、四隅の敵を倒します。");
+		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 2, COLOR_WHITE, g_resources.font_menu, "③四隅の敵から敵が沸きます");
+		DrawFormatStringToHandle(SCREEN_LEFT + 70, SCREEN_CENTER_Y - 35 + 20 * 3, COLOR_WHITE, g_resources.font_menu, "④クリックして弾をぶつけよう");
 	}
 	SetDrawBright(255, 255, 255);
 }
@@ -96,8 +77,4 @@ void RenderTitle(void)
 // タイトルシーンの終了処理
 void FinalizeTitle(void)
 {
-	DeleteFontToHandle(g_font_desc);
-
-	// テクスチャアンロード
-	DeleteGraph(g_texture_title);
 }

@@ -6,13 +6,9 @@
 
 // 定数の定義 ==============================================================
 
-// ロゴムービー
-#define MOVIE_LOGO "Resources\\Movies\\ydeagames.avi"
-
 // グローバル変数の定義 ====================================================
 
 int g_logo_count;
-HGRP g_movie_logo;
 
 // 関数の定義 ==============================================================
 
@@ -21,11 +17,8 @@ void InitializeLogo(void)
 {
 	g_logo_count = 0;
 
-	// オープンテクスチャを読み込む
-	g_movie_logo = LoadGraph(MOVIE_LOGO);
-
 	// 動画再生
-	PlayMovieToGraph(g_movie_logo);
+	PlayMovieToGraph(g_resources.movie_logo);
 }
 
 // ロゴシーンの更新処理
@@ -42,7 +35,7 @@ void RenderLogo(void)
 	{
 		{
 			SetDrawBlendMode(DX_BLENDMODE_ALPHA, (int)GetPercentValue(1 - GetPercentageRange((float)g_logo_count, 60 * 3, 60 * 3.5f), 255));
-			DrawExtendGraph(SCREEN_LEFT, SCREEN_TOP, SCREEN_WIDTH, SCREEN_HEIGHT, g_movie_logo, TRUE);
+			DrawExtendGraph(SCREEN_LEFT, SCREEN_TOP, SCREEN_WIDTH, SCREEN_HEIGHT, g_resources.movie_logo, TRUE);
 			SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 		}
 		{
@@ -59,6 +52,4 @@ void RenderLogo(void)
 // ロゴシーンの終了処理
 void FinalizeLogo(void)
 {
-	// 動画
-	DeleteGraph(g_movie_logo);
 }
