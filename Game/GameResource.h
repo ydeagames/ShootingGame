@@ -13,6 +13,7 @@ typedef struct
 	HSND sound_bgm;
 	HSND sound_se_hit;
 	HSND sound_se_hit_boss;
+	HSND sound_se_hit_boss_dead;
 	HSND sound_se_charge;
 	HSND sound_se_shoot;
 	HSND sound_se_shootbig;

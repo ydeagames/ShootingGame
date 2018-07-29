@@ -12,7 +12,8 @@
 // <ƒTƒEƒ“ƒh> ----------------------------------------------------------
 #define SOUND_BGM "Resources\\Audio\\nv_01.mp3"
 #define SOUND_SE_HIT "Resources\\Audio\\Protected\\xev_se_EnemyStriken_Zapper.wav"
-#define SOUND_SE_HIT_BOSS "Resources\\Audio\\Protected\\xev_se_EnemyStriken_Blaster.wav"
+#define SOUND_SE_HIT_BOSS "Resources\\Audio\\Protected\\xev_se_Zakato_DethoutSound.wav"
+#define SOUND_SE_HIT_BOSS_DEAD "Resources\\Audio\\Protected\\xev_se_EnemyStriken_Blaster.wav"
 #define SOUND_SE_CHARGE "Resources\\Audio\\Protected\\xev_se_Andorgenesis_loop.wav"
 #define SOUND_SE_SHOOT "Resources\\Audio\\Protected\\xev_se_ZapperShoot.wav"
 #define SOUND_SE_SHOOTBIG "Resources\\Audio\\Protected\\xev_se_EnemyStriken_Blaster.wav"
@@ -63,6 +64,7 @@ GameResource GameResource_Create(void)
 	res.sound_bgm = LoadSoundMem(SOUND_BGM);
 	res.sound_se_hit = LoadSoundMem(SOUND_SE_HIT);
 	res.sound_se_hit_boss = LoadSoundMem(SOUND_SE_HIT_BOSS);
+	res.sound_se_hit_boss_dead = LoadSoundMem(SOUND_SE_HIT_BOSS_DEAD);
 	res.sound_se_charge = LoadSoundMem(SOUND_SE_CHARGE);
 	res.sound_se_shoot = LoadSoundMem(SOUND_SE_SHOOT);
 	res.sound_se_shootbig = LoadSoundMem(SOUND_SE_SHOOTBIG);
@@ -111,6 +113,7 @@ void GameResource_Delete(GameResource* res)
 	DeleteSoundMem(res->sound_bgm);
 	DeleteSoundMem(res->sound_se_hit);
 	DeleteSoundMem(res->sound_se_hit_boss);
+	DeleteSoundMem(res->sound_se_hit_boss_dead);
 	DeleteSoundMem(res->sound_se_charge);
 	DeleteSoundMem(res->sound_se_shoot);
 	DeleteSoundMem(res->sound_se_shootbig);

@@ -100,7 +100,7 @@ void InitializePlay(void)
 	}
 
 	g_game.explosion = GameSprite_Create(GameTexture_Create(g_resources.texture_explosion, Vec2_Create(0, 0), Vec2_Create(64, 64)));
-	g_game.explosion.animation = GameSpriteAnimation_Create(0, 15, 4, 8);
+	g_game.explosion.animation = GameSpriteAnimation_Create(0, 15, 4, 16);
 	g_game.msg_show = GameTimer_Create();
 	GameTimer_SetRemaining(&g_game.msg_show, 2);
 	GameTimer_Resume(&g_game.msg_show);
@@ -176,12 +176,17 @@ void UpdatePlay(void)
 					if (enemy->type == TYPE_ENEMY2)
 					{
 						if (Vec2_LengthSquaredTo(&g_game.player.pos, &enemy->pos) < Vec2_LengthSquared(&Vec2_Scale(&g_window_field.size, .5f)))
-							if (enemy->state++ > 10)
+						{
+							if (enemy->state++ > 40 / GetMax(1, g_game.num_enemy2))
 							{
 								enemy->sprite = g_game.explosion;
-								PlaySoundMem(g_resources.sound_se_hit_boss, DX_PLAYTYPE_BACK);
+								enemy->type = TYPE_ENEMY2_DEAD;
+								PlaySoundMem(g_resources.sound_se_hit_boss_dead, DX_PLAYTYPE_BACK);
 								GameTimer_SetRemaining(&g_game.msg_show, 2);
 							}
+							else
+								PlaySoundMem(g_resources.sound_se_hit_boss, DX_PLAYTYPE_BACK);
+						}
 					}
 					else
 					{
@@ -200,18 +205,15 @@ void UpdatePlay(void)
 		g_game.num_enemy2 = 0;
 		foreach_start(&g_game.enemies, enemy)
 		{
-			if (enemy->type == TYPE_ENEMY2)
+			if (enemy->type == TYPE_ENEMY2_DEAD)
 			{
-				if (enemy->state > 10)
+				if (enemy->sprite.animation.result == ANIMATION_FINISHED)
 				{
-					if (enemy->sprite.animation.result == ANIMATION_FINISHED)
-					{
-						VectorIterator_Remove(&itr_enemy);
-					}
+					VectorIterator_Remove(&itr_enemy);
 				}
-				else
-					g_game.num_enemy2++;
 			}
+			else if (enemy->type == TYPE_ENEMY2)
+				g_game.num_enemy2++;
 		} foreach_end;
 
 		//*

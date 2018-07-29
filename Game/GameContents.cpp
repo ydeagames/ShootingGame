@@ -10,6 +10,7 @@
 #define PLAYER_SHOOTING_INTERVAL 3.5f
 #define ENEMY_APPEAR_INTERVAL .5f
 #define ENEMY_SHOOTING_INTERVAL 3.5f
+#define ENEMY_BOSS_SHOOTING_INTERVAL 2.f
 
 // ŠÖ”‚Ì’è‹` ==============================================================
 
@@ -91,20 +92,30 @@ BOOL GameContents_UpdatePlayerBullet(GameContents* game)
 	return TRUE;
 }
 
-BOOL GameContents_ShotEnemyBullet(GameContents* game, const GameObject* enemy)
+BOOL GameContents_ShotEnemyBullet(GameContents* game, GameObject* enemy)
 {
 	GameObject obj = GameObject_Bullet_Create();
 	obj.pos = enemy->pos;
 
 	//if (Vec2_LengthSquaredTo(&game->player.pos, &enemy->pos) < Vec2_LengthSquared(&Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT)))
 	{
-		//float angle = Vec2_Angle(&Vec2_Sub(&game->player.pos, &enemy->pos));
-		float angle = GetRandF(DX_PI_F*2);
+		float angle;
+		if (enemy->type == TYPE_ENEMY2)
+		{
+			angle = Vec2_Angle(&Vec2_Sub(&game->player.pos, &enemy->pos));
+			GameTimer_SetRemaining(&enemy->count, ENEMY_BOSS_SHOOTING_INTERVAL);
+			GameObject_Bullet_SetSize(&obj, 4);
+		}
+		else
+		{
+			angle = GetRandF(DX_PI_F * 2);
+			GameTimer_SetRemaining(&enemy->count, ENEMY_SHOOTING_INTERVAL);
+			GameObject_Bullet_SetSize(&obj, 2);
+		}
 		obj.vel = Vec2_Create(cosf(angle) * 5, sinf(angle) * 5);
 		obj.vel = Vec2_Add(&obj.vel, &enemy->vel);
 		GameObject_Bullet_SetSize(&obj, 2);
-		GameTimer_SetRemaining(&obj.count, 3.f);
-		GameTimer_Resume(&obj.count);
+		GameTimer_Resume(&enemy->count);
 	}
 
 	Vector_AddLast(&game->enemy_bullets, &obj);
@@ -122,8 +133,6 @@ BOOL GameContents_UpdateEnemies(GameContents* game)
 		if (GameTimer_IsPaused(&obj->count) || GameTimer_IsFinished(&obj->count))
 		{
 			GameContents_ShotEnemyBullet(game, obj);
-			GameTimer_SetRemaining(&obj->count, ENEMY_SHOOTING_INTERVAL);
-			GameTimer_Resume(&obj->count);
 		}
 	} foreach_end;
 

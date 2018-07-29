@@ -23,7 +23,8 @@ typedef enum
 	TYPE_PLAYER,
 	TYPE_PLAYER_BULLET,
 	TYPE_ENEMY1,
-	TYPE_ENEMY2
+	TYPE_ENEMY2,
+	TYPE_ENEMY2_DEAD
 } ObjectType;
 
 // ä÷êîÇÃêÈåæ ==============================================================

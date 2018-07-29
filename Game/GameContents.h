@@ -36,7 +36,7 @@ BOOL GameContents_ShotPlayerBullet(GameContents* game, int n_way);
 
 BOOL GameContents_UpdatePlayerBullet(GameContents* game);
 
-BOOL GameContents_ShotEnemyBullet(GameContents* game, const GameObject* enemy);
+BOOL GameContents_ShotEnemyBullet(GameContents* game, GameObject* enemy);
 
 BOOL GameContents_UpdateEnemies(GameContents* game);
 
