@@ -59,6 +59,7 @@ void RequestScene(SceneID scene_id)
 	g_next_scene = scene_id;
 }
 
+// シーンを初期化
 void InitializeScene(SceneID scene_id)
 {
 	switch (scene_id)
@@ -73,6 +74,7 @@ void InitializeScene(SceneID scene_id)
 	}
 }
 
+// シーンを更新
 void UpdateScene(SceneID scene_id)
 {
 	switch (scene_id)
@@ -87,6 +89,7 @@ void UpdateScene(SceneID scene_id)
 	}
 }
 
+// シーンを描画
 void RenderScene(SceneID scene_id)
 {
 	switch (scene_id)
@@ -101,6 +104,7 @@ void RenderScene(SceneID scene_id)
 	}
 }
 
+// シーンの終了処理
 void FinalizeScene(SceneID scene_id)
 {
 	switch (scene_id)

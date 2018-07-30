@@ -50,10 +50,13 @@ void FinalizePlay(void);    // ゲームの終了処理
 //----------------------------------------------------------------------
 void InitializePlay(void)
 {
+	// マウスを非表示
 	SetMouseDispFlag(FALSE);
 
+	// クリア後か
 	g_cleared = FALSE;
 
+	// フィールドを初期化
 	{
 		g_game.field = GameObject_Field_Create();
 		g_game.field.size = Vec2_Create(2048, 2048);
@@ -70,25 +73,33 @@ void InitializePlay(void)
 		g_game.field_cloud = GameSprite_Create(GameTexture_Create(g_resources.texture_cloud, Vec2_Create(), Vec2_Create(1024, 1024)));
 	}
 
-	g_game.player = GameObject_Player_Create();
-	g_game.player.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_player, Vec2_Create(), Vec2_Create(32, 32)), 1.5f);
-	g_game.player.sprite.texture.center.y += 7;
-	g_game.player.pos = Vec2_Create(GameObject_GetX(&g_game.field, CENTER_X), GameObject_GetY(&g_game.field, CENTER_Y));
-	g_game.player.shape = SHAPE_CIRCLE;
+	// プレイヤーを初期化
+	{
+		g_game.player = GameObject_Player_Create();
+		g_game.player.sprite = GameSprite_Create(GameTexture_Create(g_resources.texture_player, Vec2_Create(), Vec2_Create(32, 32)), 1.5f);
+		g_game.player.sprite.texture.center.y += 7;
+		g_game.player.pos = Vec2_Create(GameObject_GetX(&g_game.field, CENTER_X), GameObject_GetY(&g_game.field, CENTER_Y));
+		g_game.player.shape = SHAPE_CIRCLE;
 
-	g_player_ctrl = GameController_Player_Create(&g_game.field, &g_game.player, PlayerKeySet_Default_Create());
+		g_player_ctrl = GameController_Player_Create(&g_game.field, &g_game.player, PlayerKeySet_Default_Create());
+	}
 
-	g_game.player_bullets = Vector_Create();
-	g_game.enemies = Vector_Create();
-	g_game.enemy_bullets = Vector_Create();
+	// 弾を初期化
+	{
+		g_game.player_bullets = Vector_Create();
+		g_game.enemies = Vector_Create();
+		g_game.enemy_bullets = Vector_Create();
 
-	g_game.enemy_appear_count = GameTimer_Create();
+		g_game.enemy_appear_count = GameTimer_Create();
+	}
 
+	// 画面を初期化
 	{
 		g_window_field = GameObject_Create();
 		g_window_field.size = Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT);
 		g_window_field.pos = Vec2_Create(SCREEN_CENTER_X, SCREEN_CENTER_Y);
 	}
+	// ワールド座標を初期化
 	{
 		float diagonal = Vec2_Length(&g_window_field.size);
 		g_screen_field = g_window_field;
@@ -99,12 +110,16 @@ void InitializePlay(void)
 		g_screen_field.sprite.angle = ToRadians(0);
 	}
 
+	// 爆発アニメーション
 	g_game.explosion = GameSprite_Create(GameTexture_Create(g_resources.texture_explosion, Vec2_Create(0, 0), Vec2_Create(64, 64)));
 	g_game.explosion.animation = GameSpriteAnimation_Create(0, 15, 4, 16);
+	// メッセージ
 	g_game.msg_show = GameTimer_Create();
+	// タイマーを初期化
 	GameTimer_SetRemaining(&g_game.msg_show, 2);
 	GameTimer_Resume(&g_game.msg_show);
 
+	// ボスを配置
 	{
 		GameObject enemy;
 		enemy = GameObject_Enemy_Create(9);
@@ -121,6 +136,7 @@ void InitializePlay(void)
 		Vector_AddLast(&g_game.enemies, &enemy);
 	}
 
+	// BGM再生
 	PlaySoundMem(g_resources.sound_bgm, DX_PLAYTYPE_LOOP);
 }
 

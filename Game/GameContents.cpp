@@ -7,13 +7,14 @@
 
 // 定数の定義 ==============================================================
 
-#define PLAYER_SHOOTING_INTERVAL 3.5f
-#define ENEMY_APPEAR_INTERVAL .5f
-#define ENEMY_SHOOTING_INTERVAL 3.5f
-#define ENEMY_BOSS_SHOOTING_INTERVAL 2.f
+#define PLAYER_SHOOTING_INTERVAL 3.5f		// プレイヤーの発射間隔
+#define ENEMY_APPEAR_INTERVAL .5f			// 敵の出現間隔
+#define ENEMY_SHOOTING_INTERVAL 3.5f		// 敵の発射間隔
+#define ENEMY_BOSS_SHOOTING_INTERVAL 2.f	// ボスの発射間隔
 
 // 関数の定義 ==============================================================
 
+// 更新
 void GameContents_Update(GameContents* game)
 {
 	if (GameTimer_IsPaused(&game->enemy_appear_count) || GameTimer_IsFinished(&game->enemy_appear_count))
@@ -28,6 +29,7 @@ void GameContents_Update(GameContents* game)
 	}
 }
 
+// プレイヤー弾リロード
 BOOL GameContents_ReloadPlayerBullet(GameContents* game, int n_way)
 {
 	int i;
@@ -42,6 +44,7 @@ BOOL GameContents_ReloadPlayerBullet(GameContents* game, int n_way)
 	return TRUE;
 }
 
+// プレイヤーの弾を大きくする
 BOOL GameContents_GrowPlayerBullet(GameContents* game)
 {
 	foreach_start(&game->player_bullets, obj)
@@ -59,6 +62,7 @@ BOOL GameContents_GrowPlayerBullet(GameContents* game)
 	return TRUE;
 }
 
+// プレイヤーの弾発射
 BOOL GameContents_ShotPlayerBullet(GameContents* game, int n_way)
 {
 	int num_shot = 0;
@@ -82,6 +86,7 @@ BOOL GameContents_ShotPlayerBullet(GameContents* game, int n_way)
 	return TRUE;
 }
 
+// プレイヤーの弾更新
 BOOL GameContents_UpdatePlayerBullet(GameContents* game)
 {
 	foreach_start(&game->player_bullets, obj)
@@ -92,6 +97,7 @@ BOOL GameContents_UpdatePlayerBullet(GameContents* game)
 	return TRUE;
 }
 
+// 敵の弾発射
 BOOL GameContents_ShotEnemyBullet(GameContents* game, GameObject* enemy)
 {
 	GameObject obj = GameObject_Bullet_Create();
@@ -122,6 +128,7 @@ BOOL GameContents_ShotEnemyBullet(GameContents* game, GameObject* enemy)
 	return TRUE;
 }
 
+// 敵を更新
 BOOL GameContents_UpdateEnemies(GameContents* game)
 {
 	foreach_start(&game->enemies, obj)
@@ -139,6 +146,7 @@ BOOL GameContents_UpdateEnemies(GameContents* game)
 	return TRUE;
 }
 
+// 敵の弾更新
 BOOL GameContents_UpdateEnemyBullet(GameContents* game)
 {
 	foreach_start(&game->enemy_bullets, obj)
@@ -160,24 +168,34 @@ BOOL GameContents_UpdateEnemyBullet(GameContents* game)
 	return TRUE;
 }
 
+// 敵出現
 BOOL GameContents_AppearEnemy(GameContents* game)
 {
+	// 弾作成
 	GameObject obj = GameObject_Enemy_Create(GetRand(15));
 	{
+		// ボス取得用リスト
 		Vector tmp = Vector_Create();
+		// ボスを取得
 		foreach_start(&game->enemies, obj)
 		{
+			// ボスだったらリストに追加
 			if (obj->type == TYPE_ENEMY2)
 				Vector_AddLast(&tmp, obj);
 		} foreach_end;
+		// ボスがいれば
 		if (Vector_GetSize(&tmp) > 0)
 		{
+			// ボスからザコ出現
 			obj.pos = Vector_Get(&tmp, GetRand(Vector_GetSize(&tmp) - 1))->pos;
+			// リスト削除
 			Vector_Delete(&tmp);
 		}
 		else
 		{
+			// リスト削除
 			Vector_Delete(&tmp);
+
 			return FALSE;
 		}
 	}
@@ -185,11 +203,14 @@ BOOL GameContents_AppearEnemy(GameContents* game)
 	//	obj.pos = Vec2_Create(GetRandRangeF(GameObject_GetX(&game->field, LEFT), GameObject_GetX(&game->field, RIGHT)),
 	//		GetRandRangeF(GameObject_GetY(&game->field, TOP), GameObject_GetY(&game->field, BOTTOM)));
 	//} while (Vec2_LengthSquaredTo(&obj.pos, &game->player.pos) < Vec2_LengthSquared(&Vec2_Create(SCREEN_WIDTH, SCREEN_HEIGHT)));
+	// 敵はランダムの速度で出現
 	obj.vel = Vec2_Create(GetRandRangeF(-ENEMY_VEL, ENEMY_VEL), GetRandRangeF(-ENEMY_VEL, ENEMY_VEL));
 	//GameObject_Enemy_SetPosDefault(&game->enemies[i], &game->field);
 	//GameObject_Enemy_SetVelDefault(&game->enemies[i]);
+	// カウント
 	GameTimer_SetRemaining(&obj.count, ENEMY_SHOOTING_INTERVAL);
 	GameTimer_Resume(&obj.count);
+	// 敵リストに追加
 	Vector_AddLast(&game->enemies, &obj);
 
 	return TRUE;

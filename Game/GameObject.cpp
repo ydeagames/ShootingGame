@@ -61,19 +61,27 @@ GameSpriteAnimation GameSpriteAnimation_CreateNone()
 // <スプライトアニメーション更新>
 AnimationState GameSpriteAnimation_Update(GameSpriteAnimation* animate_sprite)
 {
+	// アニメーションしているか
 	animate_sprite->result = ANIMATION_RUNNING;
-
+	// 経過時間
 	animate_sprite->elapsed_time++;
-
+	
+	// フレーム経過
 	if (animate_sprite->elapsed_time > animate_sprite->frame_duration)
 	{
+		// 経過時間
 		animate_sprite->elapsed_time = 0;
+		// フレーム番号
 		animate_sprite->frame_index++;
 
+		// 最初に戻る
 		if (animate_sprite->frame_index > animate_sprite->frame_end)
 		{
+			// ループするなら
 			if (animate_sprite->loop_flag)
+				// 最初に戻る
 				animate_sprite->frame_index = animate_sprite->frame_start;
+			// アニメーション完了
 			animate_sprite->result = ANIMATION_FINISHED;
 		}
 	}

@@ -50,12 +50,15 @@ void FinalizeGame(void);    // ゲームの終了処理
 //----------------------------------------------------------------------
 void InitializeGame(void)
 {
-	SetUpMemoryLeakDetector();
+	//SetUpMemoryLeakDetector();
 
+	// F3キーをデバッグ描画に設定
 	SetJoypadInputToKeyInput(DX_INPUT_KEY_PAD1, PAD_INPUT_11, KEY_INPUT_F3);
 
+	// リソースを読み込み
 	g_resources = GameResource_Create();
 
+	// シーンマネージャーを初期化
 	InitializeSceneManager(SCENE_LOGO);
 }
 
@@ -70,15 +73,20 @@ void InitializeGame(void)
 //----------------------------------------------------------------------
 void UpdateGame(void)
 {
+	// 入力マネージャーを更新
 	UpdateInputManager();
+	// ティックの更新
 	GameTick_Update();
 
+	// F11キーが押されていたら
 	if (IsKeyPressed(PAD_INPUT_11))
 	{
+		// デバッグモードをトグル
 		extern BOOL g_debug_mode;
 		g_debug_mode = !g_debug_mode;
 	}
 
+	// シーンマネージャーを更新
 	UpdateSceneManager();
 }
 
@@ -94,6 +102,7 @@ void UpdateGame(void)
 //----------------------------------------------------------------------
 void RenderGame(void)
 {
+	// シーンマネージャーを描画
 	RenderSceneManager();
 }
 
@@ -108,7 +117,9 @@ void RenderGame(void)
 //----------------------------------------------------------------------
 void FinalizeGame(void)
 {
+	// シーンマネージャーをファイナライズ
 	FinalizeSceneManager();
 
+	// リソースをアンロード
 	GameResource_Delete(&g_resources);
 }
