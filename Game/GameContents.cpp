@@ -47,7 +47,7 @@ BOOL GameContents_ReloadPlayerBullet(GameContents* game, int n_way)
 // プレイヤーの弾を大きくする
 BOOL GameContents_GrowPlayerBullet(GameContents* game)
 {
-	foreach_start(&game->player_bullets, obj)
+	foreach_start(&game->player_bullets, GameObject, obj)
 	{
 		if (obj->state == 1)
 		{
@@ -66,7 +66,7 @@ BOOL GameContents_GrowPlayerBullet(GameContents* game)
 BOOL GameContents_ShotPlayerBullet(GameContents* game, int n_way)
 {
 	int num_shot = 0;
-	foreach_start(&game->player_bullets, obj)
+	foreach_start(&game->player_bullets, GameObject, obj)
 	{
 		if (obj->state == 1)
 		{
@@ -89,7 +89,7 @@ BOOL GameContents_ShotPlayerBullet(GameContents* game, int n_way)
 // プレイヤーの弾更新
 BOOL GameContents_UpdatePlayerBullet(GameContents* game)
 {
-	foreach_start(&game->player_bullets, obj)
+	foreach_start(&game->player_bullets, GameObject, obj)
 	{
 		GameObject_UpdatePosition(obj);
 	} foreach_end;
@@ -131,7 +131,7 @@ BOOL GameContents_ShotEnemyBullet(GameContents* game, GameObject* enemy)
 // 敵を更新
 BOOL GameContents_UpdateEnemies(GameContents* game)
 {
-	foreach_start(&game->enemies, obj)
+	foreach_start(&game->enemies, GameObject, obj)
 	{
 		//GameObject_Enemy_Update(&g_game.enemies[i]);
 		GameObject_UpdatePosition(obj);
@@ -149,7 +149,7 @@ BOOL GameContents_UpdateEnemies(GameContents* game)
 // 敵の弾更新
 BOOL GameContents_UpdateEnemyBullet(GameContents* game)
 {
-	foreach_start(&game->enemy_bullets, obj)
+	foreach_start(&game->enemy_bullets, GameObject, obj)
 	{
 		GameObject_UpdatePosition(obj);
 
@@ -175,9 +175,9 @@ BOOL GameContents_AppearEnemy(GameContents* game)
 	GameObject obj = GameObject_Enemy_Create(GetRand(15));
 	{
 		// ボス取得用リスト
-		Vector tmp = Vector_Create();
+		Vector tmp = Vector_Create(sizeof(GameObject));
 		// ボスを取得
-		foreach_start(&game->enemies, obj)
+		foreach_start(&game->enemies, GameObject, obj)
 		{
 			// ボスだったらリストに追加
 			if (obj->type == TYPE_ENEMY2)
@@ -187,7 +187,7 @@ BOOL GameContents_AppearEnemy(GameContents* game)
 		if (Vector_GetSize(&tmp) > 0)
 		{
 			// ボスからザコ出現
-			obj.pos = Vector_Get(&tmp, GetRand(Vector_GetSize(&tmp) - 1))->pos;
+			obj.pos = ((GameObject*)Vector_Get(&tmp, GetRand(Vector_GetSize(&tmp) - 1)))->pos;
 			// リスト削除
 			Vector_Delete(&tmp);
 		}

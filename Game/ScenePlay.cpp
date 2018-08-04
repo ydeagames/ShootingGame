@@ -86,9 +86,9 @@ void InitializePlay(void)
 
 	// ’e‚ð‰Šú‰»
 	{
-		g_game.player_bullets = Vector_Create();
-		g_game.enemies = Vector_Create();
-		g_game.enemy_bullets = Vector_Create();
+		g_game.player_bullets = Vector_Create(sizeof(GameObject));
+		g_game.enemies = Vector_Create(sizeof(GameObject));
+		g_game.enemy_bullets = Vector_Create(sizeof(GameObject));
 
 		g_game.enemy_appear_count = GameTimer_Create();
 	}
@@ -183,9 +183,9 @@ void UpdatePlay(void)
 	}
 
 	{
-		foreach_start(&g_game.enemies, enemy)
+		foreach_start(&g_game.enemies, GameObject, enemy)
 		{
-			foreach_start(&g_game.player_bullets, player_bullet)
+			foreach_start(&g_game.player_bullets, GameObject, player_bullet)
 			{
 				if (GameObject_IsHit(player_bullet, enemy))
 				{
@@ -219,7 +219,7 @@ void UpdatePlay(void)
 		} foreach_end;
 
 		g_game.num_enemy2 = 0;
-		foreach_start(&g_game.enemies, enemy)
+		foreach_start(&g_game.enemies, GameObject, enemy)
 		{
 			if (enemy->type == TYPE_ENEMY2_DEAD)
 			{
@@ -235,7 +235,7 @@ void UpdatePlay(void)
 		//*
 		if (GameObject_IsAlive(&g_game.player))
 		{
-			foreach_start(&g_game.enemies, obj)
+			foreach_start(&g_game.enemies, GameObject, obj)
 			{
 				if (GameObject_IsHit(obj, &g_game.player))
 				{
@@ -243,7 +243,7 @@ void UpdatePlay(void)
 					RequestScene(SCENE_RESULT);
 				}
 			} foreach_end;
-			foreach_start(&g_game.enemy_bullets, obj)
+			foreach_start(&g_game.enemy_bullets, GameObject, obj)
 			{
 				if (GameObject_IsHit(obj, &g_game.player))
 				{
@@ -259,13 +259,13 @@ void UpdatePlay(void)
 			GameObject_Field_CollisionVertical(&g_game.field, &g_game.player, CONNECTION_BARRIER, EDGESIDE_INNER);
 			GameObject_Field_CollisionHorizontal(&g_game.field, &g_game.player, CONNECTION_BARRIER, EDGESIDE_INNER);
 		}
-		foreach_start(&g_game.player_bullets, obj)
+		foreach_start(&g_game.player_bullets, GameObject, obj)
 		{
 			if (GameObject_Field_CollisionVertical(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_OUTER) ||
 				GameObject_Field_CollisionHorizontal(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_OUTER))
 				VectorIterator_Remove(&itr_obj);
 		} foreach_end;
-		foreach_start(&g_game.enemies, obj)
+		foreach_start(&g_game.enemies, GameObject, obj)
 		{
 			if (GameObject_Field_CollisionVertical(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_INNER))
 				obj->vel.y *= -1;
@@ -274,7 +274,7 @@ void UpdatePlay(void)
 			obj->pos.x = ClampF(obj->pos.x, GameObject_GetX(obj, LEFT), GameObject_GetX(obj, RIGHT));
 			obj->pos.y = ClampF(obj->pos.y, GameObject_GetY(obj, TOP), GameObject_GetY(obj, BOTTOM));
 		} foreach_end;
-		foreach_start(&g_game.enemy_bullets, obj)
+		foreach_start(&g_game.enemy_bullets, GameObject, obj)
 		{
 			if (GameObject_Field_CollisionVertical(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_OUTER) ||
 				GameObject_Field_CollisionHorizontal(&g_game.field, obj, CONNECTION_NONE, EDGESIDE_OUTER))
@@ -325,17 +325,17 @@ void RenderPlay(void)
 			color = GetLoopF(color + 1, 360);
 		}
 
-		foreach_start(&g_game.player_bullets, obj)
+		foreach_start(&g_game.player_bullets, GameObject, obj)
 		{
 			GameObject_Render(obj, &offset);
 		} foreach_end;
 
-		foreach_start(&g_game.enemies, obj)
+		foreach_start(&g_game.enemies, GameObject, obj)
 		{
 			GameObject_Render(obj, &offset);
 		} foreach_end;
 
-		foreach_start(&g_game.enemy_bullets, obj)
+		foreach_start(&g_game.enemy_bullets, GameObject, obj)
 		{
 			GameObject_Render(obj, &offset);
 		} foreach_end;

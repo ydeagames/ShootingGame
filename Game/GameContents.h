@@ -1,6 +1,7 @@
 #pragma once
 #include "Vec2.h"
 #include "Vector.h"
+#include "GameObject.h"
 #include "GameResource.h"
 
 // ’è”‚Ì’è‹` ==============================================================
